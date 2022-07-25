@@ -9,10 +9,9 @@ import org.bpmn.step1.fillxml.fillXML;
 
 public class App {
 
-	public static void main(String[] args)
-			throws ParserConfigurationException, TransformerException, FileNotFoundException {
+    public static void main(String[] args)
+            throws ParserConfigurationException, TransformerException, FileNotFoundException {
 
-		fillXML.createBPMN("FlowsToBPMN/src/resources/flows/PHoodle.json");
-
-	}
+        fillXML.createBPMN("FlowsToBPMN/src/resources/flows/PHoodle.json");
+    }
 }

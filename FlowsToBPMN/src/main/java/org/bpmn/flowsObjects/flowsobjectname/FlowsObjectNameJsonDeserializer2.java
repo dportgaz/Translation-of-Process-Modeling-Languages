@@ -5,7 +5,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
-public class FlowsObjectNameJsonDeserializer implements JsonDeserializer<AbstractFlowsObjectName> {
+public class FlowsObjectNameJsonDeserializer2 implements JsonDeserializer<AbstractFlowsObjectName> {
 
     @Override
     public AbstractFlowsObjectName deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
@@ -19,7 +19,6 @@ public class FlowsObjectNameJsonDeserializer implements JsonDeserializer<Abstrac
             default:
                 return null;
         }
-
     }
 
 }
