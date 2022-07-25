@@ -1,4 +1,4 @@
-package org.bpmn.step1.collaboration;
+package org.bpmn.step1.collaboration.participants;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
