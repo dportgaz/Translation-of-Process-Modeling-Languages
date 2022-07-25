@@ -17,7 +17,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import static org.bpmn.step1.collaboration.Participants.fillCollaborationParticipants;
+import static org.bpmn.step1.collaboration.Participant.fillCollaborationParticipants;
 
 public class fillXML {
 
@@ -25,7 +25,7 @@ public class fillXML {
     static Element process;
     static Element bpmndiagram;
 
-    public static Document createBPMN(String jsonFlowsPath)
+    public static void createBPMN(String jsonFlowsPath)
             throws ParserConfigurationException, FileNotFoundException, TransformerException {
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -41,12 +41,9 @@ public class fillXML {
         fillCollaborationParticipants(doc, collaboration, jsonFlowsPath);
 
         createXml(doc);
-
-        return doc;
-
     }
 
-    public static void fillHeader(Document doc, Element rootElement) throws FileNotFoundException {
+    public static void fillHeader(Document doc, Element rootElement) {
         rootElement.setAttribute("xmlns:bpmn", "http://www.omg.org/spec/BPMN/20100524/MODEL");
         rootElement.setAttribute("xmlns:bpmndi", "http://www.omg.org/spec/BPMN/20100524/DI");
         rootElement.setAttribute("xmlns:dc", "http://www.omg.org/spec/DD/20100524/DC");
@@ -57,7 +54,7 @@ public class fillXML {
         rootElement.setAttribute("camunda:diagramRelationId", "e9a61ae0-03e0-4936-9fa3-9d47de87bcfa");
     }
 
-    public static void fillStructure(Document doc, Element rootElement) throws FileNotFoundException {
+    public static void fillStructure(Document doc, Element rootElement) {
 
         String collaborationID = UUID.randomUUID().toString();
         String processID = UUID.randomUUID().toString();
