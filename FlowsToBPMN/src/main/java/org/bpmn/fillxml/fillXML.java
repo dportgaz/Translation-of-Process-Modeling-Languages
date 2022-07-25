@@ -148,7 +148,7 @@ public class fillXML {
 		Transformer transformer = transformerFactory.newTransformer();
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		DOMSource domSource = new DOMSource(doc);
-		StreamResult streamResult = new StreamResult(new File("src/resources/bpmn/PHoodle.xml"));
+		StreamResult streamResult = new StreamResult(new File("FlowsToBPMN/src/resources/bpmn/PHoodle.xml"));
 		transformer.transform(domSource, streamResult);
 
 	}

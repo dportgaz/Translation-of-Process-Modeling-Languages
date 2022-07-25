@@ -12,7 +12,7 @@ public class App {
 	public static void main(String[] args)
 			throws ParserConfigurationException, TransformerException, FileNotFoundException {
 
-		fillXML.createBPMN("src/resources/flows/PHoodle.json");
+		fillXML.createBPMN("FlowsToBPMN/src/resources/flows/PHoodle.json");
 
 	}
 }
