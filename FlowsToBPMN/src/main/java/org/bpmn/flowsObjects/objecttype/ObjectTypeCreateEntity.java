@@ -1,10 +1,10 @@
-package org.bpmn.flowsObjects.flowsobjectname;
+package org.bpmn.flowsObjects.objecttype;
 
 import java.util.ArrayList;
 
-public class FlowsObjectName2 extends AbstractFlowsObjectName2 {
+public class ObjectTypeCreateEntity extends AbstractObjectType {
 
-    public FlowsObjectName2(String type, String id_, String methodname_, ArrayList<Object> parameters_, String createdEntityId_) {
+    public ObjectTypeCreateEntity(String type, String id_, String methodname_, ArrayList<Object> parameters_, Double createdEntityId_) {
 
         // __type = type;
         // Id = id_;
