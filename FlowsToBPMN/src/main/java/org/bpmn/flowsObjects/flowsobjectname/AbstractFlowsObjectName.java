@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public abstract class AbstractFlowsObjectName {
 
-	protected ArrayList<String> Parameters;
+    protected ArrayList<String> Parameters;
 
-	public ArrayList<String> getParameters() {
-		return this.Parameters;
-	}
+    public ArrayList<String> getParameters() {
+        return this.Parameters;
+    }
 
 }

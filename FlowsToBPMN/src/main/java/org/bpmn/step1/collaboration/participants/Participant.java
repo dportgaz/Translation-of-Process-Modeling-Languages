@@ -93,5 +93,6 @@ public class Participant {
             temp.setAttribute("name", participant.getName());
             temp.setAttribute("processRef", "Process_" + participant.getProcessRef());
         }
+
     }
 }

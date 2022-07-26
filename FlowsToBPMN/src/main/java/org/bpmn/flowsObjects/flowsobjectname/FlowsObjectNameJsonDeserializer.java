@@ -7,19 +7,19 @@ import com.google.gson.JsonParseException;
 
 public class FlowsObjectNameJsonDeserializer implements JsonDeserializer<AbstractFlowsObjectName> {
 
-	@Override
-	public AbstractFlowsObjectName deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
-			JsonDeserializationContext context) throws JsonParseException {
+    @Override
+    public AbstractFlowsObjectName deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
+                                               JsonDeserializationContext context) throws JsonParseException {
 
-		String methodName = json.getAsJsonObject().get("MethodName").getAsString();
+        String methodName = json.getAsJsonObject().get("MethodName").getAsString();
 
-		switch (methodName) {
-		case "UpdateName":
-			return context.deserialize(json, FlowsObjectName.class);
-		default:
-			return null;
-		}
+        switch (methodName) {
+            case "UpdateName":
+                return context.deserialize(json, FlowsObjectName.class);
+            default:
+                return null;
+        }
 
-	}
+    }
 
 }
