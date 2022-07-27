@@ -25,7 +25,7 @@ public class FillFlowsParticipant {
 
     static ArrayList<FlowsParticipant> flowsParticipants = new ArrayList<>();
 
-    public FlowsObjectNameList test1(Document doc, Element collaboration, String filename) throws FileNotFoundException {
+    public FlowsObjectNameList fillFlowsObjectNameList(Document doc, Element collaboration, String filename) throws FileNotFoundException {
 
         Gson gsonFlowsObjectNameJsonDeserializer = new GsonBuilder().registerTypeAdapter(AbstractFlowsObjectName.class, new FlowsObjectNameJsonDeserializer()).create();
 
@@ -40,7 +40,7 @@ public class FillFlowsParticipant {
         return flowsObjects;
     }
 
-    public ArrayList<AbstractFlowsObject> test2(Document doc, Element collaboration, String filename) throws FileNotFoundException {
+    public ArrayList<AbstractFlowsObject> fillFlowsObjectList(Document doc, Element collaboration, String filename) throws FileNotFoundException {
 
         Gson gsonFlowsObjectJsonDeserializer = new GsonBuilder().registerTypeAdapter(AbstractFlowsObject.class, new FlowsObjectJsonDeserializer()).create();
 
@@ -54,8 +54,8 @@ public class FillFlowsParticipant {
     public ArrayList<String> test3(Document doc, Element collaboration, String filename) throws FileNotFoundException {
 
         ArrayList<String> names = new ArrayList<>();
-        ArrayList<AbstractFlowsObject> temp = test2(doc, collaboration, filename);
-        FlowsObjectNameList temp2 = test1(doc, collaboration, filename);
+        ArrayList<AbstractFlowsObject> temp = fillFlowsObjectList(doc, collaboration, filename);
+        FlowsObjectNameList temp2 = fillFlowsObjectNameList(doc, collaboration, filename);
 
         for (String key : temp2.ObjectTypeActionLogs.keySet()) {
 
@@ -75,11 +75,11 @@ public class FillFlowsParticipant {
 
 
         for (FlowsParticipant p : getParticipants()) {
-            Element temp4 = doc.createElement("bpmn:participant");
-            collaboration.appendChild(temp4);
-            temp4.setAttribute("id", "Participant_" + p.getParticipantID());
-            temp4.setAttribute("name", p.getName());
-            temp4.setAttribute("processRef", "Process_" + p.getProcessRef());
+            Element part = doc.createElement("bpmn:participant");
+            collaboration.appendChild(part);
+            part.setAttribute("id", "Participant_" + p.getParticipantID());
+            part.setAttribute("name", p.getName());
+            part.setAttribute("processRef", "Process_" + p.getProcessRef());
         }
 
     }
