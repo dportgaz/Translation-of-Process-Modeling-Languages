@@ -1,11 +1,4 @@
-package org.bpmn.flowsObjects.flowsobject;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.stream.JsonReader;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+package org.bpmn.step1.collaboration.participants.flowsobject;
 
 public abstract class AbstractFlowsObject {
 
