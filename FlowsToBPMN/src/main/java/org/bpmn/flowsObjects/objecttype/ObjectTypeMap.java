@@ -3,9 +3,9 @@ package org.bpmn.flowsObjects.objecttype;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
-import org.bpmn.step1.collaboration.participants.flowsobject.AbstractFlowsObject;
-import org.bpmn.step1.collaboration.participants.flowsobject.FlowsObjectJsonDeserializer;
-import org.bpmn.step1.collaboration.participants.flowsobject.FlowsObjectList;
+import org.bpmn.step1.collaboration.participant.flowsobject.AbstractFlowsObject;
+import org.bpmn.step1.collaboration.participant.flowsobject.FlowsObjectJsonDeserializer;
+import org.bpmn.step1.collaboration.participant.flowsobject.FlowsObjectList;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,7 +18,6 @@ public class ObjectTypeMap extends AbstractObjectType {
     public HashMap<String, ArrayList<AbstractObjectType>> ObjectTypeActionLogs;
     static ObjectTypeMap allObjectTypesMap;
     static HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjectsMap = new HashMap<>();
-
     static HashMap<String, ArrayList<AbstractObjectType>> userTypeObjectsMap = new HashMap<>();
 
     @Override
@@ -37,7 +36,10 @@ public class ObjectTypeMap extends AbstractObjectType {
 
     public ObjectTypeMap(String filename) throws FileNotFoundException {
         setAllObjects(filename);
-        setObjectAndUserTypeObjects(filename);
+        setObjectAndUserTypeObjectsSeparately(filename);
+        //System.out.println(getAllObjects(filename));
+        //System.out.println(getObjectTypeObjects(filename));
+        //System.out.println(getUserTypeObjects(filename));
     }
 
     public void setAllObjects(String filename) throws FileNotFoundException {
@@ -48,7 +50,7 @@ public class ObjectTypeMap extends AbstractObjectType {
 
     }
 
-    public void setObjectAndUserTypeObjects(String filename) throws FileNotFoundException {
+    public void setObjectAndUserTypeObjectsSeparately(String filename) throws FileNotFoundException {
 
         Gson gsonFlowsObjectJsonDeserializer = new GsonBuilder().registerTypeAdapter(AbstractFlowsObject.class, new FlowsObjectJsonDeserializer()).create();
 
@@ -75,14 +77,11 @@ public class ObjectTypeMap extends AbstractObjectType {
         return allObjectTypesMap.ObjectTypeActionLogs;
     }
 
-    public HashMap<String, ArrayList<AbstractObjectType>> getObjectTypeObjects(String filename) throws FileNotFoundException {
+    public HashMap<String, ArrayList<AbstractObjectType>> getObjectTypeObjects() throws FileNotFoundException {
         return objectTypeObjectsMap;
     }
 
     public HashMap<String, ArrayList<AbstractObjectType>> getUserTypeObjects(String filename) throws FileNotFoundException {
         return userTypeObjectsMap;
     }
-
-
-
 }

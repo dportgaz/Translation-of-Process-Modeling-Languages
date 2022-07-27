@@ -2,7 +2,6 @@ package org.bpmn.step1.fillxml;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,15 +13,16 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
+import org.bpmn.randomidgenerator.RandomIdGenerator;
+import org.bpmn.step1.collaboration.participant.FillFlowsParticipant;
+import org.bpmn.step1.process.FillFlowsProcess;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import static org.bpmn.step1.collaboration.participants.Participant.fillCollaborationParticipants;
 
 public class fillXML {
 
     static Element collaboration;
-    static Element process;
     static Element bpmndiagram;
 
     public static void createBPMN(String jsonFlowsPath)
@@ -31,14 +31,19 @@ public class fillXML {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-        // root elements
         Document doc = docBuilder.newDocument();
         Element rootElement = doc.createElement("bpmn:definitions");
         doc.appendChild(rootElement);
 
+        FillFlowsParticipant fp = new FillFlowsParticipant(doc, collaboration, jsonFlowsPath);
+        ObjectTypeMap tempMap = new ObjectTypeMap(jsonFlowsPath);
+        FillFlowsProcess ffp = new FillFlowsProcess();
+
+
         fillHeader(doc, rootElement);
         fillStructure(doc, rootElement);
-        fillCollaborationParticipants(doc, collaboration, jsonFlowsPath);
+        fp.fillCollaborationParticipants(doc, collaboration, jsonFlowsPath);
+        ffp.fillProcesses(doc, rootElement);
 
         createXml(doc);
     }
@@ -56,13 +61,8 @@ public class fillXML {
 
     public static void fillStructure(Document doc, Element rootElement) {
 
-        String collaborationID = UUID.randomUUID().toString();
-        String processID = UUID.randomUUID().toString();
-        String bpmndiagramID = UUID.randomUUID().toString();
-
-        process = doc.createElement("bpmn:process");
-        process.setAttribute("id", "Process_" + processID);
-        rootElement.appendChild(process);
+        String collaborationID = RandomIdGenerator.generateRandomUniqueId(6);
+        String bpmndiagramID = RandomIdGenerator.generateRandomUniqueId(6);
 
         bpmndiagram = doc.createElement("bpmndi:BPMNDiagram");
         bpmndiagram.setAttribute("id", "BPMNDiagram_" + bpmndiagramID);
@@ -87,10 +87,6 @@ public class fillXML {
 
     public static Element getCollaboration() {
         return collaboration;
-    }
-
-    public static Element getProcess() {
-        return process;
     }
 
     public static Element getBPMNDiagram() {

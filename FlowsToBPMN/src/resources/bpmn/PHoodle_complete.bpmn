@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" camunda:diagramRelationId="afac6347-81d9-4f42-be28-ff4c04771c83">
   <bpmn:collaboration id="Collaboration_07ucfs8">
-    <bpmn:participant id="Participant_0pujmti" name="Supervisor" processRef="Process_15c091d4-372c-4d36-bff0-487ef532e580"/>
-    <bpmn:participant id="Participant_0wydh84" name="Student" processRef="Process_1wv9dof"/>
-    <bpmn:participant id="Participant_0ie86h4" name="Tutor" processRef="Process_04y9y39"/>
+    <bpmn:flowsParticipant id="Participant_0pujmti" name="Supervisor" processRef="Process_15c091d4-372c-4d36-bff0-487ef532e580"/>
+    <bpmn:flowsParticipant id="Participant_0wydh84" name="Student" processRef="Process_1wv9dof"/>
+    <bpmn:flowsParticipant id="Participant_0ie86h4" name="Tutor" processRef="Process_04y9y39"/>
     <bpmn:messageFlow id="Flow_1et60zw" sourceRef="Event_04s8qvw" targetRef="Event_182g9ix"/>
     <bpmn:messageFlow id="Flow_1o9a7vq" sourceRef="Event_0zyan7h" targetRef="Event_0jxf3oe"/>
     <bpmn:messageFlow id="Flow_04jywlt" sourceRef="Event_1f90cft" targetRef="Event_19jj032"/>

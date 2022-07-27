@@ -1,4 +1,4 @@
-package org.bpmn.step1.collaboration.participants.flowsobject;
+package org.bpmn.step1.collaboration.participant.flowsobject;
 
 public abstract class AbstractFlowsObject {
 
