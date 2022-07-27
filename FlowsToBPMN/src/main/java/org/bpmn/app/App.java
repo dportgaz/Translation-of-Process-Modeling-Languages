@@ -8,6 +8,8 @@ import javax.xml.transform.TransformerException;
 import org.bpmn.flowsObjects.objecttype.AbstractObjectType;
 import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
 import org.bpmn.step1.fillxml.fillXML;
+import org.bpmn.step1.process.FillFlowsProcess;
+import org.bpmn.step1.process.FlowsProcess;
 
 public class App {
 
