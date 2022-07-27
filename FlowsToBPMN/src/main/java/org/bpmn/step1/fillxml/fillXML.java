@@ -14,10 +14,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.bpmn.randomidgenerator.RandomIdGenerator;
+import org.bpmn.step1.collaboration.participant.FillParticipant;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import static org.bpmn.step1.collaboration.participant.Participant.fillCollaborationParticipants;
 
 public class fillXML {
 
@@ -31,6 +31,8 @@ public class fillXML {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
+        FillParticipant fp = new FillParticipant();
+
         // root elements
         Document doc = docBuilder.newDocument();
         Element rootElement = doc.createElement("bpmn:definitions");
@@ -38,7 +40,8 @@ public class fillXML {
 
         fillHeader(doc, rootElement);
         fillStructure(doc, rootElement);
-        fillCollaborationParticipants(doc, collaboration, jsonFlowsPath);
+        fp.fillCollaborationParticipants(doc, collaboration, jsonFlowsPath);
+        //fillProcessBlock(doc, process, jsonFlowsPath);
 
         createXml(doc);
     }
@@ -56,9 +59,9 @@ public class fillXML {
 
     public static void fillStructure(Document doc, Element rootElement) {
 
-        String collaborationID = UUID.randomUUID().toString();
-        String processID = UUID.randomUUID().toString();
-        String bpmndiagramID = UUID.randomUUID().toString();
+        String collaborationID = RandomIdGenerator.generateRandomUniqueId(6);
+        String processID = RandomIdGenerator.generateRandomUniqueId(6);
+        String bpmndiagramID = RandomIdGenerator.generateRandomUniqueId(6);
 
         process = doc.createElement("bpmn:process");
         process.setAttribute("id", "Process_" + processID);

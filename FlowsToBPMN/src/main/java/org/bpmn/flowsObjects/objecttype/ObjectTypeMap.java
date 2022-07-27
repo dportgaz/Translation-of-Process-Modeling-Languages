@@ -38,6 +38,9 @@ public class ObjectTypeMap extends AbstractObjectType {
     public ObjectTypeMap(String filename) throws FileNotFoundException {
         setAllObjects(filename);
         setObjectAndUserTypeObjects(filename);
+        System.out.println(getAllObjects(filename));
+        System.out.println(getObjectTypeObjects(filename));
+        System.out.println(getUserTypeObjects(filename));
     }
 
     public void setAllObjects(String filename) throws FileNotFoundException {
