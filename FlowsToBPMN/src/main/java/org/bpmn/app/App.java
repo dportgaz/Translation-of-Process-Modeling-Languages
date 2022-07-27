@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.bpmn.flowsObjects.objecttype.AbstractObjectType;
+import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
 import org.bpmn.step1.fillxml.fillXML;
 
 public class App {

@@ -18,8 +18,6 @@ public abstract class AbstractObjectType {
     protected Double CreatedEntityId;
     protected Double UpdatedEntityId;
 
-    protected HashMap<String, ArrayList<AbstractObjectType>> objects;
-
     public String getMethodName() {
         return this.MethodName;
     }
@@ -38,15 +36,6 @@ public abstract class AbstractObjectType {
 
     public Double getUpdatedEntityId() {
         return this.UpdatedEntityId;
-    }
-
-    public static ObjectTypeMap getObjects(String filename) throws FileNotFoundException {
-
-        Gson gsonFlowsObjectTypeJsonDeserializer = new GsonBuilder().registerTypeAdapter(AbstractObjectType.class, new FlowsObjectTypeJsonDeserializer()).create();
-
-        ObjectTypeMap flowsObjects3 = gsonFlowsObjectTypeJsonDeserializer.fromJson(new JsonReader(new FileReader(filename)), ObjectTypeMap.class);
-
-        return flowsObjects3;
     }
 
 }

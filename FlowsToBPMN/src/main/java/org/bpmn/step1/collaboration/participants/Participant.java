@@ -3,12 +3,12 @@ package org.bpmn.step1.collaboration.participants;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
-import org.bpmn.flowsObjects.flowsobject.AbstractFlowsObject;
-import org.bpmn.flowsObjects.flowsobject.FlowsObjectJsonDeserializer;
-import org.bpmn.flowsObjects.flowsobject.FlowsObjectList;
-import org.bpmn.flowsObjects.flowsobjectname.AbstractFlowsObjectName;
-import org.bpmn.flowsObjects.flowsobjectname.FlowsObjectNameJsonDeserializer;
-import org.bpmn.flowsObjects.flowsobjectname.FlowsObjectNameList;
+import org.bpmn.step1.collaboration.participants.flowsobject.AbstractFlowsObject;
+import org.bpmn.step1.collaboration.participants.flowsobject.FlowsObjectJsonDeserializer;
+import org.bpmn.step1.collaboration.participants.flowsobject.FlowsObjectList;
+import org.bpmn.step1.collaboration.participants.flowsobjectname.AbstractFlowsObjectName;
+import org.bpmn.step1.collaboration.participants.flowsobjectname.FlowsObjectNameJsonDeserializer;
+import org.bpmn.step1.collaboration.participants.flowsobjectname.FlowsObjectNameList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -64,6 +64,8 @@ public class Participant {
 
         FlowsObjectNameList flowsObjects = gsonFlowsObjectNameJsonDeserializer.fromJson(new JsonReader(new FileReader(filename)), FlowsObjectNameList.class);
 
+        System.out.println(flowsObjects);
+
         for (String key : flowsObjects.ObjectTypeActionLogs.keySet()) {
 
             flowsObjects.ObjectTypeActionLogs.get(key).removeAll(Collections.singleton(null));
@@ -73,6 +75,10 @@ public class Participant {
         Gson gsonFlowsObjectJsonDeserializer = new GsonBuilder().registerTypeAdapter(AbstractFlowsObject.class, new FlowsObjectJsonDeserializer()).create();
 
         FlowsObjectList flowsObjects2 = gsonFlowsObjectJsonDeserializer.fromJson(new JsonReader(new FileReader(filename)), FlowsObjectList.class);
+
+        flowsObjects2.getList().removeAll(Collections.singleton(null));
+
+        System.out.println(flowsObjects2);
 
         ArrayList<String> names = new ArrayList<>();
 
@@ -84,6 +90,8 @@ public class Participant {
             }
 
         }
+
+        System.out.println(names);
 
         for (String name : names) {
             Participant participant = new Participant(name);
