@@ -17,7 +17,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import static org.bpmn.step1.collaboration.participants.Participant.fillCollaborationParticipants;
+import static org.bpmn.step1.collaboration.participant.Participant.fillCollaborationParticipants;
 
 public class fillXML {
 

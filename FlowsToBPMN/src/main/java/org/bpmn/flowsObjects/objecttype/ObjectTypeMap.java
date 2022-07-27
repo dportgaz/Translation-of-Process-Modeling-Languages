@@ -3,9 +3,9 @@ package org.bpmn.flowsObjects.objecttype;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
-import org.bpmn.step1.collaboration.participants.flowsobject.AbstractFlowsObject;
-import org.bpmn.step1.collaboration.participants.flowsobject.FlowsObjectJsonDeserializer;
-import org.bpmn.step1.collaboration.participants.flowsobject.FlowsObjectList;
+import org.bpmn.step1.collaboration.participant.flowsobject.AbstractFlowsObject;
+import org.bpmn.step1.collaboration.participant.flowsobject.FlowsObjectJsonDeserializer;
+import org.bpmn.step1.collaboration.participant.flowsobject.FlowsObjectList;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

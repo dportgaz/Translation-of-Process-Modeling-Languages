@@ -1,14 +1,14 @@
-package org.bpmn.step1.collaboration.participants;
+package org.bpmn.step1.collaboration.participant;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
-import org.bpmn.step1.collaboration.participants.flowsobject.AbstractFlowsObject;
-import org.bpmn.step1.collaboration.participants.flowsobject.FlowsObjectJsonDeserializer;
-import org.bpmn.step1.collaboration.participants.flowsobject.FlowsObjectList;
-import org.bpmn.step1.collaboration.participants.flowsobjectname.AbstractFlowsObjectName;
-import org.bpmn.step1.collaboration.participants.flowsobjectname.FlowsObjectNameJsonDeserializer;
-import org.bpmn.step1.collaboration.participants.flowsobjectname.FlowsObjectNameList;
+import org.bpmn.step1.collaboration.participant.flowsobject.AbstractFlowsObject;
+import org.bpmn.step1.collaboration.participant.flowsobject.FlowsObjectJsonDeserializer;
+import org.bpmn.step1.collaboration.participant.flowsobject.FlowsObjectList;
+import org.bpmn.step1.collaboration.participant.flowsobjectname.AbstractFlowsObjectName;
+import org.bpmn.step1.collaboration.participant.flowsobjectname.FlowsObjectNameJsonDeserializer;
+import org.bpmn.step1.collaboration.participant.flowsobjectname.FlowsObjectNameList;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
