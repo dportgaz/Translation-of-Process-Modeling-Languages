@@ -64,6 +64,8 @@ public class Participant {
 
         FlowsObjectNameList flowsObjects = gsonFlowsObjectNameJsonDeserializer.fromJson(new JsonReader(new FileReader(filename)), FlowsObjectNameList.class);
 
+        System.out.println(flowsObjects);
+
         for (String key : flowsObjects.ObjectTypeActionLogs.keySet()) {
 
             flowsObjects.ObjectTypeActionLogs.get(key).removeAll(Collections.singleton(null));
@@ -73,6 +75,10 @@ public class Participant {
         Gson gsonFlowsObjectJsonDeserializer = new GsonBuilder().registerTypeAdapter(AbstractFlowsObject.class, new FlowsObjectJsonDeserializer()).create();
 
         FlowsObjectList flowsObjects2 = gsonFlowsObjectJsonDeserializer.fromJson(new JsonReader(new FileReader(filename)), FlowsObjectList.class);
+
+        flowsObjects2.getList().removeAll(Collections.singleton(null));
+
+        System.out.println(flowsObjects2);
 
         ArrayList<String> names = new ArrayList<>();
 
@@ -84,6 +90,8 @@ public class Participant {
             }
 
         }
+
+        System.out.println(names);
 
         for (String name : names) {
             Participant participant = new Participant(name);
