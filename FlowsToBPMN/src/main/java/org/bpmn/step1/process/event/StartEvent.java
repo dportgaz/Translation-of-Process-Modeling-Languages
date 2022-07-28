@@ -9,8 +9,8 @@ public class StartEvent {
     SequenceFlow outgoing;
     public StartEvent() {
         this.id = RandomIdGenerator.generateRandomUniqueId(6);
-    }
 
+    }
     public String getId(){
         return this.id;
     }

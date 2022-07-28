@@ -5,6 +5,8 @@ import org.bpmn.flowsObjects.objecttype.AbstractObjectType;
 import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
 import org.bpmn.step1.collaboration.participant.FillFlowsParticipant;
 import org.bpmn.step1.collaboration.participant.FlowsParticipant;
+import org.bpmn.step1.process.activity.Task;
+import org.bpmn.step1.process.event.EndEvent;
 import org.bpmn.step1.process.event.StartEvent;
 import org.bpmn.step1.process.flow.SequenceFlow;
 import org.w3c.dom.Document;
@@ -16,11 +18,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.bpmn.step1.collaboration.participant.FillFlowsParticipant.getParticipants;
+
 public class FlowsProcess {
 
     String id;
     boolean isExecutable;
     StartEvent startEvent;
+
+    ArrayList<EndEvent> endEvents = new ArrayList<>();
+
+    ArrayList<Task> taskList = new ArrayList<>();
 
     public FlowsProcess(String id, boolean isExecutable) throws FileNotFoundException {
         this.id = id;
@@ -28,20 +36,36 @@ public class FlowsProcess {
         this.startEvent = new StartEvent();
     }
 
+    public void addTask(Task task) {
+
+        this.taskList.add(task);
+
+    }
+
+    public void addEndEvent(EndEvent endEvent){
+
+        this.endEvents.add(endEvent);
+
+    }
+
     public StartEvent getStartEvent() {
         return this.startEvent;
     }
 
-    public String getId(){
+    public String getId() {
         return this.id;
     }
 
-    public boolean getIsExecutable(){
+    public boolean getIsExecutable() {
         return this.isExecutable;
     }
 
+    public ArrayList<Task> getTaskList() {
+        return this.taskList;
+    }
+
     @Override
-    public String toString(){
+    public String toString() {
         return "Process: " + "Id= " + id + " isExecutable= " + isExecutable;
     }
 
