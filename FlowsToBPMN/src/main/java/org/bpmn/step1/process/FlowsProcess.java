@@ -35,7 +35,6 @@ public class FlowsProcess {
     public FlowsProcess(String id, boolean isExecutable) throws FileNotFoundException {
         this.id = id;
         this.isExecutable = isExecutable;
-        this.startEvent = new StartEvent();
     }
 
     public void addTask(Task task) {
@@ -54,6 +53,10 @@ public class FlowsProcess {
 
         this.sequenceFlowList.add(sequenceFlow);
 
+    }
+
+    public void setStartEvent(StartEvent startEvent) {
+        this.startEvent = startEvent;
     }
 
     public StartEvent getStartEvent() {

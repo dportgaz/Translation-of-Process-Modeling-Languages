@@ -4,13 +4,13 @@ import org.bpmn.flowsObjects.objecttype.AbstractObjectType;
 import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
 import org.bpmn.step1.collaboration.participant.FlowsParticipant;
 import org.bpmn.step1.process.activity.Task;
+import org.bpmn.step1.process.event.StartEvent;
 import org.bpmn.step1.process.flow.SequenceFlow;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.bpmn.step1.collaboration.participant.FillFlowsParticipant.getParticipants;
@@ -26,6 +26,7 @@ public class FillFlowsProcess {
     public void fillProcesses(Document doc, Element rootElement, ObjectTypeMap objectMap) throws FileNotFoundException {
         for (int i = 0; i < processes.size(); i++) {
 
+            String key = objectMap.getObjectIdsList().get(i);
             // add Header
             FlowsProcess fp = processes.get(i);
             Element process = doc.createElement("bpmn:process");
@@ -34,12 +35,14 @@ public class FillFlowsProcess {
             rootElement.appendChild(process);
 
             // add StartEvent
+            StartEvent startEventTemp = new StartEvent();
+            startEventTemp.setCreatedEntityId(findStartEventId(objectMap, key));
+            fp.setStartEvent(startEventTemp);
             Element startEvent = doc.createElement("bpmn:startEvent");
             startEvent.setAttribute("id", "Event_" + fp.getStartEvent().getId());
             process.appendChild(startEvent);
 
             // add activities
-            String key = objectMap.getObjectIdsList().get(i);
             String participantName = getParticipants().get(i).getName();
             objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
                 if (obj != null) {
@@ -62,6 +65,11 @@ public class FillFlowsProcess {
             }
 
             // add SequenceFlows
+            SequenceFlow startFlow = new SequenceFlow();
+            startFlow.setSourceRef("Event_" + fp.getStartEvent().getId());
+            startFlow.setTargetRef("Activity_" + fp.getTaskList().get(0).getId());
+            fp.addSequenceFlow(startFlow);
+
             objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
                 if (obj != null && obj.getMethodName().equals("AddTransitionType")) {
                     Double source = (Double) obj.getParameters().get(0);
@@ -71,21 +79,17 @@ public class FillFlowsProcess {
                         Double targetObjectId = (Double) findObjectById(target, objectMap, key).getParameters().get(0);
                         if (!sourceObjectId.equals(targetObjectId)) {
                             SequenceFlow sf = new SequenceFlow();
+                            Task task1 = findTaskById(sourceObjectId, objectMap, key, fp);
+                            Task task2 = findTaskById(targetObjectId, objectMap, key, fp);
 
-                            for (int k = 0; k < fp.getTaskList().size(); k++) {
-                                Task task = fp.getTaskList().get(k);
-                                Double createdEntityIdOfActivity = task.getCreatedEntityId();
-                                if (sourceObjectId.equals(createdEntityIdOfActivity)) {
-                                    sf.setSourceRef("Activity_" + task.getId());
-                                }
-                                if (targetObjectId.equals(createdEntityIdOfActivity)) {
-                                    sf.setTargetRef("Activity_" + task.getId());
-                                }
+                            if (task1 != null && task2 != null) {
+                                sf.setSourceRef("Activity_" + task1.getId());
+                                sf.setTargetRef("Activity_" + task2.getId());
                             }
-                            System.out.println(sf.getSourceRef());
-                            System.out.println(sf.getTargetRef());
+
                             fp.addSequenceFlow(sf);
                         }
+
                     } catch (FileNotFoundException e) {
                         throw new RuntimeException(e);
                     }
@@ -104,10 +108,29 @@ public class FillFlowsProcess {
         }
     }
 
-    public static AbstractObjectType findObjectById(Double id, ObjectTypeMap objectMap, String key) throws
+    public Task findTaskById(Double id, ObjectTypeMap objectMap, String key, FlowsProcess f) throws
+            FileNotFoundException {
+
+        for (Task task : f.getTaskList()) {
+
+            if (task.getCreatedEntityId().equals(id)) {
+                return task;
+            }
+
+        }
+        return null;
+    }
+
+    public AbstractObjectType findObjectById(Double id, ObjectTypeMap objectMap, String key) throws
             FileNotFoundException {
 
         return objectMap.getObjectTypeObjects().get(key).stream().filter(obj -> obj != null && obj.getCreatedEntityId() != null && obj.getCreatedEntityId().equals(id)).collect(Collectors.toList()).get(0);
+    }
+
+    public Double findStartEventId(ObjectTypeMap objectMap, String key) throws
+            FileNotFoundException {
+
+        return objectMap.getObjectTypeObjects().get(key).stream().filter(obj -> obj != null && obj.getParameters().get(0).equals("StartState")).collect(Collectors.toList()).get(0).getCreatedEntityId();
     }
 
     public void setProcessList() throws FileNotFoundException {
