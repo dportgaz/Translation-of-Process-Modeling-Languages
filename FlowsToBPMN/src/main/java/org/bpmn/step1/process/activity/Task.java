@@ -9,6 +9,8 @@ public class Task {
 
     String name;
 
+    Double CreatedEntityId;
+
     SequenceFlow incoming;
 
     SequenceFlow outcoming;
@@ -29,6 +31,13 @@ public class Task {
         this.outcoming = outcoming;
     }
 
+    public void setCreatedEntityId(Double createdEntityId) {
+        CreatedEntityId = createdEntityId;
+    }
+
+    public Double getCreatedEntityId() {
+        return CreatedEntityId;
+    }
 
     public String getId() {
         return this.id;

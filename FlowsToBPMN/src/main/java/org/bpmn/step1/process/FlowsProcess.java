@@ -30,6 +30,8 @@ public class FlowsProcess {
 
     ArrayList<Task> taskList = new ArrayList<>();
 
+    ArrayList<SequenceFlow> sequenceFlowList = new ArrayList<>();
+
     public FlowsProcess(String id, boolean isExecutable) throws FileNotFoundException {
         this.id = id;
         this.isExecutable = isExecutable;
@@ -48,6 +50,12 @@ public class FlowsProcess {
 
     }
 
+    public void addSequenceFlow(SequenceFlow sequenceFlow){
+
+        this.sequenceFlowList.add(sequenceFlow);
+
+    }
+
     public StartEvent getStartEvent() {
         return this.startEvent;
     }
@@ -62,6 +70,10 @@ public class FlowsProcess {
 
     public ArrayList<Task> getTaskList() {
         return this.taskList;
+    }
+
+    public ArrayList<SequenceFlow> getSequenceFlowList() {
+        return sequenceFlowList;
     }
 
     @Override
