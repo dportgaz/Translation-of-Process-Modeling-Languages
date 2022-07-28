@@ -60,18 +60,18 @@ public class ObjectTypeMap extends AbstractObjectType {
 
         ArrayList<String> nameIdList = new ArrayList<>();
 
-        for(int i = 0; i < objectTypeObjectsIdList.getList().size(); i++) {
+        for (int i = 0; i < objectTypeObjectsIdList.getList().size(); i++) {
             nameIdList.add(objectTypeObjectsIdList.getList().get(i).getCreatedActorId());
         }
 
-        for(String key : this.getAllObjects(filename).keySet()){
-                if (nameIdList.contains(key)) {
-                    objectTypeObjectsMap.put(key, this.getAllObjects(filename).get(key));
-                }else {
-                    userTypeObjectsMap.put(key, this.getAllObjects(filename).get(key));
-                }
+        for (String key : this.getAllObjects(filename).keySet()) {
+            if (nameIdList.contains(key)) {
+                objectTypeObjectsMap.put(key, this.getAllObjects(filename).get(key));
+            } else {
+                userTypeObjectsMap.put(key, this.getAllObjects(filename).get(key));
             }
         }
+    }
 
     public HashMap<String, ArrayList<AbstractObjectType>> getAllObjects(String filename) throws FileNotFoundException {
         return allObjectTypesMap.ObjectTypeActionLogs;
@@ -83,5 +83,15 @@ public class ObjectTypeMap extends AbstractObjectType {
 
     public HashMap<String, ArrayList<AbstractObjectType>> getUserTypeObjects(String filename) throws FileNotFoundException {
         return userTypeObjectsMap;
+    }
+
+    public ArrayList<String> getObjectIdsList() {
+        ArrayList<String> temp = new ArrayList<>();
+
+        for (String key : objectTypeObjectsMap.keySet()) {
+            temp.add(key);
+        }
+
+        return temp;
     }
 }

@@ -36,14 +36,15 @@ public class fillXML {
         doc.appendChild(rootElement);
 
         FillFlowsParticipant fp = new FillFlowsParticipant(doc, collaboration, jsonFlowsPath);
-        ObjectTypeMap tempMap = new ObjectTypeMap(jsonFlowsPath);
+        ObjectTypeMap objectMap = new ObjectTypeMap(jsonFlowsPath);
         FillFlowsProcess ffp = new FillFlowsProcess();
 
 
         fillHeader(doc, rootElement);
         fillStructure(doc, rootElement);
         fp.fillCollaborationParticipants(doc, collaboration, jsonFlowsPath);
-        ffp.fillProcesses(doc, rootElement);
+        ffp.fillProcesses(doc, rootElement, objectMap);
+        System.out.println(objectMap.getObjectTypeObjects());
 
         createXml(doc);
     }
