@@ -2,17 +2,16 @@ package org.bpmn.step1.process;
 
 import org.bpmn.flowsObjects.objecttype.AbstractObjectType;
 import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
-import org.bpmn.step1.collaboration.participant.FillFlowsParticipant;
 import org.bpmn.step1.collaboration.participant.FlowsParticipant;
-import org.bpmn.step1.collaboration.participant.flowsobject.AbstractFlowsObject;
 import org.bpmn.step1.process.activity.Task;
+import org.bpmn.step1.process.flow.SequenceFlow;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.bpmn.step1.collaboration.participant.FillFlowsParticipant.getParticipants;
 
@@ -42,18 +41,18 @@ public class FillFlowsProcess {
             // add activities
             String key = objectMap.getObjectIdsList().get(i);
             String participantName = getParticipants().get(i).getName();
-            objectMap.getObjectTypeObjects().get(key).
-                    forEach(obj -> {
-                        if (obj != null) {
-                            if (obj.getMethodName().equals("UpdateStateType")) {
-                                Task task = new Task();
-                                String activityName = obj.getParameters().get(1) + " " + participantName;
-                                task.setName(activityName);
-                                fp.addTask(task);
-                            }
+            objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
+                if (obj != null) {
+                    if (obj.getMethodName().equals("UpdateStateType")) {
+                        Task task = new Task();
+                        String activityName = obj.getParameters().get(1) + " " + participantName;
+                        task.setCreatedEntityId((Double) obj.getParameters().get(0));
+                        task.setName(activityName);
+                        fp.addTask(task);
+                    }
 
-                        }
-                    });
+                }
+            });
 
             for (Task task : fp.getTaskList()) {
                 Element activity = doc.createElement("bpmn:task");
@@ -61,7 +60,54 @@ public class FillFlowsProcess {
                 activity.setAttribute("name", task.getName());
                 process.appendChild(activity);
             }
+
+            // add SequenceFlows
+            objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
+                if (obj != null && obj.getMethodName().equals("AddTransitionType")) {
+                    Double source = (Double) obj.getParameters().get(0);
+                    Double target = (Double) obj.getParameters().get(1);
+                    try {
+                        Double sourceObjectId = (Double) findObjectById(source, objectMap, key).getParameters().get(0);
+                        Double targetObjectId = (Double) findObjectById(target, objectMap, key).getParameters().get(0);
+                        if (!sourceObjectId.equals(targetObjectId)) {
+                            SequenceFlow sf = new SequenceFlow();
+
+                            for (int k = 0; k < fp.getTaskList().size(); k++) {
+                                Task task = fp.getTaskList().get(k);
+                                Double createdEntityIdOfActivity = task.getCreatedEntityId();
+                                if (sourceObjectId.equals(createdEntityIdOfActivity)) {
+                                    sf.setSourceRef("Activity_" + task.getId());
+                                }
+                                if (targetObjectId.equals(createdEntityIdOfActivity)) {
+                                    sf.setTargetRef("Activity_" + task.getId());
+                                }
+                            }
+                            System.out.println(sf.getSourceRef());
+                            System.out.println(sf.getTargetRef());
+                            fp.addSequenceFlow(sf);
+                        }
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
+            });
+
+            for (SequenceFlow sequenceFlow : fp.getSequenceFlowList()) {
+                Element flow = doc.createElement("bpmn:sequenceFlow");
+                flow.setAttribute("id", "Flow_" + sequenceFlow.getId());
+                flow.setAttribute("sourceRef", sequenceFlow.getSourceRef());
+                flow.setAttribute("targetRef", sequenceFlow.getTargetRef());
+                process.appendChild(flow);
+            }
+
         }
+    }
+
+    public static AbstractObjectType findObjectById(Double id, ObjectTypeMap objectMap, String key) throws
+            FileNotFoundException {
+
+        return objectMap.getObjectTypeObjects().get(key).stream().filter(obj -> obj != null && obj.getCreatedEntityId() != null && obj.getCreatedEntityId().equals(id)).collect(Collectors.toList()).get(0);
     }
 
     public void setProcessList() throws FileNotFoundException {
