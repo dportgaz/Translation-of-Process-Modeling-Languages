@@ -40,7 +40,6 @@ public class FillFlowsProcess {
             process.appendChild(startEvent);
 
             // add activities
-
             String key = objectMap.getObjectIdsList().get(i);
             String participantName = getParticipants().get(i).getName();
             objectMap.getObjectTypeObjects().get(key).
@@ -52,9 +51,9 @@ public class FillFlowsProcess {
                                 task.setName(activityName);
                                 fp.addTask(task);
                             }
+
                         }
                     });
-
 
             for (Task task : fp.getTaskList()) {
                 Element activity = doc.createElement("bpmn:task");
@@ -64,7 +63,6 @@ public class FillFlowsProcess {
             }
         }
     }
-
 
     public void setProcessList() throws FileNotFoundException {
 
