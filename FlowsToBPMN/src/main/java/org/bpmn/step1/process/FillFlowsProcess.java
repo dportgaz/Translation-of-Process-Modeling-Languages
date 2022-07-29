@@ -36,7 +36,6 @@ public class FillFlowsProcess {
 
             // add StartEvent
             StartEvent startEventTemp = new StartEvent();
-            startEventTemp.setCreatedEntityId(findStartEventId(objectMap, key));
             fp.setStartEvent(startEventTemp);
             Element startEvent = doc.createElement("bpmn:startEvent");
             startEvent.setAttribute("id", "Event_" + fp.getStartEvent().getId());
@@ -125,12 +124,6 @@ public class FillFlowsProcess {
             FileNotFoundException {
 
         return objectMap.getObjectTypeObjects().get(key).stream().filter(obj -> obj != null && obj.getCreatedEntityId() != null && obj.getCreatedEntityId().equals(id)).collect(Collectors.toList()).get(0);
-    }
-
-    public Double findStartEventId(ObjectTypeMap objectMap, String key) throws
-            FileNotFoundException {
-
-        return objectMap.getObjectTypeObjects().get(key).stream().filter(obj -> obj != null && obj.getParameters().get(0).equals("StartState")).collect(Collectors.toList()).get(0).getCreatedEntityId();
     }
 
     public void setProcessList() throws FileNotFoundException {
