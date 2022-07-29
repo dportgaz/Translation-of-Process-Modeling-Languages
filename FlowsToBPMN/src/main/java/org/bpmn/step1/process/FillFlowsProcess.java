@@ -104,6 +104,41 @@ public class FillFlowsProcess {
                 process.appendChild(flow);
             }
 
+            // find backward transistions between states
+            objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
+                if (obj != null && obj.getMethodName().equals("AddBackwardsTransitionType")) {
+                    Double source = (Double) obj.getParameters().get(0);
+                    Double target = (Double) obj.getParameters().get(1);
+                    try {
+                        Double sourceObjectId = findObjectById(source, objectMap, key).getCreatedEntityId();
+                        Double targetObjectId = findObjectById(target, objectMap, key).getCreatedEntityId();
+
+
+                        SequenceFlow sf = new SequenceFlow();
+                        Task task1 = findTaskById(sourceObjectId, objectMap, key, fp);
+                        Task task2 = findTaskById(targetObjectId, objectMap, key, fp);
+
+
+                        if (task1 != null && task2 != null) {
+                            sf.setSourceRef("Activity_" + task1.getId());
+                            sf.setTargetRef("Activity_" + task2.getId());
+                        }
+
+                        fp.addSequenceFlow(sf);
+                        Element flow = doc.createElement("bpmn:sequenceFlow");
+                        flow.setAttribute("id", "Flow_" + sf.getId());
+                        flow.setAttribute("sourceRef", sf.getSourceRef());
+                        flow.setAttribute("targetRef", sf.getTargetRef());
+                        process.appendChild(flow);
+
+
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
+            });
+
         }
     }
 
