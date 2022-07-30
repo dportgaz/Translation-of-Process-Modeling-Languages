@@ -19,11 +19,8 @@ public class FillFlowsProcess {
 
     static ArrayList<FlowsProcess> processes = new ArrayList<FlowsProcess>();
 
-    public FillFlowsProcess() throws FileNotFoundException {
-        setProcessList();
-    }
-
     public void fillProcesses(Document doc, Element rootElement, ObjectTypeMap objectMap) throws FileNotFoundException {
+
         for (int i = 0; i < processes.size(); i++) {
 
             String key = objectMap.getObjectIdsList().get(i);
@@ -32,11 +29,29 @@ public class FillFlowsProcess {
 
             fillProcess(doc, rootElement, process, objectMap, fp, key, i);
 
+            System.out.println(addGateways(fp));
+
         }
+
     }
 
-    public Task findTaskById(Double id, ObjectTypeMap objectMap, String key, FlowsProcess f) throws
-            FileNotFoundException {
+    public boolean addGateways(FlowsProcess fp) {
+
+        // identify loops
+
+        if (fp.containsLoop()) {
+            return true;
+        }
+
+        return false;
+
+    }
+
+    public FillFlowsProcess() throws FileNotFoundException {
+        setProcessList();
+    }
+
+    public Task findTaskById(Double id, ObjectTypeMap objectMap, String key, FlowsProcess f) throws FileNotFoundException {
 
         for (Task task : f.getTaskList()) {
 
@@ -48,8 +63,7 @@ public class FillFlowsProcess {
         return null;
     }
 
-    public AbstractObjectType findObjectById(Double id, ObjectTypeMap objectMap, String key) throws
-            FileNotFoundException {
+    public AbstractObjectType findObjectById(Double id, ObjectTypeMap objectMap, String key) throws FileNotFoundException {
 
         return objectMap.getObjectTypeObjects().get(key).stream().filter(obj -> obj != null && obj.getCreatedEntityId() != null && obj.getCreatedEntityId().equals(id)).collect(Collectors.toList()).get(0);
     }
@@ -204,6 +218,5 @@ public class FillFlowsProcess {
 
 
     }
-
 
 }
