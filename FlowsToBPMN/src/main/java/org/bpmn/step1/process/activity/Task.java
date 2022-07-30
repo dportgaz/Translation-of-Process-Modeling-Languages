@@ -16,7 +16,7 @@ public class Task {
     SequenceFlow outcoming;
 
     public Task() {
-        this.id = RandomIdGenerator.generateRandomUniqueId(6);
+        this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
     }
 
     public void setName(String name) {
@@ -42,6 +42,7 @@ public class Task {
     public String getId() {
         return this.id;
     }
+
     public String getName() {
         return this.name;
     }
@@ -52,5 +53,10 @@ public class Task {
 
     public SequenceFlow getOutcoming() {
         return this.outcoming;
+    }
+
+    @Override
+    public String toString() {
+        return this.id;
     }
 }

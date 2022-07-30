@@ -10,8 +10,8 @@ public class SequenceFlow {
 
     String targetRef;
 
-    public SequenceFlow(){
-        this.id = RandomIdGenerator.generateRandomUniqueId(6);
+    public SequenceFlow() {
+        this.id = "Flow_" + RandomIdGenerator.generateRandomUniqueId(6);
     }
 
     public void setSourceRef(String sourceRef) {
@@ -32,5 +32,10 @@ public class SequenceFlow {
 
     public String getTargetRef() {
         return targetRef;
+    }
+
+    @Override
+    public String toString() {
+        return this.id;
     }
 }

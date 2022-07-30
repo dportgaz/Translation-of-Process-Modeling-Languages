@@ -8,10 +8,12 @@ public class StartEvent {
     String id;
     Double createdEntityId;
     SequenceFlow outgoing;
+
     public StartEvent() {
-        this.id = RandomIdGenerator.generateRandomUniqueId(6);
+        this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
     }
-    public String getId(){
+
+    public String getId() {
         return this.id;
     }
 
