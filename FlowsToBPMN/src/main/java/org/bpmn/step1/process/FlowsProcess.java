@@ -43,13 +43,13 @@ public class FlowsProcess {
 
     }
 
-    public void addEndEvent(EndEvent endEvent){
+    public void addEndEvent(EndEvent endEvent) {
 
         this.endEvents.add(endEvent);
 
     }
 
-    public void addSequenceFlow(SequenceFlow sequenceFlow){
+    public void addSequenceFlow(SequenceFlow sequenceFlow) {
 
         this.sequenceFlowList.add(sequenceFlow);
 
@@ -78,6 +78,31 @@ public class FlowsProcess {
     public ArrayList<SequenceFlow> getSequenceFlowList() {
         return sequenceFlowList;
     }
+
+    public boolean containsLoop() {
+
+        for (SequenceFlow sfOuter : getSequenceFlowList()) {
+
+            String outerSource = sfOuter.getSourceRef();
+            String outerTarget = sfOuter.getTargetRef();
+
+            for (SequenceFlow sfInner : getSequenceFlowList()) {
+
+                String innerTarget = sfInner.getTargetRef();
+                String innerSource = sfInner.getSourceRef();
+
+                if (outerSource != null && innerTarget != null && outerTarget != null && innerSource != null) {
+                    if (outerSource.equals(innerTarget) && outerTarget.equals(innerSource)) {
+                        return true;
+                    }
+                }
+            }
+
+        }
+        return false;
+
+    }
+
 
     @Override
     public String toString() {
