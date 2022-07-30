@@ -8,11 +8,15 @@ import org.bpmn.step1.process.event.StartEvent;
 import org.bpmn.step1.process.flow.SequenceFlow;
 import org.bpmn.step1.process.gateway.ExclusiveGateway;
 import org.bpmn.step1.process.gateway.Gateway;
+import org.bpmn.step1.process.gateway.Predicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.bpmn.step1.collaboration.participant.FillFlowsParticipant.getParticipants;
@@ -75,16 +79,20 @@ public class FillFlowsProcess {
 
     public void fillProcess(Document doc, Element rootElement, Element process, ObjectTypeMap objectMap, FlowsProcess fp, String key, int i) throws FileNotFoundException {
 
-        addProcessHeader(rootElement, fp, process);
+        addProcessHeader(rootElement, fp, process, i);
         addStartEvent(doc, fp, process);
+        addPredicates(objectMap, key, i, fp, doc, process);
+        addPredicateSteps(objectMap, key, i, fp, doc, process);
+        // System.out.println(fp.getPredicateStepTypes());
+        // System.out.println(fp.getPredicateList());
         addActivities(objectMap, key, i, fp, doc, process);
         addSequenceFlows(objectMap, key, i, fp, doc, process);
 
     }
 
-    public void addProcessHeader(Element rootElement, FlowsProcess fp, Element process) {
+    public void addProcessHeader(Element rootElement, FlowsProcess fp, Element process, int i) {
 
-        process.setAttribute("id", fp.getId());
+        process.setAttribute("id", "Process_" + getParticipants().get(i).getProcessRef());
         process.setAttribute("isExecutable", new Boolean(fp.getIsExecutable()).toString());
         rootElement.appendChild(process);
 
@@ -113,7 +121,6 @@ public class FillFlowsProcess {
                     task.setName(activityName);
                     fp.addTask(task);
                 }
-
             }
         });
 
@@ -124,7 +131,43 @@ public class FillFlowsProcess {
             process.appendChild(activity);
         }
 
+    }
 
+    public void addPredicates(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
+
+        // add predicates
+        objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
+            if (obj != null) {
+                if (obj.getMethodName().equals("AddPredicateStepType")) {
+
+                    Predicate predicate = new Predicate();
+                    predicate.setCreatedEntityId((Double) obj.getParameters().get(0));
+                    fp.addPredicate(predicate);
+                }
+            }
+        });
+
+    }
+
+    public void addPredicateSteps(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
+
+        // add predicate steptypes
+        objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
+            if (obj != null) {
+                if (obj.getMethodName().equals("AddStepType")) {
+
+                    for (Predicate p : fp.getPredicateList()) {
+
+                        if (p.getCreatedEntityId().equals(obj.getCreatedEntityId())) {
+                            fp.addPredicateStepType(obj);
+                        }
+
+                    }
+                }
+            }
+        });
+
+        //System.out.println(fp.getPredicateStepTypes());
     }
 
     public void addSequenceFlows(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
@@ -139,6 +182,7 @@ public class FillFlowsProcess {
             if (obj != null && obj.getMethodName().equals("AddTransitionType")) {
                 Double source = (Double) obj.getParameters().get(0);
                 Double target = (Double) obj.getParameters().get(1);
+
                 try {
                     Double sourceObjectId = (Double) findObjectById(source, objectMap, key).getParameters().get(0);
                     Double targetObjectId = (Double) findObjectById(target, objectMap, key).getParameters().get(0);
@@ -147,11 +191,21 @@ public class FillFlowsProcess {
                         Task task1 = findTaskById(sourceObjectId, objectMap, key, fp);
                         Task task2 = findTaskById(targetObjectId, objectMap, key, fp);
 
-                        if (task1 != null && task2 != null) {
-                            sf.setSourceRef(task1.getId());
-                            sf.setTargetRef(task2.getId());
+                        //find task by Id but predicate
+
+                        // TODO: !!!!! does not work with predicates in multiple different states/steps; needs fix
+                        if (task1 == null) {
+                            task1 = findTaskById((Double) fp.getPredicateStepTypes().get(0).getParameters().get(0), objectMap, key, fp);
                         }
 
+                        if (task2 == null) {
+                            task2 = findTaskById((Double) fp.getPredicateStepTypes().get(0).getParameters().get(0), objectMap, key, fp);
+                        }
+
+                        // System.out.println(source + " ___ " + task1 + " ___ " + target + " ___ " + task2);
+
+                        sf.setSourceRef(task1.getId());
+                        sf.setTargetRef(task2.getId());
                         fp.addSequenceFlow(sf);
                     }
 
@@ -183,22 +237,17 @@ public class FillFlowsProcess {
 
                 try {
                     Double sourceObjectId = findObjectById(source, objectMap, key).getCreatedEntityId();
-
                     Double targetObjectId = findObjectById(target, objectMap, key).getCreatedEntityId();
-
 
                     SequenceFlow sf = new SequenceFlow();
                     Task sourceTask = findTaskById(sourceObjectId, objectMap, key, fp);
                     Task targetTask = findTaskById(targetObjectId, objectMap, key, fp);
 
-
                     SequenceFlow flowBeforeStart = fp.getFlowBySource(sourceTask);
                     SequenceFlow flowAfterEnd = fp.getFlowByTarget(targetTask);
 
-
                     ExclusiveGateway startGate = new ExclusiveGateway();
                     ExclusiveGateway endGate = new ExclusiveGateway();
-
 
                     SequenceFlow sf1 = new SequenceFlow();
                     sf1.setSourceRef(flowBeforeStart.getSourceRef());
@@ -235,5 +284,19 @@ public class FillFlowsProcess {
         });
 
     }
-}
 
+    public void addDecision(Document doc, FlowsProcess fp, ObjectTypeMap objectMap, String key, Element process) throws FileNotFoundException {
+
+        // check which flows have the same sourceRef
+        for (int i = 0; i < fp.getSequenceFlowList().size(); i++) {
+
+            for (int j = 0; j < fp.getSequenceFlowList().size(); j++) {
+
+
+            }
+
+        }
+    }
+
+
+}

@@ -9,6 +9,7 @@ import org.bpmn.step1.process.activity.Task;
 import org.bpmn.step1.process.event.EndEvent;
 import org.bpmn.step1.process.event.StartEvent;
 import org.bpmn.step1.process.flow.SequenceFlow;
+import org.bpmn.step1.process.gateway.Predicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -32,6 +33,11 @@ public class FlowsProcess {
 
     ArrayList<SequenceFlow> sequenceFlowList = new ArrayList<>();
 
+    ArrayList<Predicate> predicateList = new ArrayList<>();
+
+    ArrayList<AbstractObjectType> predicateStepTypes = new ArrayList<>();
+
+
     public FlowsProcess(String id, boolean isExecutable) throws FileNotFoundException {
         this.id = "Process_" + id;
         this.isExecutable = isExecutable;
@@ -47,6 +53,28 @@ public class FlowsProcess {
 
         this.endEvents.add(endEvent);
 
+    }
+
+    public void addPredicate(Predicate predicate) {
+        predicateList.add(predicate);
+    }
+
+    public void addPredicateStepType(AbstractObjectType o) {
+        if (!predicateStepTypes.contains(o)) {
+            this.predicateStepTypes.add(o);
+        }
+    }
+
+    public void setPredicateStepTypes(ArrayList<AbstractObjectType> predicateStepTypes) {
+        this.predicateStepTypes = predicateStepTypes;
+    }
+
+    public ArrayList<AbstractObjectType> getPredicateStepTypes() {
+        return this.predicateStepTypes;
+    }
+
+    public ArrayList<Predicate> getPredicateList() {
+        return this.predicateList;
     }
 
     public void addSequenceFlow(SequenceFlow sequenceFlow) {
