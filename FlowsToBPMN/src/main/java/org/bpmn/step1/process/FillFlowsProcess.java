@@ -6,6 +6,8 @@ import org.bpmn.step1.collaboration.participant.FlowsParticipant;
 import org.bpmn.step1.process.activity.Task;
 import org.bpmn.step1.process.event.StartEvent;
 import org.bpmn.step1.process.flow.SequenceFlow;
+import org.bpmn.step1.process.gateway.ExclusiveGateway;
+import org.bpmn.step1.process.gateway.Gateway;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -29,21 +31,8 @@ public class FillFlowsProcess {
 
             fillProcess(doc, rootElement, process, objectMap, fp, key, i);
 
-            System.out.println(addGateways(fp));
 
         }
-
-    }
-
-    public boolean addGateways(FlowsProcess fp) {
-
-        // identify loops
-
-        if (fp.containsLoop()) {
-            return true;
-        }
-
-        return false;
 
     }
 
@@ -95,7 +84,7 @@ public class FillFlowsProcess {
 
     public void addProcessHeader(Element rootElement, FlowsProcess fp, Element process) {
 
-        process.setAttribute("id", "Process_" + fp.getId());
+        process.setAttribute("id", fp.getId());
         process.setAttribute("isExecutable", new Boolean(fp.getIsExecutable()).toString());
         rootElement.appendChild(process);
 
@@ -106,7 +95,7 @@ public class FillFlowsProcess {
         StartEvent startEventTemp = new StartEvent();
         fp.setStartEvent(startEventTemp);
         Element startEvent = doc.createElement("bpmn:startEvent");
-        startEvent.setAttribute("id", "Event_" + fp.getStartEvent().getId());
+        startEvent.setAttribute("id", fp.getStartEvent().getId());
         process.appendChild(startEvent);
 
     }
@@ -130,7 +119,7 @@ public class FillFlowsProcess {
 
         for (Task task : fp.getTaskList()) {
             Element activity = doc.createElement("bpmn:task");
-            activity.setAttribute("id", "Activity_" + task.getId());
+            activity.setAttribute("id", task.getId());
             activity.setAttribute("name", task.getName());
             process.appendChild(activity);
         }
@@ -142,8 +131,8 @@ public class FillFlowsProcess {
 
         // add SequenceFlows
         SequenceFlow startFlow = new SequenceFlow();
-        startFlow.setSourceRef("Event_" + fp.getStartEvent().getId());
-        startFlow.setTargetRef("Activity_" + fp.getTaskList().get(0).getId());
+        startFlow.setSourceRef(fp.getStartEvent().getId());
+        startFlow.setTargetRef(fp.getTaskList().get(0).getId());
         fp.addSequenceFlow(startFlow);
 
         objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
@@ -159,8 +148,8 @@ public class FillFlowsProcess {
                         Task task2 = findTaskById(targetObjectId, objectMap, key, fp);
 
                         if (task1 != null && task2 != null) {
-                            sf.setSourceRef("Activity_" + task1.getId());
-                            sf.setTargetRef("Activity_" + task2.getId());
+                            sf.setSourceRef(task1.getId());
+                            sf.setTargetRef(task2.getId());
                         }
 
                         fp.addSequenceFlow(sf);
@@ -173,40 +162,68 @@ public class FillFlowsProcess {
             }
         });
 
+        addLoop(doc, fp, objectMap, key, process);
+
         for (SequenceFlow sequenceFlow : fp.getSequenceFlowList()) {
             Element flow = doc.createElement("bpmn:sequenceFlow");
-            flow.setAttribute("id", "Flow_" + sequenceFlow.getId());
+            flow.setAttribute("id", sequenceFlow.getId());
             flow.setAttribute("sourceRef", sequenceFlow.getSourceRef());
             flow.setAttribute("targetRef", sequenceFlow.getTargetRef());
             process.appendChild(flow);
         }
+    }
 
-        // find backward transistions between states
+    public void addLoop(Document doc, FlowsProcess fp, ObjectTypeMap objectMap, String key, Element process) throws FileNotFoundException {
+
+        // gateways in case of loop
         objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
             if (obj != null && obj.getMethodName().equals("AddBackwardsTransitionType")) {
-                Double source = (Double) obj.getParameters().get(0);
-                Double target = (Double) obj.getParameters().get(1);
+                Double source = (Double) obj.getParameters().get(1);
+                Double target = (Double) obj.getParameters().get(0);
+
                 try {
                     Double sourceObjectId = findObjectById(source, objectMap, key).getCreatedEntityId();
+
                     Double targetObjectId = findObjectById(target, objectMap, key).getCreatedEntityId();
 
 
                     SequenceFlow sf = new SequenceFlow();
-                    Task task1 = findTaskById(sourceObjectId, objectMap, key, fp);
-                    Task task2 = findTaskById(targetObjectId, objectMap, key, fp);
+                    Task sourceTask = findTaskById(sourceObjectId, objectMap, key, fp);
+                    Task targetTask = findTaskById(targetObjectId, objectMap, key, fp);
 
 
-                    if (task1 != null && task2 != null) {
-                        sf.setSourceRef("Activity_" + task1.getId());
-                        sf.setTargetRef("Activity_" + task2.getId());
-                    }
+                    SequenceFlow flowBeforeStart = fp.getFlowBySource(sourceTask);
+                    SequenceFlow flowAfterEnd = fp.getFlowByTarget(targetTask);
 
-                    fp.addSequenceFlow(sf);
-                    Element flow = doc.createElement("bpmn:sequenceFlow");
-                    flow.setAttribute("id", "Flow_" + sf.getId());
-                    flow.setAttribute("sourceRef", sf.getSourceRef());
-                    flow.setAttribute("targetRef", sf.getTargetRef());
-                    process.appendChild(flow);
+
+                    ExclusiveGateway startGate = new ExclusiveGateway();
+                    ExclusiveGateway endGate = new ExclusiveGateway();
+
+
+                    SequenceFlow sf1 = new SequenceFlow();
+                    sf1.setSourceRef(flowBeforeStart.getSourceRef());
+                    sf1.setTargetRef(startGate.getId());
+                    flowBeforeStart.setSourceRef(startGate.getId());
+
+                    SequenceFlow sf2 = new SequenceFlow();
+                    sf2.setSourceRef(endGate.getId());
+                    sf2.setTargetRef(flowAfterEnd.getTargetRef());
+                    flowAfterEnd.setTargetRef(endGate.getId());
+
+                    SequenceFlow sf3 = new SequenceFlow();
+                    sf3.setSourceRef(endGate.getId());
+                    sf3.setTargetRef(startGate.getId());
+
+                    fp.addSequenceFlow(sf1);
+                    fp.addSequenceFlow(sf2);
+                    fp.addSequenceFlow(sf3);
+
+                    Element gateway1 = doc.createElement("bpmn:exclusiveGateway");
+                    Element gateway2 = doc.createElement("bpmn:exclusiveGateway");
+                    gateway1.setAttribute("id", startGate.getId());
+                    gateway2.setAttribute("id", endGate.getId());
+                    process.appendChild(gateway1);
+                    process.appendChild(gateway2);
 
 
                 } catch (FileNotFoundException e) {
@@ -214,9 +231,9 @@ public class FillFlowsProcess {
                 }
 
             }
+
         });
 
-
     }
-
 }
+

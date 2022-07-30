@@ -33,7 +33,7 @@ public class FlowsProcess {
     ArrayList<SequenceFlow> sequenceFlowList = new ArrayList<>();
 
     public FlowsProcess(String id, boolean isExecutable) throws FileNotFoundException {
-        this.id = id;
+        this.id = "Process_" + id;
         this.isExecutable = isExecutable;
     }
 
@@ -52,6 +52,19 @@ public class FlowsProcess {
     public void addSequenceFlow(SequenceFlow sequenceFlow) {
 
         this.sequenceFlowList.add(sequenceFlow);
+
+    }
+
+    public void removeSequenzeFlow(SequenceFlow sequenceFlow) {
+
+        for (int i = 0; i < getSequenceFlowList().size(); i++) {
+            SequenceFlow sf = getSequenceFlowList().get(i);
+            if (sf.getId().equals(sequenceFlow.getId())) {
+                System.out.println(sf);
+                this.sequenceFlowList.remove(i);
+            }
+
+        }
 
     }
 
@@ -79,30 +92,44 @@ public class FlowsProcess {
         return sequenceFlowList;
     }
 
-    public boolean containsLoop() {
+    public boolean containsLoop(ObjectTypeMap objectMap, String key) throws FileNotFoundException {
 
-        for (SequenceFlow sfOuter : getSequenceFlowList()) {
+        for (AbstractObjectType obj : objectMap.getObjectTypeObjects().get(key)) {
+            if (obj != null && obj.getMethodName().equals("AddBackwardsTransitionType")) {
+                return true;
+            }
+        }
 
-            String outerSource = sfOuter.getSourceRef();
-            String outerTarget = sfOuter.getTargetRef();
+        return false;
+    }
 
-            for (SequenceFlow sfInner : getSequenceFlowList()) {
+    public SequenceFlow getFlowBySource(Task source) {
 
-                String innerTarget = sfInner.getTargetRef();
-                String innerSource = sfInner.getSourceRef();
+        for (SequenceFlow sf : getSequenceFlowList()) {
 
-                if (outerSource != null && innerTarget != null && outerTarget != null && innerSource != null) {
-                    if (outerSource.equals(innerTarget) && outerTarget.equals(innerSource)) {
-                        return true;
-                    }
-                }
+            if (sf.getTargetRef().equals(source.getId())) {
+                return sf;
             }
 
         }
-        return false;
+
+        return null;
 
     }
 
+    public SequenceFlow getFlowByTarget(Task target) {
+
+        for (SequenceFlow sf : getSequenceFlowList()) {
+
+            if (sf.getSourceRef().equals(target.getId())) {
+                return sf;
+            }
+
+        }
+
+        return null;
+
+    }
 
     @Override
     public String toString() {
