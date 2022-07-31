@@ -65,6 +65,23 @@ public class FlowsProcess {
         }
     }
 
+    public boolean containsTask(Task task) {
+        for (Task t : taskList) {
+            if (t.getCreatedEntityId().equals(task.getCreatedEntityId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void removeTaskFromList(Task task) {
+        for (int i = 0; i < taskList.size(); i++) {
+            if (taskList.get(i).getCreatedEntityId().equals(task.getCreatedEntityId())) {
+                taskList.remove(i);
+            }
+        }
+    }
+
     public void setPredicateStepTypes(ArrayList<AbstractObjectType> predicateStepTypes) {
         this.predicateStepTypes = predicateStepTypes;
     }

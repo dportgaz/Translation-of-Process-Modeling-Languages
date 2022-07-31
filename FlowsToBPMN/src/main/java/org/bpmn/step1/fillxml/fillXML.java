@@ -25,7 +25,7 @@ public class fillXML {
     static Element collaboration;
     static Element bpmndiagram;
 
-    public static void createBPMN(String jsonFlowsPath)
+    public static void createBPMN(String jsonFlowsPath, String filename)
             throws ParserConfigurationException, FileNotFoundException, TransformerException {
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -46,7 +46,7 @@ public class fillXML {
         ffp.fillProcesses(doc, rootElement, objectMap);
         System.out.println(objectMap.getObjectTypeObjects());
 
-        createXml(doc);
+        createXml(doc, filename);
     }
 
     public static void fillHeader(Document doc, Element rootElement) {
@@ -75,13 +75,13 @@ public class fillXML {
 
     }
 
-    private static void createXml(Document doc) throws TransformerException {
+    private static void createXml(Document doc, String filename) throws TransformerException {
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         DOMSource domSource = new DOMSource(doc);
-        StreamResult streamResult = new StreamResult(new File("FlowsToBPMN/src/resources/bpmn/PHoodle.xml"));
+        StreamResult streamResult = new StreamResult(new File("FlowsToBPMN/src/resources/bpmn/" + filename));
         transformer.transform(domSource, streamResult);
 
     }

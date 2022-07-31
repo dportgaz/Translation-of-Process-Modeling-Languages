@@ -13,8 +13,10 @@ public class App {
     public static void main(String[] args)
             throws ParserConfigurationException, TransformerException, FileNotFoundException {
 
-        String file = "FlowsToBPMN/src/resources/flows/WTFISTHISSHIT.json";
-        fillXML.createBPMN(file);
+        //String filePHoodle = "FlowsToBPMN/src/resources/flows/PHoodle.json";
+        String fileRecruitment = "FlowsToBPMN/src/resources/flows/recruitment_json.json";
+        //fillXML.createBPMN(filePHoodle, "PHoodle.xml");
+        fillXML.createBPMN(fileRecruitment, "Recruitment.xml");
 
     }
 }
