@@ -37,10 +37,16 @@ public class FlowsProcess {
 
     ArrayList<AbstractObjectType> predicateStepTypes = new ArrayList<>();
 
+    ArrayList<Task> endTasks = new ArrayList<>();
+
 
     public FlowsProcess(String id, boolean isExecutable) throws FileNotFoundException {
         this.id = "Process_" + id;
         this.isExecutable = isExecutable;
+    }
+
+    public ArrayList<Task> getEndTasks() {
+        return endTasks;
     }
 
     public void addTask(Task task) {
@@ -74,10 +80,27 @@ public class FlowsProcess {
         return false;
     }
 
+    public boolean containsFlow(SequenceFlow flow) {
+        for (SequenceFlow sf : sequenceFlowList) {
+            if (sf.getSourceRef().equals(flow.getSourceRef()) && sf.getTargetRef().equals(flow.getTargetRef())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void removeTaskFromList(Task task) {
         for (int i = 0; i < taskList.size(); i++) {
             if (taskList.get(i).getCreatedEntityId().equals(task.getCreatedEntityId())) {
                 taskList.remove(i);
+            }
+        }
+    }
+
+    public void removeFlowFromList(SequenceFlow flow) {
+        for (int i = 0; i < sequenceFlowList.size(); i++) {
+            if (sequenceFlowList.get(i).getSourceRef().equals(flow.getSourceRef()) && sequenceFlowList.get(i).getTargetRef().equals(flow.getTargetRef())) {
+                sequenceFlowList.remove(i);
             }
         }
     }
