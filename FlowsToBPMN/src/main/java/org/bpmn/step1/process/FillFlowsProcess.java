@@ -15,10 +15,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -284,6 +281,7 @@ public class FillFlowsProcess {
 
         addLoop(doc, fp, objectMap, key, process);
         addDecision(doc, fp, objectMap, key, process);
+        combineArtifcats(doc, fp, objectMap, key, process);
 
         for (SequenceFlow sequenceFlow : fp.getSequenceFlowList()) {
             Element flow = doc.createElement("bpmn:sequenceFlow");
@@ -431,33 +429,50 @@ public class FillFlowsProcess {
 
         }
 
-
     }
 
-    public void closeDecisionFlows(ArrayList<SequenceFlow> flows, Document doc, FlowsProcess fp, ObjectTypeMap objectMap, String key, Element process) {
+    public void combineArtifcats(Document doc, FlowsProcess fp, ObjectTypeMap objectMap, String key, Element process) {
 
-        ExclusiveGateway gate = new ExclusiveGateway();
+        HashSet<SequenceFlow> temp = new HashSet<>();
+        Pattern pattern = Pattern.compile("Gateway_*");
 
-        Element gateway = doc.createElement("bpmn:exclusiveGateway");
-        gateway.setAttribute("id", gate.getId());
-        process.appendChild(gateway);
+        for (int i = 0; i < fp.getSequenceFlowList().size() - 1; i++) {
+            Matcher matcher = pattern.matcher(fp.getSequenceFlowList().get(i).getTargetRef());
+            boolean duplicate = false;
+            if (!matcher.find()) {
 
-        SequenceFlow toGateway = new SequenceFlow();
-        toGateway.setSourceRef(flows.get(0).getSourceRef());
-        toGateway.setTargetRef(gate.getId());
-        fp.addSequenceFlow(toGateway);
+                SequenceFlow outerFlow = fp.getSequenceFlowList().get(i);
+                ExclusiveGateway gate = new ExclusiveGateway();
 
-        for (int i = 0; i < flows.size(); i++) {
+                for (int j = i + 1; j < fp.getSequenceFlowList().size(); j++) {
+                    Matcher datcher = pattern.matcher(fp.getSequenceFlowList().get(j).getTargetRef());
+                    if (!datcher.find()) {
+                        SequenceFlow innerFlow = fp.getSequenceFlowList().get(j);
 
-            SequenceFlow fromGateway = new SequenceFlow();
-            fromGateway.setSourceRef(gate.getId());
-            fromGateway.setTargetRef(flows.get(i).getTargetRef());
-            fp.addSequenceFlow(fromGateway);
+                        if (outerFlow.getTargetRef().equals(innerFlow.getTargetRef()) && !temp.contains(outerFlow)) {
 
+                            Element gateway = doc.createElement("bpmn:exclusiveGateway");
+                            gateway.setAttribute("id", gate.getId());
+                            process.appendChild(gateway);
+
+                            duplicate = true;
+                            temp.add(outerFlow);
+                            innerFlow.setTargetRef(gate.getId());
+
+                        }
+
+                    }
+
+                    if (duplicate) {
+                        SequenceFlow sf = new SequenceFlow();
+                        sf.setSourceRef(gate.getId());
+                        sf.setTargetRef(outerFlow.getTargetRef());
+                        fp.addSequenceFlow(sf);
+                        outerFlow.setTargetRef(gate.getId());
+                        duplicate = false;
+                    }
+                }
+            }
         }
-
-
     }
-
-
 }
