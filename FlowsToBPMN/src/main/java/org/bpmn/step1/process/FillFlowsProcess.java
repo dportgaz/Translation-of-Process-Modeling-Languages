@@ -117,8 +117,15 @@ public class FillFlowsProcess {
                 if (obj.getMethodName().equals("UpdateStateType")) {
                     Task task = new Task();
                     String activityName = obj.getParameters().get(1) + " " + participantName;
+
                     task.setCreatedEntityId((Double) obj.getParameters().get(0));
                     task.setName(activityName);
+
+                    // Fixes New State and double Edit/Submit/etc. problem
+                    if (fp.containsTask(task)) {
+                        fp.removeTaskFromList(task);
+                    }
+
                     fp.addTask(task);
                 }
             }
@@ -178,10 +185,25 @@ public class FillFlowsProcess {
         startFlow.setTargetRef(fp.getTaskList().get(0).getId());
         fp.addSequenceFlow(startFlow);
 
-        objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
+        for (AbstractObjectType obj : objectMap.getObjectTypeObjects().get(key)) {
+
             if (obj != null && obj.getMethodName().equals("AddTransitionType")) {
                 Double source = (Double) obj.getParameters().get(0);
                 Double target = (Double) obj.getParameters().get(1);
+
+                // check whether source and/or target are predicates
+                // in this case, change parameter of transition to his respective step
+
+                AbstractObjectType sourceTemp = getPredicate(source, objectMap, key);
+                AbstractObjectType targetTemp = getPredicate(target, objectMap, key);
+
+                if (sourceTemp != null && sourceTemp.getMethodName().equals("AddPredicateStepType")) {
+                    source = (Double) getPredicate(source, objectMap, key).getParameters().get(0);
+                }
+
+                if (targetTemp != null && targetTemp.getMethodName().equals("AddPredicateStepType")) {
+                    target = (Double) getPredicate(target, objectMap, key).getParameters().get(0);
+                }
 
                 try {
                     Double sourceObjectId = (Double) findObjectById(source, objectMap, key).getParameters().get(0);
@@ -191,22 +213,13 @@ public class FillFlowsProcess {
                         Task task1 = findTaskById(sourceObjectId, objectMap, key, fp);
                         Task task2 = findTaskById(targetObjectId, objectMap, key, fp);
 
-                        //find task by Id but predicate
+                        //System.out.println(source + " ___ " + task1 + " ___ " + target + " ___ " + task2);
 
-                        // TODO: !!!!! does not work with predicates in multiple different states/steps; needs fix
-                        if (task1 == null) {
-                            task1 = findTaskById((Double) fp.getPredicateStepTypes().get(0).getParameters().get(0), objectMap, key, fp);
+                        if (task1 != null && task2 != null) {
+                            sf.setSourceRef(task1.getId());
+                            sf.setTargetRef(task2.getId());
+                            fp.addSequenceFlow(sf);
                         }
-
-                        if (task2 == null) {
-                            task2 = findTaskById((Double) fp.getPredicateStepTypes().get(0).getParameters().get(0), objectMap, key, fp);
-                        }
-
-                        // System.out.println(source + " ___ " + task1 + " ___ " + target + " ___ " + task2);
-
-                        sf.setSourceRef(task1.getId());
-                        sf.setTargetRef(task2.getId());
-                        fp.addSequenceFlow(sf);
                     }
 
                 } catch (FileNotFoundException e) {
@@ -214,7 +227,7 @@ public class FillFlowsProcess {
                 }
 
             }
-        });
+        }
 
         addLoop(doc, fp, objectMap, key, process);
 
@@ -225,6 +238,21 @@ public class FillFlowsProcess {
             flow.setAttribute("targetRef", sequenceFlow.getTargetRef());
             process.appendChild(flow);
         }
+    }
+
+    private AbstractObjectType getPredicate(Double source, ObjectTypeMap objectMap, String key) throws FileNotFoundException {
+
+        for (AbstractObjectType obj : objectMap.getObjectTypeObjects().get(key)) {
+
+            if (obj != null && obj.getCreatedEntityId() != null && obj.getCreatedEntityId().equals(source)) {
+                if (obj.getMethodName().equals("AddPredicateStepType")) {
+                    return obj;
+                }
+            }
+
+        }
+
+        return null;
     }
 
     public void addLoop(Document doc, FlowsProcess fp, ObjectTypeMap objectMap, String key, Element process) throws FileNotFoundException {
