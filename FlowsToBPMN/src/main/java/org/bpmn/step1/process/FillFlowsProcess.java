@@ -1,6 +1,7 @@
 package org.bpmn.step1.process;
 
 import org.bpmn.flowsObjects.objecttype.AbstractObjectType;
+import org.bpmn.flowsObjects.objecttype.ObjectTypeCreateEntity;
 import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
 import org.bpmn.step1.collaboration.participant.FlowsParticipant;
 import org.bpmn.step1.process.activity.Task;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.bpmn.step1.collaboration.participant.FillFlowsParticipant.getParticipants;
@@ -90,6 +93,7 @@ public class FillFlowsProcess {
         addSequenceFlows(objectMap, key, i, fp, doc, process);
         // addEndEvent(doc, fp, process, objectMap, key);
         // addEndEventSequenceFlows(objectMap, key, fp, doc, process);
+        // addDecision(doc, fp, objectMap, key, process);
 
     }
 
@@ -102,7 +106,6 @@ public class FillFlowsProcess {
 
         for (int i = 0; i < fp.getEndTasks().size(); i++) {
 
-
             Task task = fp.getEndTasks().get(i);
 
             SequenceFlow sf = new SequenceFlow();
@@ -110,7 +113,6 @@ public class FillFlowsProcess {
             sf.setTargetRef(endEventTemp.getId());
 
             fp.addSequenceFlow(sf);
-
 
         }
 
@@ -132,7 +134,7 @@ public class FillFlowsProcess {
 
         }
 
-        System.out.println(fp.getEndTasks());
+        // System.out.println(fp.getEndTasks());
     }
 
     public void addProcessHeader(Element rootElement, FlowsProcess fp, Element process, int i) {
@@ -281,6 +283,7 @@ public class FillFlowsProcess {
         addEndEventSequenceFlows(objectMap, key, fp, doc, process);
 
         addLoop(doc, fp, objectMap, key, process);
+        addDecision(doc, fp, objectMap, key, process);
 
         for (SequenceFlow sequenceFlow : fp.getSequenceFlowList()) {
             Element flow = doc.createElement("bpmn:sequenceFlow");
@@ -366,15 +369,94 @@ public class FillFlowsProcess {
 
     public void addDecision(Document doc, FlowsProcess fp, ObjectTypeMap objectMap, String key, Element process) throws FileNotFoundException {
 
-        // check which flows have the same sourceRef
-        for (int i = 0; i < fp.getSequenceFlowList().size(); i++) {
+        Pattern pattern = Pattern.compile("Activity_*");
+        LinkedHashSet<SequenceFlow> temp = new LinkedHashSet<>();
 
-            for (int j = 0; j < fp.getSequenceFlowList().size(); j++) {
 
+        for (int i = 0; i < fp.getSequenceFlowList().size() - 1; i++) {
+
+            Matcher matcher = pattern.matcher(fp.getSequenceFlowList().get(i).getSourceRef());
+            String outerSourceRef = fp.getSequenceFlowList().get(i).getSourceRef();
+            boolean duplicate = false;
+
+            ArrayList<SequenceFlow> flows = new ArrayList<>();
+            flows.add(fp.getSequenceFlowList().get(i));
+
+            if (matcher.find()) {
+
+                for (int j = i + 1; j < fp.getSequenceFlowList().size(); j++) {
+
+                    Matcher datcher = pattern.matcher(fp.getSequenceFlowList().get(j).getSourceRef());
+                    String innerSourceRef = fp.getSequenceFlowList().get(j).getSourceRef();
+
+                    if (datcher.find() && outerSourceRef.equals(innerSourceRef)) {
+
+                        duplicate = true;
+                        flows.add(fp.getSequenceFlowList().get(j));
+                        fp.removeSequenzeFlow(fp.getSequenceFlowList().get(j));
+
+                    }
+                }
+
+                if (duplicate) {
+                    openDecisionFlows(flows, doc, fp, objectMap, key, process);
+                    fp.removeSequenzeFlow(fp.getSequenceFlowList().get(i));
+                }
 
             }
 
         }
+
+    }
+
+    public void openDecisionFlows(ArrayList<SequenceFlow> flows, Document doc, FlowsProcess fp, ObjectTypeMap objectMap, String key, Element process) {
+
+        ExclusiveGateway gate = new ExclusiveGateway();
+
+        Element gateway = doc.createElement("bpmn:exclusiveGateway");
+        gateway.setAttribute("id", gate.getId());
+        process.appendChild(gateway);
+
+        SequenceFlow toGateway = new SequenceFlow();
+        toGateway.setSourceRef(flows.get(0).getSourceRef());
+        toGateway.setTargetRef(gate.getId());
+        fp.addSequenceFlow(toGateway);
+
+        for (int i = 0; i < flows.size(); i++) {
+
+            SequenceFlow fromGateway = new SequenceFlow();
+            fromGateway.setSourceRef(gate.getId());
+            fromGateway.setTargetRef(flows.get(i).getTargetRef());
+            fp.addSequenceFlow(fromGateway);
+
+        }
+
+
+    }
+
+    public void closeDecisionFlows(ArrayList<SequenceFlow> flows, Document doc, FlowsProcess fp, ObjectTypeMap objectMap, String key, Element process) {
+
+        ExclusiveGateway gate = new ExclusiveGateway();
+
+        Element gateway = doc.createElement("bpmn:exclusiveGateway");
+        gateway.setAttribute("id", gate.getId());
+        process.appendChild(gateway);
+
+        SequenceFlow toGateway = new SequenceFlow();
+        toGateway.setSourceRef(flows.get(0).getSourceRef());
+        toGateway.setTargetRef(gate.getId());
+        fp.addSequenceFlow(toGateway);
+
+        for (int i = 0; i < flows.size(); i++) {
+
+            SequenceFlow fromGateway = new SequenceFlow();
+            fromGateway.setSourceRef(gate.getId());
+            fromGateway.setTargetRef(flows.get(i).getTargetRef());
+            fp.addSequenceFlow(fromGateway);
+
+        }
+
+
     }
 
 

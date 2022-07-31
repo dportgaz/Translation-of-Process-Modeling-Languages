@@ -128,7 +128,18 @@ public class FlowsProcess {
         for (int i = 0; i < getSequenceFlowList().size(); i++) {
             SequenceFlow sf = getSequenceFlowList().get(i);
             if (sf.getId().equals(sequenceFlow.getId())) {
-                System.out.println(sf);
+                this.sequenceFlowList.remove(i);
+            }
+
+        }
+
+    }
+
+    public void removeSequenzeFlowBySource(SequenceFlow sequenceFlow) {
+
+        for (int i = 0; i < getSequenceFlowList().size(); i++) {
+            SequenceFlow sf = getSequenceFlowList().get(i);
+            if (sf.getSourceRef().equals(sequenceFlow.getSourceRef())) {
                 this.sequenceFlowList.remove(i);
             }
 
