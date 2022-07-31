@@ -4,6 +4,7 @@ import org.bpmn.flowsObjects.objecttype.AbstractObjectType;
 import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
 import org.bpmn.step1.collaboration.participant.FlowsParticipant;
 import org.bpmn.step1.process.activity.Task;
+import org.bpmn.step1.process.event.EndEvent;
 import org.bpmn.step1.process.event.StartEvent;
 import org.bpmn.step1.process.flow.SequenceFlow;
 import org.bpmn.step1.process.gateway.ExclusiveGateway;
@@ -87,7 +88,31 @@ public class FillFlowsProcess {
         // System.out.println(fp.getPredicateList());
         addActivities(objectMap, key, i, fp, doc, process);
         addSequenceFlows(objectMap, key, i, fp, doc, process);
-        addEndEvent(doc, fp, process, objectMap, key);
+        // addEndEvent(doc, fp, process, objectMap, key);
+        // addEndEventSequenceFlows(objectMap, key, fp, doc, process);
+
+    }
+
+    public void addEndEventSequenceFlows(ObjectTypeMap objectMap, String key, FlowsProcess fp, Document doc, Element process) {
+
+        EndEvent endEventTemp = new EndEvent();
+        Element endEvent = doc.createElement("bpmn:endEvent");
+        endEvent.setAttribute("id", endEventTemp.getId());
+        process.appendChild(endEvent);
+
+        for (int i = 0; i < fp.getEndTasks().size(); i++) {
+
+
+            Task task = fp.getEndTasks().get(i);
+
+            SequenceFlow sf = new SequenceFlow();
+            sf.setSourceRef(task.getId());
+            sf.setTargetRef(endEventTemp.getId());
+
+            fp.addSequenceFlow(sf);
+
+
+        }
 
     }
 
@@ -97,12 +122,17 @@ public class FillFlowsProcess {
             for (SequenceFlow sf : fp.getSequenceFlowList()) {
                 if (task.getId().equals(sf.getSourceRef())) {
                     temp = true;
+
                 }
+
             }
             if (!temp) {
                 fp.getEndTasks().add(task);
             }
+
         }
+
+        System.out.println(fp.getEndTasks());
     }
 
     public void addProcessHeader(Element rootElement, FlowsProcess fp, Element process, int i) {
@@ -246,6 +276,9 @@ public class FillFlowsProcess {
 
             }
         }
+
+        addEndEvent(doc, fp, process, objectMap, key);
+        addEndEventSequenceFlows(objectMap, key, fp, doc, process);
 
         addLoop(doc, fp, objectMap, key, process);
 

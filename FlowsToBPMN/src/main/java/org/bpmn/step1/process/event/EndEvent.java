@@ -10,7 +10,7 @@ public class EndEvent {
     String id;
     ArrayList<SequenceFlow> incomingFlows;
     public EndEvent() {
-        this.id = RandomIdGenerator.generateRandomUniqueId(6);
+        this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
 
     }
     public String getId(){
