@@ -91,6 +91,43 @@ public class FillFlowsProcess {
         // addEndEvent(doc, fp, process, objectMap, key);
         // addEndEventSequenceFlows(objectMap, key, fp, doc, process);
         // addDecision(doc, fp, objectMap, key, process);
+        addFlowsToActivities(objectMap, key, i, fp, doc, process);
+
+    }
+
+    public void addFlowsToActivities(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) {
+
+
+        for (Task task : fp.getTaskList()) {
+
+            for (SequenceFlow sf : fp.getSequenceFlowList()) {
+
+                if(task.getId().equals(sf.getSourceRef())){
+                    task.setOutgoing(sf);
+                }
+
+                if(task.getId().equals(sf.getTargetRef())){
+                    task.setIncoming(sf);
+                }
+
+            }
+
+        }
+
+        for (Task task : fp.getTaskList()) {
+            Element activity = doc.createElement("bpmn:task");
+            activity.setAttribute("id", task.getId());
+            activity.setAttribute("name", task.getName());
+            process.appendChild(activity);
+
+            Element inc = doc.createElement("bpmn:incoming");
+            Element out = doc.createElement("bpmn:outgoing");
+            inc.setTextContent(task.getIncoming().getId());
+            out.setTextContent(task.getOutgoing().getId());
+
+            activity.appendChild(inc);
+            activity.appendChild(out);
+        }
 
     }
 
@@ -174,13 +211,6 @@ public class FillFlowsProcess {
                 }
             }
         });
-
-        for (Task task : fp.getTaskList()) {
-            Element activity = doc.createElement("bpmn:task");
-            activity.setAttribute("id", task.getId());
-            activity.setAttribute("name", task.getName());
-            process.appendChild(activity);
-        }
 
     }
 
