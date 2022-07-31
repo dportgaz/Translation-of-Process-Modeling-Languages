@@ -87,7 +87,22 @@ public class FillFlowsProcess {
         // System.out.println(fp.getPredicateList());
         addActivities(objectMap, key, i, fp, doc, process);
         addSequenceFlows(objectMap, key, i, fp, doc, process);
+        addEndEvent(doc, fp, process, objectMap, key);
 
+    }
+
+    public void addEndEvent(Document doc, FlowsProcess fp, Element process, ObjectTypeMap objectMap, String key) throws FileNotFoundException {
+        for (Task task : fp.taskList) {
+            boolean temp = false;
+            for (SequenceFlow sf : fp.getSequenceFlowList()) {
+                if (task.getId().equals(sf.getSourceRef())) {
+                    temp = true;
+                }
+            }
+            if (!temp) {
+                fp.getEndTasks().add(task);
+            }
+        }
     }
 
     public void addProcessHeader(Element rootElement, FlowsProcess fp, Element process, int i) {
@@ -218,6 +233,9 @@ public class FillFlowsProcess {
                         if (task1 != null && task2 != null) {
                             sf.setSourceRef(task1.getId());
                             sf.setTargetRef(task2.getId());
+                            if (fp.containsFlow(sf)) {
+                                fp.removeFlowFromList(sf);
+                            }
                             fp.addSequenceFlow(sf);
                         }
                     }

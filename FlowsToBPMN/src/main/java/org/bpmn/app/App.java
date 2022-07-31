@@ -14,9 +14,9 @@ public class App {
             throws ParserConfigurationException, TransformerException, FileNotFoundException {
 
         //String filePHoodle = "FlowsToBPMN/src/resources/flows/PHoodle.json";
-        String fileRecruitment = "FlowsToBPMN/src/resources/flows/recruitment_json.json";
+        String fileRecruitment = "FlowsToBPMN/src/resources/flows/PHoodle_v3.json";
         //fillXML.createBPMN(filePHoodle, "PHoodle.xml");
-        fillXML.createBPMN(fileRecruitment, "Recruitment.xml");
+        fillXML.createBPMN(fileRecruitment, "PHoodleV3.xml");
 
     }
 }
