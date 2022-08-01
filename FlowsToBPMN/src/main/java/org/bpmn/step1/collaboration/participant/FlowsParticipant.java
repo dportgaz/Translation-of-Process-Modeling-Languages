@@ -34,8 +34,8 @@ public class FlowsParticipant {
     }
 
     public FlowsParticipant(String name) {
-        this.participantID = RandomIdGenerator.generateRandomUniqueId(6);
-        this.processRef = RandomIdGenerator.generateRandomUniqueId(6);
+        this.participantID = "Participant_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.processRef = "Process_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.name = name;
     }
 }

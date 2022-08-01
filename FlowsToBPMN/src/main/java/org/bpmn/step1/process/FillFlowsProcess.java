@@ -232,7 +232,7 @@ public class FillFlowsProcess {
 
     public void addProcessHeader(Element rootElement, FlowsProcess fp, Element process, int i) {
 
-        process.setAttribute("id", "Process_" + getParticipants().get(i).getProcessRef());
+        process.setAttribute("id", getParticipants().get(i).getProcessRef());
         process.setAttribute("isExecutable", new Boolean(fp.getIsExecutable()).toString());
         rootElement.appendChild(process);
 

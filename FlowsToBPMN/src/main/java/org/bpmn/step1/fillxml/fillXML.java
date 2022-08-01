@@ -23,8 +23,8 @@ import org.w3c.dom.Element;
 
 public class fillXML {
 
-    static Element collaboration;
-    static Element bpmndiagram;
+    static String collaborationID = "Collaboration_" + RandomIdGenerator.generateRandomUniqueId(6);
+    static String bpmndiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
 
     public static void createBPMN(String jsonFlowsPath, String filename)
             throws ParserConfigurationException, FileNotFoundException, TransformerException {
@@ -36,16 +36,16 @@ public class fillXML {
         Element rootElement = doc.createElement("bpmn:definitions");
         doc.appendChild(rootElement);
 
-        FillFlowsParticipant fp = new FillFlowsParticipant(doc, collaboration, jsonFlowsPath);
+        FillFlowsParticipant fp = new FillFlowsParticipant(doc, jsonFlowsPath);
         ObjectTypeMap objectMap = new ObjectTypeMap(jsonFlowsPath);
         FillFlowsProcess ffp = new FillFlowsProcess();
         FillBPMNDI bpmndi = new FillBPMNDI();
 
 
         fillHeader(doc, rootElement);
-        fp.fillCollaborationParticipants(doc, collaboration, jsonFlowsPath, rootElement);
+        fp.fillCollaborationParticipants(doc, collaborationID, jsonFlowsPath, rootElement);
         ffp.fillProcesses(doc, rootElement, objectMap);
-        bpmndi.fillBPMNDI(doc,bpmndiagram, filename, rootElement);
+        bpmndi.fillBPMNDI(doc, bpmndiagramID, filename, rootElement);
         //System.out.println(objectMap.getObjectTypeObjects());
 
         createXml(doc, filename);
@@ -62,16 +62,6 @@ public class fillXML {
         rootElement.setAttribute("camunda:diagramRelationId", "e9a61ae0-03e0-4936-9fa3-9d47de87bcfa");
     }
 
-    public static void fillStructure(Document doc, Element rootElement) {
-
-        String bpmndiagramID = RandomIdGenerator.generateRandomUniqueId(6);
-
-        bpmndiagram = doc.createElement("bpmndi:BPMNDiagram");
-        bpmndiagram.setAttribute("id", "BPMNDiagram_" + bpmndiagramID);
-        rootElement.appendChild(bpmndiagram);
-
-    }
-
     private static void createXml(Document doc, String filename) throws TransformerException {
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -83,12 +73,11 @@ public class fillXML {
 
     }
 
-    public static Element getCollaboration() {
-        return collaboration;
+    public static String getBpmndiagramID() {
+        return bpmndiagramID;
     }
 
-    public static Element getBPMNDiagram() {
-        return bpmndiagram;
+    public static String getCollaborationID() {
+        return collaborationID;
     }
-
 }
