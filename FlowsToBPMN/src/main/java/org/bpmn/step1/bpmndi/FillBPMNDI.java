@@ -6,6 +6,7 @@ import org.bpmn.step1.collaboration.participant.FlowsParticipant;
 import org.bpmn.step1.process.FillFlowsProcess;
 import org.bpmn.step1.process.FlowsProcess;
 import org.bpmn.step1.process.flow.SequenceFlow;
+import org.bpmn.step1.process.gateway.ExclusiveGateway;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -30,14 +31,61 @@ public class FillBPMNDI {
         for (FlowsParticipant p : FillFlowsParticipant.getParticipants()) {
 
             // add participant shape
-            addParticipantShape(doc, bpmnlane, p);
+            addParticipantsShape(doc, bpmnlane, p);
+
+            // add event shapes (start and end)
+            addEventsShape(doc, bpmnlane, p);
+
+            // add gateway shapes
+            addGatewaysShape(doc, bpmnlane, p);
+
+            // add flows edge
+            addFlowsEdge(doc, bpmnlane, p);
+
+            // add labels
+            addLabels(doc, bpmnlane, p);
+
         }
 
-        // add flows edge
-        addFlowsEdge(doc, bpmnlane);
     }
 
-    public void addParticipantShape(Document doc, Element rootElement, FlowsParticipant p) {
+    public void addGatewaysShape(Document doc, Element bpmnlane, FlowsParticipant p) {
+
+        FlowsProcess fp = FillFlowsProcess.getProcessById(p.getProcessRef());
+
+        for (ExclusiveGateway gate : fp.getGateways()) {
+
+            Element flow = doc.createElement("bpmndi:BPMNShape");
+            flow.setAttribute("id", gate.getId() + "_di");
+            flow.setAttribute("bpmnElement", gate.getId());
+            bpmnlane.appendChild(flow);
+
+        }
+
+    }
+
+    public void addLabels(Document doc, Element bpmnlane, FlowsParticipant p) {
+
+        Element start = doc.createElement("bpmndi:BPMNLabel");
+        bpmnlane.appendChild(start);
+
+    }
+
+    public void addEventsShape(Document doc, Element rootElement, FlowsParticipant p) {
+
+        Element start = doc.createElement("bpmndi:BPMNShape");
+        start.setAttribute("id", FillFlowsProcess.getProcessById(p.getProcessRef()).getStartEvent().getId() + "_di");
+        start.setAttribute("bpmnElement", FillFlowsProcess.getProcessById(p.getProcessRef()).getStartEvent().getId());
+        rootElement.appendChild(start);
+
+        Element end = doc.createElement("bpmndi:BPMNShape");
+        end.setAttribute("id", FillFlowsProcess.getProcessById(p.getProcessRef()).getEndEvent().getId() + "_di");
+        end.setAttribute("bpmnElement", FillFlowsProcess.getProcessById(p.getProcessRef()).getEndEvent().getId());
+        rootElement.appendChild(end);
+
+    }
+
+    public void addParticipantsShape(Document doc, Element rootElement, FlowsParticipant p) {
 
         Element participant = doc.createElement("bpmndi:BPMNShape");
         participant.setAttribute("id", p.getParticipantID() + "_di");
@@ -47,19 +95,19 @@ public class FillBPMNDI {
 
     }
 
-    public void addFlowsEdge(Document doc, Element rootElement) {
+    public void addFlowsEdge(Document doc, Element rootElement, FlowsParticipant p) {
 
-        for (FlowsProcess fp : FillFlowsProcess.getProcesses()) {
-            for (SequenceFlow sf : fp.getSequenceFlowList()) {
+        FlowsProcess fp = FillFlowsProcess.getProcessById(p.getProcessRef());
 
-                Element flow = doc.createElement("bpmndi:BPMNEdge");
-                flow.setAttribute("id", sf.getId() + "_di");
-                flow.setAttribute("bpmnElement", sf.getId());
-                flow.setAttribute("isHorizontal", "true");
-                rootElement.appendChild(flow);
+        for (SequenceFlow sf : fp.getSequenceFlowList()) {
 
-            }
+            Element flow = doc.createElement("bpmndi:BPMNEdge");
+            flow.setAttribute("id", sf.getId() + "_di");
+            flow.setAttribute("bpmnElement", sf.getId());
+            rootElement.appendChild(flow);
+
         }
+
 
     }
 }
