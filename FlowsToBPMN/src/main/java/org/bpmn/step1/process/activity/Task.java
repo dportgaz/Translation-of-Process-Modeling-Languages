@@ -13,7 +13,7 @@ public class Task {
 
     SequenceFlow incoming;
 
-    SequenceFlow outcoming;
+    SequenceFlow outgoing;
 
     public Task() {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -27,8 +27,8 @@ public class Task {
         this.incoming = incoming;
     }
 
-    public void setOutcoming(SequenceFlow outcoming) {
-        this.outcoming = outcoming;
+    public void setOutgoing(SequenceFlow outcoming) {
+        this.outgoing = outcoming;
     }
 
     public void setCreatedEntityId(Double createdEntityId) {
@@ -51,8 +51,8 @@ public class Task {
         return this.incoming;
     }
 
-    public SequenceFlow getOutcoming() {
-        return this.outcoming;
+    public SequenceFlow getOutgoing() {
+        return this.outgoing;
     }
 
     @Override

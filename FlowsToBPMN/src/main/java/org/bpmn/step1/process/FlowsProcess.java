@@ -9,6 +9,7 @@ import org.bpmn.step1.process.activity.Task;
 import org.bpmn.step1.process.event.EndEvent;
 import org.bpmn.step1.process.event.StartEvent;
 import org.bpmn.step1.process.flow.SequenceFlow;
+import org.bpmn.step1.process.gateway.ExclusiveGateway;
 import org.bpmn.step1.process.gateway.Predicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -17,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import static org.bpmn.step1.collaboration.participant.FillFlowsParticipant.getParticipants;
@@ -39,10 +41,29 @@ public class FlowsProcess {
 
     ArrayList<Task> endTasks = new ArrayList<>();
 
+    HashSet<ExclusiveGateway> gateways = new HashSet<>();
+
+    EndEvent endEvent;
 
     public FlowsProcess(String id, boolean isExecutable) throws FileNotFoundException {
         this.id = "Process_" + id;
         this.isExecutable = isExecutable;
+    }
+
+    public HashSet<ExclusiveGateway> getGateways() {
+        return gateways;
+    }
+
+    public void setGateways(HashSet<ExclusiveGateway> gateways) {
+        this.gateways = gateways;
+    }
+
+    public EndEvent getEndEvent() {
+        return endEvent;
+    }
+
+    public void setEndEvent(EndEvent endEvent) {
+        this.endEvent = endEvent;
     }
 
     public ArrayList<Task> getEndTasks() {
