@@ -5,6 +5,7 @@ import org.bpmn.step1.collaboration.participant.FillFlowsParticipant;
 import org.bpmn.step1.collaboration.participant.FlowsParticipant;
 import org.bpmn.step1.process.FillFlowsProcess;
 import org.bpmn.step1.process.FlowsProcess;
+import org.bpmn.step1.process.activity.Task;
 import org.bpmn.step1.process.flow.SequenceFlow;
 import org.bpmn.step1.process.gateway.ExclusiveGateway;
 import org.w3c.dom.Document;
@@ -33,19 +34,49 @@ public class FillBPMNDI {
             // add participant shape
             addParticipantsShape(doc, bpmnlane, p);
 
-            // add event shapes (start and end)
-            addEventsShape(doc, bpmnlane, p);
+            // add flows edge
+            addFlowsEdge(doc, bpmnlane, p);
+
+            // add startevent shape
+            addStartEventShape(doc, bpmnlane, p);
+
+            // add activities
+            addActivitiesShape(doc, bpmnlane, p);
 
             // add gateway shapes
             addGatewaysShape(doc, bpmnlane, p);
 
-            // add flows edge
-            addFlowsEdge(doc, bpmnlane, p);
+            // add endevent shape
+            addEndEventShape(doc, bpmnlane, p);
 
             // add labels
             addLabels(doc, bpmnlane, p);
 
         }
+
+    }
+
+    public void addActivitiesShape(Document doc, Element bpmnlane, FlowsParticipant p) {
+
+        FlowsProcess fp = FillFlowsProcess.getProcessById(p.getProcessRef());
+
+        for (Task task : fp.getTaskList()) {
+
+            Element taskTemp = doc.createElement("bpmndi:BPMNShape");
+            taskTemp.setAttribute("id", task.getId() + "_di");
+            taskTemp.setAttribute("bpmnElement", task.getId());
+            bpmnlane.appendChild(taskTemp);
+
+        }
+
+    }
+
+    public void addEndEventShape(Document doc, Element bpmnlane, FlowsParticipant p) {
+
+        Element end = doc.createElement("bpmndi:BPMNShape");
+        end.setAttribute("id", FillFlowsProcess.getProcessById(p.getProcessRef()).getEndEvent().getId() + "_di");
+        end.setAttribute("bpmnElement", FillFlowsProcess.getProcessById(p.getProcessRef()).getEndEvent().getId());
+        bpmnlane.appendChild(end);
 
     }
 
@@ -71,17 +102,12 @@ public class FillBPMNDI {
 
     }
 
-    public void addEventsShape(Document doc, Element rootElement, FlowsParticipant p) {
+    public void addStartEventShape(Document doc, Element rootElement, FlowsParticipant p) {
 
         Element start = doc.createElement("bpmndi:BPMNShape");
         start.setAttribute("id", FillFlowsProcess.getProcessById(p.getProcessRef()).getStartEvent().getId() + "_di");
         start.setAttribute("bpmnElement", FillFlowsProcess.getProcessById(p.getProcessRef()).getStartEvent().getId());
         rootElement.appendChild(start);
-
-        Element end = doc.createElement("bpmndi:BPMNShape");
-        end.setAttribute("id", FillFlowsProcess.getProcessById(p.getProcessRef()).getEndEvent().getId() + "_di");
-        end.setAttribute("bpmnElement", FillFlowsProcess.getProcessById(p.getProcessRef()).getEndEvent().getId());
-        rootElement.appendChild(end);
 
     }
 
