@@ -1,7 +1,6 @@
 package org.bpmn.step1.process;
 
 import org.bpmn.flowsObjects.objecttype.AbstractObjectType;
-import org.bpmn.flowsObjects.objecttype.ObjectTypeCreateEntity;
 import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
 import org.bpmn.step1.collaboration.participant.FlowsParticipant;
 import org.bpmn.step1.process.activity.Task;
@@ -9,7 +8,6 @@ import org.bpmn.step1.process.event.EndEvent;
 import org.bpmn.step1.process.event.StartEvent;
 import org.bpmn.step1.process.flow.SequenceFlow;
 import org.bpmn.step1.process.gateway.ExclusiveGateway;
-import org.bpmn.step1.process.gateway.Gateway;
 import org.bpmn.step1.process.gateway.Predicate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,6 +39,20 @@ public class FillFlowsProcess {
 
     }
 
+    public static ArrayList<FlowsProcess> getProcesses() {
+        return processes;
+    }
+
+    public static FlowsProcess getProcessById(String id) {
+        for (FlowsProcess fp : processes) {
+            // System.out.println("DASHIER: " + fp.getId() + "_____UNDDASHIER: " + id);
+            if (fp.getId().equals(id)) {
+                return fp;
+            }
+        }
+        return null;
+    }
+
     public FillFlowsProcess() throws FileNotFoundException {
         setProcessList();
     }
@@ -68,11 +80,11 @@ public class FillFlowsProcess {
         for (FlowsParticipant tempFlowsParticipant : getParticipants()) {
 
             if (firstProcess == true) {
-                FlowsProcess fp = new FlowsProcess(tempFlowsParticipant.getParticipantID(), true);
+                FlowsProcess fp = new FlowsProcess(tempFlowsParticipant.getProcessRef(), true);
                 processes.add(fp);
                 firstProcess = false;
             } else {
-                FlowsProcess fp = new FlowsProcess(tempFlowsParticipant.getParticipantID(), false);
+                FlowsProcess fp = new FlowsProcess(tempFlowsParticipant.getProcessRef(), false);
                 processes.add(fp);
             }
         }

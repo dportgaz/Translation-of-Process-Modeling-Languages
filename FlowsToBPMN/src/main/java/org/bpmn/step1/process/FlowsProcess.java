@@ -46,7 +46,7 @@ public class FlowsProcess {
     EndEvent endEvent;
 
     public FlowsProcess(String id, boolean isExecutable) throws FileNotFoundException {
-        this.id = "Process_" + id;
+        this.id = id;
         this.isExecutable = isExecutable;
     }
 

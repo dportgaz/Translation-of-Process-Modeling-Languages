@@ -3,7 +3,9 @@ package org.bpmn.step1.bpmndi;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step1.collaboration.participant.FillFlowsParticipant;
 import org.bpmn.step1.collaboration.participant.FlowsParticipant;
+import org.bpmn.step1.process.FillFlowsProcess;
 import org.bpmn.step1.process.FlowsProcess;
+import org.bpmn.step1.process.flow.SequenceFlow;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -29,13 +31,10 @@ public class FillBPMNDI {
 
             // add participant shape
             addParticipantShape(doc, bpmnlane, p);
-
-            // add flows edge
-
-
         }
 
-
+        // add flows edge
+        addFlowsEdge(doc, bpmnlane);
     }
 
     public void addParticipantShape(Document doc, Element rootElement, FlowsParticipant p) {
@@ -48,9 +47,19 @@ public class FillBPMNDI {
 
     }
 
-    public void addFlowsEdge(Document doc, Element rootElement, FlowsParticipant p) {
+    public void addFlowsEdge(Document doc, Element rootElement) {
 
+        for (FlowsProcess fp : FillFlowsProcess.getProcesses()) {
+            for (SequenceFlow sf : fp.getSequenceFlowList()) {
 
+                Element flow = doc.createElement("bpmndi:BPMNEdge");
+                flow.setAttribute("id", sf.getId() + "_di");
+                flow.setAttribute("bpmnElement", sf.getId());
+                flow.setAttribute("isHorizontal", "true");
+                rootElement.appendChild(flow);
+
+            }
+        }
 
     }
 }
