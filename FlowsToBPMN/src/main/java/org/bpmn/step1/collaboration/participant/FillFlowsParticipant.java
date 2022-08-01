@@ -3,6 +3,7 @@ package org.bpmn.step1.collaboration.participant;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
+import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step1.collaboration.participant.flowsobject.AbstractFlowsObject;
 import org.bpmn.step1.collaboration.participant.flowsobject.FlowsObjectJsonDeserializer;
 import org.bpmn.step1.collaboration.participant.flowsobject.FlowsObjectList;
@@ -19,13 +20,13 @@ import java.util.Collections;
 
 public class FillFlowsParticipant {
 
-    public FillFlowsParticipant(Document doc, Element collaboration, String filename) throws FileNotFoundException {
-        setParticipants(test3(doc, collaboration, filename));
+    public FillFlowsParticipant(Document doc, String filename) throws FileNotFoundException {
+        setParticipants(test3(doc, filename));
     }
 
     static ArrayList<FlowsParticipant> flowsParticipants = new ArrayList<>();
 
-    public FlowsObjectNameList fillFlowsObjectNameList(Document doc, Element collaboration, String filename) throws FileNotFoundException {
+    public FlowsObjectNameList fillFlowsObjectNameList(Document doc, String filename) throws FileNotFoundException {
 
         Gson gsonFlowsObjectNameJsonDeserializer = new GsonBuilder().registerTypeAdapter(AbstractFlowsObjectName.class, new FlowsObjectNameJsonDeserializer()).create();
 
@@ -40,7 +41,7 @@ public class FillFlowsParticipant {
         return flowsObjects;
     }
 
-    public ArrayList<AbstractFlowsObject> fillFlowsObjectList(Document doc, Element collaboration, String filename) throws FileNotFoundException {
+    public ArrayList<AbstractFlowsObject> fillFlowsObjectList(Document doc, String filename) throws FileNotFoundException {
 
         Gson gsonFlowsObjectJsonDeserializer = new GsonBuilder().registerTypeAdapter(AbstractFlowsObject.class, new FlowsObjectJsonDeserializer()).create();
 
@@ -51,11 +52,11 @@ public class FillFlowsParticipant {
         return flowsObjects2.getList();
     }
 
-    public ArrayList<String> test3(Document doc, Element collaboration, String filename) throws FileNotFoundException {
+    public ArrayList<String> test3(Document doc, String filename) throws FileNotFoundException {
 
         ArrayList<String> names = new ArrayList<>();
-        ArrayList<AbstractFlowsObject> temp = fillFlowsObjectList(doc, collaboration, filename);
-        FlowsObjectNameList temp2 = fillFlowsObjectNameList(doc, collaboration, filename);
+        ArrayList<AbstractFlowsObject> temp = fillFlowsObjectList(doc, filename);
+        FlowsObjectNameList temp2 = fillFlowsObjectNameList(doc, filename);
 
         for (String key : temp2.ObjectTypeActionLogs.keySet()) {
 
@@ -71,15 +72,18 @@ public class FillFlowsParticipant {
 
     }
 
-    public void fillCollaborationParticipants(Document doc, Element collaboration, String filename) throws FileNotFoundException {
+    public void fillCollaborationParticipants(Document doc, String collaborationID, String filename, Element rootElement) throws FileNotFoundException {
 
+        Element collaboration = doc.createElement("bpmn:collaboration");
+        collaboration.setAttribute("id", collaborationID);
+        rootElement.appendChild(collaboration);
 
         for (FlowsParticipant p : getParticipants()) {
             Element part = doc.createElement("bpmn:participant");
             collaboration.appendChild(part);
-            part.setAttribute("id", "Participant_" + p.getParticipantID());
+            part.setAttribute("id", p.getParticipantID());
             part.setAttribute("name", p.getName());
-            part.setAttribute("processRef", "Process_" + p.getProcessRef());
+            part.setAttribute("processRef", p.getProcessRef());
         }
 
     }
@@ -90,6 +94,7 @@ public class FillFlowsParticipant {
             flowsParticipants.add(flowsParticipant);
         }
     }
+
     public static ArrayList<FlowsParticipant> getParticipants() {
         return flowsParticipants;
     }

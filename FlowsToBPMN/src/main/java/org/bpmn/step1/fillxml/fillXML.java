@@ -15,6 +15,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
+import org.bpmn.step1.bpmndi.FillBPMNDI;
 import org.bpmn.step1.collaboration.participant.FillFlowsParticipant;
 import org.bpmn.step1.process.FillFlowsProcess;
 import org.w3c.dom.Document;
@@ -22,8 +23,8 @@ import org.w3c.dom.Element;
 
 public class fillXML {
 
-    static Element collaboration;
-    static Element bpmndiagram;
+    static String collaborationID = "Collaboration_" + RandomIdGenerator.generateRandomUniqueId(6);
+    static String bpmndiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
 
     public static void createBPMN(String jsonFlowsPath, String filename)
             throws ParserConfigurationException, FileNotFoundException, TransformerException {
@@ -35,16 +36,17 @@ public class fillXML {
         Element rootElement = doc.createElement("bpmn:definitions");
         doc.appendChild(rootElement);
 
-        FillFlowsParticipant fp = new FillFlowsParticipant(doc, collaboration, jsonFlowsPath);
+        FillFlowsParticipant fp = new FillFlowsParticipant(doc, jsonFlowsPath);
         ObjectTypeMap objectMap = new ObjectTypeMap(jsonFlowsPath);
         FillFlowsProcess ffp = new FillFlowsProcess();
+        FillBPMNDI bpmndi = new FillBPMNDI();
 
 
         fillHeader(doc, rootElement);
-        fillStructure(doc, rootElement);
-        fp.fillCollaborationParticipants(doc, collaboration, jsonFlowsPath);
+        fp.fillCollaborationParticipants(doc, collaborationID, jsonFlowsPath, rootElement);
         ffp.fillProcesses(doc, rootElement, objectMap);
-        System.out.println(objectMap.getObjectTypeObjects());
+        bpmndi.fillBPMNDI(doc, bpmndiagramID, filename, rootElement);
+        //System.out.println(objectMap.getObjectTypeObjects());
 
         createXml(doc, filename);
     }
@@ -60,21 +62,6 @@ public class fillXML {
         rootElement.setAttribute("camunda:diagramRelationId", "e9a61ae0-03e0-4936-9fa3-9d47de87bcfa");
     }
 
-    public static void fillStructure(Document doc, Element rootElement) {
-
-        String collaborationID = RandomIdGenerator.generateRandomUniqueId(6);
-        String bpmndiagramID = RandomIdGenerator.generateRandomUniqueId(6);
-
-        bpmndiagram = doc.createElement("bpmndi:BPMNDiagram");
-        bpmndiagram.setAttribute("id", "BPMNDiagram_" + bpmndiagramID);
-        rootElement.appendChild(bpmndiagram);
-
-        collaboration = doc.createElement("bpmn:collaboration");
-        collaboration.setAttribute("id", "Collaboration_" + collaborationID);
-        rootElement.appendChild(collaboration);
-
-    }
-
     private static void createXml(Document doc, String filename) throws TransformerException {
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -86,12 +73,11 @@ public class fillXML {
 
     }
 
-    public static Element getCollaboration() {
-        return collaboration;
+    public static String getBpmndiagramID() {
+        return bpmndiagramID;
     }
 
-    public static Element getBPMNDiagram() {
-        return bpmndiagram;
+    public static String getCollaborationID() {
+        return collaborationID;
     }
-
 }
