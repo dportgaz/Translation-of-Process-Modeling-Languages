@@ -3,6 +3,7 @@ package org.bpmn.step1.collaboration.participant;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
+import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step1.collaboration.participant.flowsobject.AbstractFlowsObject;
 import org.bpmn.step1.collaboration.participant.flowsobject.FlowsObjectJsonDeserializer;
 import org.bpmn.step1.collaboration.participant.flowsobject.FlowsObjectList;
@@ -71,8 +72,13 @@ public class FillFlowsParticipant {
 
     }
 
-    public void fillCollaborationParticipants(Document doc, Element collaboration, String filename) throws FileNotFoundException {
+    public void fillCollaborationParticipants(Document doc, Element collaboration, String filename, Element rootElement) throws FileNotFoundException {
 
+        String collaborationID = "Collaboration_" + RandomIdGenerator.generateRandomUniqueId(6);
+
+        collaboration = doc.createElement("bpmn:collaboration");
+        collaboration.setAttribute("id", collaborationID);
+        rootElement.appendChild(collaboration);
 
         for (FlowsParticipant p : getParticipants()) {
             Element part = doc.createElement("bpmn:participant");
@@ -90,6 +96,7 @@ public class FillFlowsParticipant {
             flowsParticipants.add(flowsParticipant);
         }
     }
+
     public static ArrayList<FlowsParticipant> getParticipants() {
         return flowsParticipants;
     }

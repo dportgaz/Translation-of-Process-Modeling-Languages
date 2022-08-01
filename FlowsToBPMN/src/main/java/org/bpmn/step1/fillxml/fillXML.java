@@ -15,6 +15,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
+import org.bpmn.step1.bpmndi.FillBPMNDI;
 import org.bpmn.step1.collaboration.participant.FillFlowsParticipant;
 import org.bpmn.step1.process.FillFlowsProcess;
 import org.w3c.dom.Document;
@@ -38,13 +39,14 @@ public class fillXML {
         FillFlowsParticipant fp = new FillFlowsParticipant(doc, collaboration, jsonFlowsPath);
         ObjectTypeMap objectMap = new ObjectTypeMap(jsonFlowsPath);
         FillFlowsProcess ffp = new FillFlowsProcess();
+        FillBPMNDI bpmndi = new FillBPMNDI();
 
 
         fillHeader(doc, rootElement);
-        fillStructure(doc, rootElement);
-        fp.fillCollaborationParticipants(doc, collaboration, jsonFlowsPath);
+        fp.fillCollaborationParticipants(doc, collaboration, jsonFlowsPath, rootElement);
         ffp.fillProcesses(doc, rootElement, objectMap);
-        System.out.println(objectMap.getObjectTypeObjects());
+        bpmndi.fillBPMNDI(doc,bpmndiagram, filename, rootElement);
+        //System.out.println(objectMap.getObjectTypeObjects());
 
         createXml(doc, filename);
     }
@@ -62,16 +64,11 @@ public class fillXML {
 
     public static void fillStructure(Document doc, Element rootElement) {
 
-        String collaborationID = RandomIdGenerator.generateRandomUniqueId(6);
         String bpmndiagramID = RandomIdGenerator.generateRandomUniqueId(6);
 
         bpmndiagram = doc.createElement("bpmndi:BPMNDiagram");
         bpmndiagram.setAttribute("id", "BPMNDiagram_" + bpmndiagramID);
         rootElement.appendChild(bpmndiagram);
-
-        collaboration = doc.createElement("bpmn:collaboration");
-        collaboration.setAttribute("id", "Collaboration_" + collaborationID);
-        rootElement.appendChild(collaboration);
 
     }
 
