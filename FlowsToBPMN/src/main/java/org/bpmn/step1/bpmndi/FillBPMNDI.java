@@ -1,6 +1,9 @@
 package org.bpmn.step1.bpmndi;
 
 import org.bpmn.randomidgenerator.RandomIdGenerator;
+import org.bpmn.step1.collaboration.participant.FillFlowsParticipant;
+import org.bpmn.step1.collaboration.participant.FlowsParticipant;
+import org.bpmn.step1.process.FlowsProcess;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -20,6 +23,34 @@ public class FillBPMNDI {
         bpmnlane.setAttribute("id", "BPMNlane_" + RandomIdGenerator.generateRandomUniqueId(6));
         bpmnlane.setAttribute("bpmnElement", getCollaborationID());
         bpmndiagram.appendChild(bpmnlane);
+
+
+        for (FlowsParticipant p : FillFlowsParticipant.getParticipants()) {
+
+            // add participant shape
+            addParticipantShape(doc, bpmnlane, p);
+
+            // add flows edge
+
+
+        }
+
+
+    }
+
+    public void addParticipantShape(Document doc, Element rootElement, FlowsParticipant p) {
+
+        Element participant = doc.createElement("bpmndi:BPMNShape");
+        participant.setAttribute("id", p.getParticipantID() + "_di");
+        participant.setAttribute("bpmnElement", p.getParticipantID());
+        participant.setAttribute("isHorizontal", "true");
+        rootElement.appendChild(participant);
+
+    }
+
+    public void addFlowsEdge(Document doc, Element rootElement, FlowsParticipant p) {
+
+
 
     }
 }
