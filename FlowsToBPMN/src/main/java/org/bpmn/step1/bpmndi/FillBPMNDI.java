@@ -50,7 +50,7 @@ public class FillBPMNDI {
             addEndEventShape(doc, bpmnlane, p);
 
             // add labels
-            addLabels(doc, bpmnlane, p);
+            // addLabels(doc, bpmnlane, p);
 
         }
 
