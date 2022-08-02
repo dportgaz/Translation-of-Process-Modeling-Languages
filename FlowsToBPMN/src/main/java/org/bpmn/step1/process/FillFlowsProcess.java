@@ -4,6 +4,7 @@ import org.bpmn.flowsObjects.objecttype.AbstractObjectType;
 import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
 import org.bpmn.step1.collaboration.participant.FlowsParticipant;
 import org.bpmn.step1.process.activity.Task;
+import org.bpmn.step1.process.dataobject.DataObject;
 import org.bpmn.step1.process.event.EndEvent;
 import org.bpmn.step1.process.event.StartEvent;
 import org.bpmn.step1.process.flow.SequenceFlow;
@@ -100,12 +101,35 @@ public class FillFlowsProcess {
         // System.out.println(fp.getPredicateList());
         addActivities(objectMap, key, i, fp, doc, process);
         addSequenceFlows(objectMap, key, i, fp, doc, process);
+        addDataObjects(objectMap, key, i, fp, doc, process);
         // addEndEvent(doc, fp, process, objectMap, key);
         // addEndEventSequenceFlows(objectMap, key, fp, doc, process);
         // addDecision(doc, fp, objectMap, key, process);
         addFlowsToActivities(objectMap, key, i, fp, doc, process);
         addFlowsToEvents(objectMap, key, i, fp, doc, process);
         addFlowsToGateways(objectMap, key, i, fp, doc, process);
+
+    }
+
+    public static void addDataObjects(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) {
+
+        String participantName = getParticipants().get(i).getName();
+
+        for (int j = 0; j < fp.getTaskList().size(); j++) {
+
+            DataObject obj = new DataObject();
+            Task task = fp.getTaskList().get(j);
+
+            Element dataObjectRef = doc.createElement("bpmn:dataObjectReference");
+            dataObjectRef.setAttribute("id", obj.getRefId());
+            dataObjectRef.setAttribute("name", participantName + " [" + task.getName().replaceAll(" " + participantName, "") + "]");
+            dataObjectRef.setAttribute("dataObjectRef", obj.getId());
+            process.appendChild(dataObjectRef);
+
+            Element dataObject = doc.createElement("bpmn:dataObject");
+            dataObject.setAttribute("id", obj.getId());
+            process.appendChild(dataObject);
+        }
 
     }
 
