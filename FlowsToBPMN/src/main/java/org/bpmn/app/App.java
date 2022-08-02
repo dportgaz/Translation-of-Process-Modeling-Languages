@@ -20,7 +20,7 @@ public class App {
 
         /*
         String fileRecruitment = "FlowsToBPMN/src/resources/flows/recruitment.json";
-        fillXML.createBPMN(fileRecruitment, "recruitment.xml");
+        fillXML.createBPMN(fileRecruitment, "Recruitment.xml");
         */
 
     }
