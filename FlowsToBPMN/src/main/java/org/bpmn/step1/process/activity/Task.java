@@ -1,6 +1,9 @@
 package org.bpmn.step1.process.activity;
 
 import org.bpmn.randomidgenerator.RandomIdGenerator;
+import org.bpmn.step1.process.dataobject.DataObject;
+import org.bpmn.step1.process.event.EndEvent;
+import org.bpmn.step1.process.event.StartEvent;
 import org.bpmn.step1.process.flow.SequenceFlow;
 
 public class Task {
@@ -15,8 +18,88 @@ public class Task {
 
     SequenceFlow outgoing;
 
+    String dataInputAssociation;
+
+    String dataOutputAssociation;
+
+    DataObject dataObject;
+
+    Task before;
+
+    Task after;
+
+    StartEvent beforeEvent;
+
+    EndEvent afterEvent;
+
+    String property;
+
     public Task() {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
+    }
+
+    public String getProperty() {
+        return property;
+    }
+
+    public void setProperty() {
+        this.property = "Property_" + RandomIdGenerator.generateRandomUniqueId(6);
+    }
+
+    public String getDataOutputAssociation() {
+        return dataOutputAssociation;
+    }
+
+    public Task getAfter() {
+        return after;
+    }
+
+    public void setAfter(Task after) {
+        this.after = after;
+    }
+
+    public Task getBefore() {
+        return before;
+    }
+
+    public void setBefore(Task before) {
+        this.before = before;
+    }
+
+    public EndEvent getAfterEvent() {
+        return afterEvent;
+    }
+
+    public void setAfterEvent(EndEvent afterEvent) {
+        this.afterEvent = afterEvent;
+    }
+
+    public StartEvent getBeforeEvent() {
+        return beforeEvent;
+    }
+
+    public void setBeforeEvent(StartEvent beforeEvent) {
+        this.beforeEvent = beforeEvent;
+    }
+
+    public void setDataOutputAssociation() {
+        this.dataOutputAssociation = "DataOutputAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
+    }
+
+    public void setDataInputAssociation() {
+        this.dataInputAssociation = "DataInputAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
+    }
+
+    public String getDataInputAssociation() {
+        return dataInputAssociation;
+    }
+
+    public void setDataObject(DataObject dataObject) {
+        this.dataObject = dataObject;
+    }
+
+    public DataObject getDataObject() {
+        return dataObject;
     }
 
     public void setName(String name) {
@@ -57,6 +140,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return this.id;
+        return this.name;
     }
+
 }

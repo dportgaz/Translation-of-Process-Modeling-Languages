@@ -9,11 +9,18 @@ public class EndEvent {
 
     String id;
     ArrayList<SequenceFlow> incomingFlows;
+
     public EndEvent() {
         this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
 
     }
-    public String getId(){
+
+    public String getId() {
         return this.id;
+    }
+
+    @Override
+    public String toString() {
+        return "EndEvent=" + this.id;
     }
 }

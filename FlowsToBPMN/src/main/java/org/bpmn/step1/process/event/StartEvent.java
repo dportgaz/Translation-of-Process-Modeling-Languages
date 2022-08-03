@@ -24,4 +24,9 @@ public class StartEvent {
     public Double getCreatedEntityId() {
         return createdEntityId;
     }
+
+    @Override
+    public String toString() {
+        return "StartEvent=" + this.id;
+    }
 }
