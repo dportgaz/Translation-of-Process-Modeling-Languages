@@ -110,6 +110,17 @@ public class FillFlowsProcess {
         addFlowsToActivities(objectMap, key, i, fp, doc, process);
         addFlowsToEvents(objectMap, key, i, fp, doc, process);
         addFlowsToGateways(objectMap, key, i, fp, doc, process);
+        addSteps(objectMap, key, i, fp, doc, process);
+
+        for (Task task : fp.getTaskList()) {
+
+            for (AbstractObjectType obj : task.getSteps().values()) {
+
+                System.out.println(task.getName() + " _____ " + obj.getCreatedEntityId() + " _____ " + obj);
+
+            }
+
+        }
 
     }
 
@@ -237,7 +248,7 @@ public class FillFlowsProcess {
             // add data input association
 
             if (task.getDataInputAssociation() != null) {
-                System.out.println(task + " ___ " + task.getDataInputAssociation());
+                //System.out.println(task + " ___ " + task.getDataInputAssociation());
                 Element dataObjectRef = doc.createElement("bpmn:dataInputAssociation");
                 dataObjectRef.setAttribute("id", task.getDataInputAssociation());
                 Element source = doc.createElement("bpmn:sourceRef");
@@ -311,6 +322,31 @@ public class FillFlowsProcess {
         fp.setStartEvent(startEventTemp);
 
     }
+
+    public void addSteps(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
+
+        objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
+
+            for (Task task : fp.getTaskList()) {
+                if (obj != null) {
+                    if (obj.getMethodName().equals("AddStepType")) {
+
+                        Double temp = (Double) obj.getParameters().get(0);
+                        if (task.getCreatedEntityId().equals(temp)) {
+                            task.getSteps().put(obj.getCreatedEntityId(), obj);
+                        }
+
+                    }
+                }
+            }
+
+        });
+
+        // trim steps by removing default steps
+
+
+    }
+
 
     public void addActivities(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
 
@@ -477,7 +513,7 @@ public class FillFlowsProcess {
             process.appendChild(flow);
         }
 
-        System.out.println(fp.getTaskList());
+        // System.out.println(fp.getTaskList());
 
         for (int k = 0; k < fp.getTaskList().size(); k++) {
 
@@ -486,11 +522,11 @@ public class FillFlowsProcess {
             if (k == 0) {
                 task.setBeforeEvent(fp.getStartEvent());
                 task.setAfter(fp.getTaskList().get(k + 1));
-                System.out.println("1: " + task.getBeforeEvent() + " --> " + task + " --> " + task.getAfter());
+                //System.out.println("1: " + task.getBeforeEvent() + " --> " + task + " --> " + task.getAfter());
             } else if (k == fp.getTaskList().size() - 1) {
                 task.setAfterEvent(fp.getEndEvent());
                 task.setBefore(fp.getTaskList().get(k - 1));
-                System.out.println("2: " + task.getBefore() + " --> " + task + " --> " + task.getAfterEvent());
+                //System.out.println("2: " + task.getBefore() + " --> " + task + " --> " + task.getAfterEvent());
             } else {
                 if (fp.getDecisionTasks().containsKey(task.getId())) {
                     task.setBefore(fp.getTaskList().get(k - 1));
@@ -503,11 +539,11 @@ public class FillFlowsProcess {
                                 tempTask.setBefore(task);
                                 if (indexAfter < fp.getTaskList().size()) {
                                     tempTask.setAfter(fp.getTaskList().get(indexAfter));
-                                    System.out.println("4: " + tempTask.getBefore() + " --> " + tempTask + " --> " + tempTask.getAfter());
+                                    //System.out.println("4: " + tempTask.getBefore() + " --> " + tempTask + " --> " + tempTask.getAfter());
 
                                 } else {
                                     tempTask.setAfterEvent(fp.getEndEvent());
-                                    System.out.println("4: " + tempTask.getBefore() + " --> " + tempTask + " --> " + tempTask.getAfterEvent());
+                                    //System.out.println("4: " + tempTask.getBefore() + " --> " + tempTask + " --> " + tempTask.getAfterEvent());
                                 }
                             }
                         }
@@ -516,7 +552,7 @@ public class FillFlowsProcess {
                 } else {
                     task.setBefore(fp.getTaskList().get(k - 1));
                     task.setAfter(fp.getTaskList().get(k + 1));
-                    System.out.println("3: " + task.getBefore() + " --> " + task + " --> " + task.getAfter());
+                    //System.out.println("3: " + task.getBefore() + " --> " + task + " --> " + task.getAfter());
                 }
             }
         }
