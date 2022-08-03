@@ -10,8 +10,28 @@ public class SequenceFlow {
 
     String targetRef;
 
+    SequenceFlow toGateway;
+
+    SequenceFlow fromGateway;
+
     public SequenceFlow() {
         this.id = "Flow_" + RandomIdGenerator.generateRandomUniqueId(6);
+    }
+
+    public void setFromGateway(SequenceFlow fromGateway) {
+        this.fromGateway = fromGateway;
+    }
+
+    public void setToGateway(SequenceFlow toGateway) {
+        this.toGateway = toGateway;
+    }
+
+    public SequenceFlow getFromGateway() {
+        return fromGateway;
+    }
+
+    public SequenceFlow getToGateway() {
+        return toGateway;
     }
 
     public void setSourceRef(String sourceRef) {
@@ -36,6 +56,6 @@ public class SequenceFlow {
 
     @Override
     public String toString() {
-        return this.id;
+        return this.id + ", sourceRef: " + this.sourceRef + ", targetRef: " + this.targetRef;
     }
 }

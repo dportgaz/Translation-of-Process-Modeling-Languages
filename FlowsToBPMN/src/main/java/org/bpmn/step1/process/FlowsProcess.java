@@ -6,6 +6,7 @@ import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
 import org.bpmn.step1.collaboration.participant.FillFlowsParticipant;
 import org.bpmn.step1.collaboration.participant.FlowsParticipant;
 import org.bpmn.step1.process.activity.Task;
+import org.bpmn.step1.process.dataobject.DataObject;
 import org.bpmn.step1.process.event.EndEvent;
 import org.bpmn.step1.process.event.StartEvent;
 import org.bpmn.step1.process.flow.SequenceFlow;
@@ -43,11 +44,23 @@ public class FlowsProcess {
 
     HashSet<ExclusiveGateway> gateways = new HashSet<>();
 
+    HashMap<String, DataObject> dataObjects = new HashMap();
+
     EndEvent endEvent;
+
+    HashMap<String, ArrayList<String>> decisionTasks = new HashMap<>();
 
     public FlowsProcess(String id, boolean isExecutable) throws FileNotFoundException {
         this.id = id;
         this.isExecutable = isExecutable;
+    }
+
+    public HashMap<String, ArrayList<String>> getDecisionTasks() {
+        return decisionTasks;
+    }
+
+    public HashMap<String, DataObject> getDataObjects() {
+        return dataObjects;
     }
 
     public HashSet<ExclusiveGateway> getGateways() {
@@ -100,7 +113,7 @@ public class FlowsProcess {
         }
         return false;
     }
-
+    
     public boolean containsFlow(SequenceFlow flow) {
         for (SequenceFlow sf : sequenceFlowList) {
             if (sf.getSourceRef().equals(flow.getSourceRef()) && sf.getTargetRef().equals(flow.getTargetRef())) {

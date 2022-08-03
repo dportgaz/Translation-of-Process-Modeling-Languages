@@ -14,6 +14,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -95,6 +96,7 @@ public class FillFlowsProcess {
 
         addProcessHeader(rootElement, fp, process, i);
         addStartEvent(doc, fp, process);
+
         addPredicates(objectMap, key, i, fp, doc, process);
         addPredicateSteps(objectMap, key, i, fp, doc, process);
         // System.out.println(fp.getPredicateStepTypes());
@@ -115,19 +117,19 @@ public class FillFlowsProcess {
 
         String participantName = getParticipants().get(i).getName();
 
-        for (int j = 0; j < fp.getTaskList().size(); j++) {
+        for (Task task : fp.getTaskList()) {
 
-            DataObject obj = new DataObject();
-            Task task = fp.getTaskList().get(j);
+            String dataObjName = participantName + " [" + task.getName().replaceAll(" " + participantName, "") + "]";
+            task.getDataObject().setName(dataObjName);
 
             Element dataObjectRef = doc.createElement("bpmn:dataObjectReference");
-            dataObjectRef.setAttribute("id", obj.getRefId());
-            dataObjectRef.setAttribute("name", participantName + " [" + task.getName().replaceAll(" " + participantName, "") + "]");
-            dataObjectRef.setAttribute("dataObjectRef", obj.getId());
+            dataObjectRef.setAttribute("id", task.getDataObject().getRefId());
+            dataObjectRef.setAttribute("name", dataObjName);
+            dataObjectRef.setAttribute("dataObjectRef", task.getDataObject().getId());
             process.appendChild(dataObjectRef);
 
             Element dataObject = doc.createElement("bpmn:dataObject");
-            dataObject.setAttribute("id", obj.getId());
+            dataObject.setAttribute("id", task.getDataObject().getId());
             process.appendChild(dataObject);
         }
 
@@ -154,12 +156,8 @@ public class FillFlowsProcess {
                     inc.setTextContent(sf.getId());
                     tempGate.appendChild(inc);
                 }
-
-
             }
         }
-
-
     }
 
     public void addFlowsToEvents(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) {
@@ -214,11 +212,14 @@ public class FillFlowsProcess {
         }
 
         for (Task task : fp.getTaskList()) {
+
+            // add activities
             Element activity = doc.createElement("bpmn:task");
             activity.setAttribute("id", task.getId());
             activity.setAttribute("name", task.getName());
             process.appendChild(activity);
 
+            // add flows
             Element inc = doc.createElement("bpmn:incoming");
             Element out = doc.createElement("bpmn:outgoing");
             inc.setTextContent(task.getIncoming().getId());
@@ -226,6 +227,36 @@ public class FillFlowsProcess {
 
             activity.appendChild(inc);
             activity.appendChild(out);
+
+            // add property
+            Element prop = doc.createElement("bpmn:property");
+            prop.setAttribute("id", task.getProperty());
+            prop.setAttribute("name", "__targetRef_placeholder");
+            activity.appendChild(prop);
+
+            // add data input association
+
+            if (task.getDataInputAssociation() != null) {
+                System.out.println(task + " ___ " + task.getDataInputAssociation());
+                Element dataObjectRef = doc.createElement("bpmn:dataInputAssociation");
+                dataObjectRef.setAttribute("id", task.getDataInputAssociation());
+                Element source = doc.createElement("bpmn:sourceRef");
+                Element target = doc.createElement("bpmn:targetRef");
+                target.setTextContent(task.getProperty());
+                source.setTextContent(task.getBefore().getDataObject().getRefId());
+                dataObjectRef.appendChild(source);
+                dataObjectRef.appendChild(target);
+                activity.appendChild(dataObjectRef);
+            }
+
+            // add data output association
+            Element dataObjectRef2 = doc.createElement("bpmn:dataOutputAssociation");
+            dataObjectRef2.setAttribute("id", task.getDataOutputAssociation());
+            Element target = doc.createElement("bpmn:targetRef");
+            target.setTextContent(task.getDataObject().getRefId());
+            dataObjectRef2.appendChild(target);
+            activity.appendChild(dataObjectRef2);
+
         }
 
     }
@@ -285,6 +316,7 @@ public class FillFlowsProcess {
 
         // add activities
         String participantName = getParticipants().get(i).getName();
+
         objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
             if (obj != null) {
                 if (obj.getMethodName().equals("UpdateStateType")) {
@@ -295,15 +327,47 @@ public class FillFlowsProcess {
                     task.setName(activityName);
 
                     // Fixes New State and double Edit/Submit/etc. problem
+                    // System.out.println(obj + "  EARLY: " + fp.getTaskList());
                     if (fp.containsTask(task)) {
-                        fp.removeTaskFromList(task);
+                        // System.out.println("ASDIASDASDIASDIASDASIASDASD  " + task);
+                        // fp.removeTaskFromList(task);
+                        int cnt = 0;
+                        for (Task teemo : fp.getTaskList()) {
+                            if (teemo.getCreatedEntityId().equals(task.getCreatedEntityId())) {
+                                // System.out.println("MARKO");
+                                DataObject dObj = new DataObject();
+                                fp.getDataObjects().put(dObj.getRefId(), dObj);
+                                dObj.setAssociatedTask(task);
+                                teemo.setDataObject(dObj);
+                                teemo.setName(activityName);
+                                if (cnt > 0) {
+                                    teemo.setDataInputAssociation();
+                                    cnt++;
+                                }
+                                // task.setDataInputAssociation();
+                                teemo.setDataOutputAssociation();
+                                teemo.setProperty();
+                            }
+                        }
+                    } else {
+
+                        DataObject dObj = new DataObject();
+                        fp.getDataObjects().put(dObj.getRefId(), dObj);
+                        dObj.setAssociatedTask(task);
+                        task.setDataObject(dObj);
+                        if (fp.getTaskList().size() > 0) {
+                            task.setDataInputAssociation();
+                        }
+                        // task.setDataInputAssociation();
+                        task.setDataOutputAssociation();
+                        task.setProperty();
+
+                        fp.addTask(task);
                     }
 
-                    fp.addTask(task);
                 }
             }
         });
-
     }
 
     public void addPredicates(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
@@ -412,6 +476,60 @@ public class FillFlowsProcess {
             flow.setAttribute("targetRef", sequenceFlow.getTargetRef());
             process.appendChild(flow);
         }
+
+        System.out.println(fp.getTaskList());
+
+        for (int k = 0; k < fp.getTaskList().size(); k++) {
+
+            Task task = fp.getTaskList().get(k);
+
+            if (k == 0) {
+                task.setBeforeEvent(fp.getStartEvent());
+                task.setAfter(fp.getTaskList().get(k + 1));
+                System.out.println("1: " + task.getBeforeEvent() + " --> " + task + " --> " + task.getAfter());
+            } else if (k == fp.getTaskList().size() - 1) {
+                task.setAfterEvent(fp.getEndEvent());
+                task.setBefore(fp.getTaskList().get(k - 1));
+                System.out.println("2: " + task.getBefore() + " --> " + task + " --> " + task.getAfterEvent());
+            } else {
+                if (fp.getDecisionTasks().containsKey(task.getId())) {
+                    task.setBefore(fp.getTaskList().get(k - 1));
+                    int indexAfter = k + fp.getDecisionTasks().get(task.getId()).size() + 1;
+
+                    for (String id : fp.getDecisionTasks().get(task.getId())) {
+                        for (int m = 0; m < fp.getTaskList().size(); m++) {
+                            Task tempTask = fp.getTaskList().get(m);
+                            if (tempTask.getId().equals(id)) {
+                                tempTask.setBefore(task);
+                                if (indexAfter < fp.getTaskList().size()) {
+                                    tempTask.setAfter(fp.getTaskList().get(indexAfter));
+                                    System.out.println("4: " + tempTask.getBefore() + " --> " + tempTask + " --> " + tempTask.getAfter());
+
+                                } else {
+                                    tempTask.setAfterEvent(fp.getEndEvent());
+                                    System.out.println("4: " + tempTask.getBefore() + " --> " + tempTask + " --> " + tempTask.getAfterEvent());
+                                }
+                            }
+                        }
+                    }
+                    k += fp.getDecisionTasks().size() + 1;
+                } else {
+                    task.setBefore(fp.getTaskList().get(k - 1));
+                    task.setAfter(fp.getTaskList().get(k + 1));
+                    System.out.println("3: " + task.getBefore() + " --> " + task + " --> " + task.getAfter());
+                }
+            }
+        }
+
+    }
+
+    public Task getTaskById(FlowsProcess fp, String id) {
+        for (Task task : fp.getTaskList()) {
+            if (task.getId().equals(id)) {
+                return task;
+            }
+        }
+        return null;
     }
 
     private AbstractObjectType getPredicate(Double source, ObjectTypeMap objectMap, String key) throws FileNotFoundException {
@@ -529,21 +647,28 @@ public class FillFlowsProcess {
 
         ExclusiveGateway gate = new ExclusiveGateway();
         fp.getGateways().add(gate);
+        ArrayList<String> tempTasks = new ArrayList<>();
 
         SequenceFlow toGateway = new SequenceFlow();
         toGateway.setSourceRef(flows.get(0).getSourceRef());
         toGateway.setTargetRef(gate.getId());
         fp.addSequenceFlow(toGateway);
 
+        // System.out.println(toGateway);
+
+
         for (int i = 0; i < flows.size(); i++) {
 
             SequenceFlow fromGateway = new SequenceFlow();
             fromGateway.setSourceRef(gate.getId());
             fromGateway.setTargetRef(flows.get(i).getTargetRef());
+            // System.out.println(fromGateway);
             fp.addSequenceFlow(fromGateway);
             fp.getGateways().add(gate);
-
+            tempTasks.add(fromGateway.getTargetRef());
         }
+
+        fp.getDecisionTasks().put(toGateway.getSourceRef(), tempTasks);
 
     }
 
