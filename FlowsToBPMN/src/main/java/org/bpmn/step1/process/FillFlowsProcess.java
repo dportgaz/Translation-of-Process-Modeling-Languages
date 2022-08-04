@@ -110,7 +110,6 @@ public class FillFlowsProcess {
         addFlowsToActivities(objectMap, key, i, fp, doc, process);
         addFlowsToEvents(objectMap, key, i, fp, doc, process);
         addFlowsToGateways(objectMap, key, i, fp, doc, process);
-        addSteps(objectMap, key, i, fp, doc, process);
 
         for (Task task : fp.getTaskList()) {
 
@@ -223,12 +222,24 @@ public class FillFlowsProcess {
         }
 
         for (Task task : fp.getTaskList()) {
+            Element activity;
+            if (task.getSteps().size() == 0) {
 
-            // add activities
-            Element activity = doc.createElement("bpmn:task");
-            activity.setAttribute("id", task.getId());
-            activity.setAttribute("name", task.getName());
-            process.appendChild(activity);
+                // add activities without subprocess
+                activity = doc.createElement("bpmn:task");
+                activity.setAttribute("id", task.getId());
+                activity.setAttribute("name", task.getName());
+                process.appendChild(activity);
+
+            } else {
+
+                // add activities as subprocess
+                activity = doc.createElement("bpmn:subProcess");
+                activity.setAttribute("id", task.getId());
+                activity.setAttribute("name", task.getName());
+                process.appendChild(activity);
+
+            }
 
             // add flows
             Element inc = doc.createElement("bpmn:incoming");
@@ -443,6 +454,7 @@ public class FillFlowsProcess {
                 }
             }
         });
+        addSteps(objectMap, key, i, fp, doc, process);
     }
 
     public void addPredicates(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {

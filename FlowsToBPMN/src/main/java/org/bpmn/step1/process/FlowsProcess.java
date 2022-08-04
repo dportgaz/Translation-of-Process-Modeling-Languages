@@ -50,7 +50,6 @@ public class FlowsProcess {
 
     HashMap<String, ArrayList<String>> decisionTasks = new HashMap<>();
 
-
     HashMap<String, SequenceFlow> decisionFlows = new HashMap<>();
 
     public FlowsProcess(String id, boolean isExecutable) throws FileNotFoundException {
