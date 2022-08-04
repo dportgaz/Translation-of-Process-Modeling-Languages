@@ -1,10 +1,13 @@
 package org.bpmn.step1.process.activity;
 
+import org.bpmn.flowsObjects.objecttype.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step1.process.dataobject.DataObject;
 import org.bpmn.step1.process.event.EndEvent;
 import org.bpmn.step1.process.event.StartEvent;
 import org.bpmn.step1.process.flow.SequenceFlow;
+
+import java.util.HashMap;
 
 public class Task {
 
@@ -34,8 +37,14 @@ public class Task {
 
     String property;
 
+    HashMap<Double, AbstractObjectType> steps = new HashMap<>();
+
     public Task() {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
+    }
+
+    public HashMap<Double, AbstractObjectType> getSteps() {
+        return steps;
     }
 
     public String getProperty() {
