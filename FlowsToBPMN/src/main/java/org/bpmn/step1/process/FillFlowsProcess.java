@@ -1,5 +1,6 @@
 package org.bpmn.step1.process;
 
+import com.google.gson.internal.LinkedTreeMap;
 import org.bpmn.flowsObjects.objecttype.AbstractObjectType;
 import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
 import org.bpmn.step1.collaboration.participant.FlowsParticipant;
@@ -96,9 +97,8 @@ public class FillFlowsProcess {
 
         addProcessHeader(rootElement, fp, process, i);
         addStartEvent(doc, fp, process);
-
         addPredicates(objectMap, key, i, fp, doc, process);
-        addPredicateSteps(objectMap, key, i, fp, doc, process);
+        // addPredicateSteps(objectMap, key, i, fp, doc, process);
         // System.out.println(fp.getPredicateStepTypes());
         // System.out.println(fp.getPredicateList());
         addActivities(objectMap, key, i, fp, doc, process);
@@ -346,18 +346,18 @@ public class FillFlowsProcess {
                                                 //System.out.println("6");
                                                 //check if predicate
                                                 try {
-                                                    stepIsPredicate(objectMap, key, obj.getCreatedEntityId(), fp, doc, process);
+                                                    if (!stepIsPredicate(objectMap, key, (Double) obj2.getParameters().get(1), fp, doc, process)) {
+                                                        task.getSteps().put(obj.getCreatedEntityId(), obj);
+                                                    }
                                                 } catch (FileNotFoundException e) {
                                                     throw new RuntimeException(e);
                                                 }
-                                                task.getSteps().put(obj.getCreatedEntityId(), obj);
+
+
                                             }
                                         }
-
                                     }
-
                                 });
-
                             } catch (FileNotFoundException e) {
                                 throw new RuntimeException(e);
                             }
@@ -368,24 +368,26 @@ public class FillFlowsProcess {
         });
     }
 
-    public void stepIsPredicate(ObjectTypeMap objectMap, String key, Double id, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
+    public boolean stepIsPredicate(ObjectTypeMap objectMap, String key, Double id, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
 
-        objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
+        for (AbstractObjectType obj : objectMap.getObjectTypeObjects().get(key)) {
             //System.out.println("3");
             if (obj != null) {
                 //System.out.println("4");
                 if (obj.getMethodName().equals("UpdatePredicateStepTypeExpression")) {
-                    System.out.println(obj.getParameters().get(1));
-
+                    LinkedTreeMap link = (LinkedTreeMap) obj.getParameters().get(1);
+                    LinkedTreeMap innerLink = (LinkedTreeMap) link.get("Left");
+                    if (innerLink.get("AttributeTypeId").equals(id)) {
+                        return true;
+                    }
                 }
             }
-        });
+        }
+        return false;
     }
 
 
-    public void addActivities(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document
-            doc, Element
-                                      process) throws FileNotFoundException {
+    public void addActivities(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
 
         // add activities
         String participantName = getParticipants().get(i).getName();
@@ -443,27 +445,74 @@ public class FillFlowsProcess {
         });
     }
 
-    public void addPredicates(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document
-            doc, Element
-                                      process) throws FileNotFoundException {
+    public void addPredicates(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
 
         // add predicates
         objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
             if (obj != null) {
                 if (obj.getMethodName().equals("AddPredicateStepType")) {
 
-                    Predicate predicate = new Predicate();
-                    predicate.setCreatedEntityId((Double) obj.getParameters().get(0));
-                    fp.addPredicate(predicate);
+                    Predicate p = null;
+                    try {
+                        p = findPredicate(obj.getCreatedEntityId(), objectMap, key, i, fp, doc, process);
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                    p.setCreatedEntityId(obj.getCreatedEntityId());
+                    fp.addPredicate(p);
                 }
             }
         });
-
+        System.out.println("PREDICATELIST: " + fp.getPredicateList());
     }
 
-    public void addPredicateSteps(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document
-            doc, Element
-                                          process) throws FileNotFoundException {
+    public Predicate findPredicate(Double id, ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
+
+        for (AbstractObjectType obj : objectMap.getObjectTypeObjects().get(key)) {
+            //System.out.println("3");
+            if (obj != null) {
+                //System.out.println("4");
+                if (obj.getMethodName().equals("UpdatePredicateStepTypeExpression")) {
+                    Double stepId = (Double) obj.getParameters().get(0);
+                    LinkedTreeMap link = (LinkedTreeMap) obj.getParameters().get(1);
+                    LinkedTreeMap innerLeft = (LinkedTreeMap) link.get("Left");
+                    LinkedTreeMap innerRight = (LinkedTreeMap) link.get("Right");
+                    if (stepId.equals(id)) {
+
+                        String att = findAttributeOfPredicate((Double) innerLeft.get("AttributeTypeId"), objectMap, key);
+
+
+                        Predicate p = new Predicate();
+                        p.setCondition(att + " " + innerRight.get("Value"));
+                        return p;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public String findAttributeOfPredicate(Double id, ObjectTypeMap objectMap, String key) throws FileNotFoundException {
+
+        for (AbstractObjectType obj : objectMap.getObjectTypeObjects().get(key)) {
+            //System.out.println("3");
+            if (obj != null) {
+
+                Pattern p = Pattern.compile("^Update.*AttributeType$");
+                Matcher m = p.matcher(obj.getMethodName());
+
+                if (m.find() && obj.getParameters().get(0).equals(id)) {
+                    return (String) obj.getParameters().get(1);
+                }
+            }
+
+        }
+        return null;
+    }
+
+
+    /*
+    public void addPredicateSteps(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
 
         // add predicate steptypes
         objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
@@ -481,12 +530,14 @@ public class FillFlowsProcess {
             }
         });
 
-        //System.out.println(fp.getPredicateStepTypes());
+        System.out.println(fp.getPredicateStepTypes());
     }
 
-    public void addSequenceFlows(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document
-            doc, Element
-                                         process) throws FileNotFoundException {
+     */
+
+
+    public void addSequenceFlows(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element
+            process) throws FileNotFoundException {
 
         // add SequenceFlows
         SequenceFlow startFlow = new SequenceFlow();
@@ -548,11 +599,20 @@ public class FillFlowsProcess {
         addDecision(doc, fp, objectMap, key, process);
         combineArtifcats(doc, fp, objectMap, key, process);
 
+        int decisionFlowsCnt = 0;
         for (SequenceFlow sequenceFlow : fp.getSequenceFlowList()) {
+
             Element flow = doc.createElement("bpmn:sequenceFlow");
             flow.setAttribute("id", sequenceFlow.getId());
             flow.setAttribute("sourceRef", sequenceFlow.getSourceRef());
             flow.setAttribute("targetRef", sequenceFlow.getTargetRef());
+
+            if (fp.getDecisionFlows().containsKey(sequenceFlow.getId())) {
+                sequenceFlow.setName(fp.getPredicateList().get(decisionFlowsCnt).getCondition());
+                decisionFlowsCnt++;
+                flow.setAttribute("name", sequenceFlow.getName());
+            }
+
             process.appendChild(flow);
         }
 
@@ -682,8 +742,7 @@ public class FillFlowsProcess {
 
     }
 
-    public void addDecision(Document doc, FlowsProcess fp, ObjectTypeMap objectMap, String key, Element
-            process) throws
+    public void addDecision(Document doc, FlowsProcess fp, ObjectTypeMap objectMap, String key, Element process) throws
             FileNotFoundException {
 
         Pattern pattern = Pattern.compile("Activity_*");
@@ -726,9 +785,8 @@ public class FillFlowsProcess {
 
     }
 
-    public void openDecisionFlows(ArrayList<SequenceFlow> flows, Document doc, FlowsProcess
-            fp, ObjectTypeMap
-                                          objectMap, String key, Element process) {
+    public void openDecisionFlows(ArrayList<SequenceFlow> flows, Document doc, FlowsProcess fp, ObjectTypeMap
+            objectMap, String key, Element process) {
 
         ExclusiveGateway gate = new ExclusiveGateway();
         fp.getGateways().add(gate);
@@ -751,15 +809,17 @@ public class FillFlowsProcess {
             fp.addSequenceFlow(fromGateway);
             fp.getGateways().add(gate);
             tempTasks.add(fromGateway.getTargetRef());
+            fp.getDecisionFlows().put(fromGateway.getId(), fromGateway);
         }
 
         fp.getDecisionTasks().put(toGateway.getSourceRef(), tempTasks);
+        System.out.println("DECISION FLOWS: " + fp.getDecisionFlows());
+
 
     }
 
-    public void combineArtifcats(Document doc, FlowsProcess fp, ObjectTypeMap objectMap, String
-            key, Element
-                                         process) {
+    public void combineArtifcats(Document doc, FlowsProcess fp, ObjectTypeMap objectMap, String key, Element
+            process) {
 
         HashSet<SequenceFlow> temp = new HashSet<>();
         Pattern pattern = Pattern.compile("Gateway_*");

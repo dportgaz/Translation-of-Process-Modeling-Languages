@@ -129,8 +129,8 @@
     </bpmn:task>
     <bpmn:sequenceFlow id="Flow_1uo3yke" sourceRef="Event_0437u3j" targetRef="Activity_0u74bsj"/>
     <bpmn:sequenceFlow id="Flow_0c3ly5i" sourceRef="Activity_0u74bsj" targetRef="Gateway_08o13b0"/>
-    <bpmn:sequenceFlow id="Flow_0svl7u2" name="&gt;= 50% of&#10;Maximum&#10;Points" sourceRef="Gateway_08o13b0" targetRef="Activity_1uierib"/>
-    <bpmn:sequenceFlow id="Flow_1887rif" name="&lt; 50% of&#10;Maximum&#10;Points" sourceRef="Gateway_08o13b0" targetRef="Activity_1638lda"/>
+    <bpmn:sequenceFlow id="Flow_0svl7u2" name="Points 50% of [Maximum Points]" sourceRef="Gateway_08o13b0" targetRef="Activity_1uierib"/>
+    <bpmn:sequenceFlow id="Flow_1887rif" name="Points 50% of [Maximum Points]" sourceRef="Gateway_08o13b0" targetRef="Activity_1638lda"/>
     <bpmn:sequenceFlow id="Flow_0yrpup8" sourceRef="Activity_1uierib" targetRef="Event_1f90cft"/>
     <bpmn:endEvent id="Event_1f90cft">
       <bpmn:incoming>Flow_0yrpup8</bpmn:incoming>

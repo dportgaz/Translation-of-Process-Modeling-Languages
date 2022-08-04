@@ -50,9 +50,16 @@ public class FlowsProcess {
 
     HashMap<String, ArrayList<String>> decisionTasks = new HashMap<>();
 
+
+    HashMap<String, SequenceFlow> decisionFlows = new HashMap<>();
+
     public FlowsProcess(String id, boolean isExecutable) throws FileNotFoundException {
         this.id = id;
         this.isExecutable = isExecutable;
+    }
+
+    public HashMap<String, SequenceFlow> getDecisionFlows() {
+        return decisionFlows;
     }
 
     public HashMap<String, ArrayList<String>> getDecisionTasks() {
@@ -113,7 +120,7 @@ public class FlowsProcess {
         }
         return false;
     }
-    
+
     public boolean containsFlow(SequenceFlow flow) {
         for (SequenceFlow sf : sequenceFlowList) {
             if (sf.getSourceRef().equals(flow.getSourceRef()) && sf.getTargetRef().equals(flow.getTargetRef())) {

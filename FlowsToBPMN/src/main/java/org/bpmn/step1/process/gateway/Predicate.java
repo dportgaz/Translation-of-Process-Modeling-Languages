@@ -6,10 +6,20 @@ public class Predicate {
 
     String Id;
 
+    String condition;
     Double createdEntityId;
 
     public Predicate() {
         this.Id = "Predicate_" + RandomIdGenerator.generateRandomUniqueId(6);
+    }
+
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
 
     public Double getCreatedEntityId() {
@@ -26,6 +36,6 @@ public class Predicate {
 
     @Override
     public String toString() {
-        return "Id= " + this.createdEntityId;
+        return "Id= " + this.createdEntityId + "Value= " + this.getCondition();
     }
 }

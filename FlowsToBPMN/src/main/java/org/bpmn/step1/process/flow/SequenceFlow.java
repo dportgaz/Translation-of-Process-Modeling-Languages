@@ -6,6 +6,8 @@ public class SequenceFlow {
 
     String id;
 
+    String name;
+
     String sourceRef;
 
     String targetRef;
@@ -16,6 +18,15 @@ public class SequenceFlow {
 
     public SequenceFlow() {
         this.id = "Flow_" + RandomIdGenerator.generateRandomUniqueId(6);
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setFromGateway(SequenceFlow fromGateway) {
