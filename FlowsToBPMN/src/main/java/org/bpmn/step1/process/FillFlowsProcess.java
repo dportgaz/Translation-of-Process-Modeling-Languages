@@ -202,7 +202,7 @@ public class FillFlowsProcess {
 
     }
 
-    public void addFlowsToActivities(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) {
+    public void addFlowsToActivities(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
 
 
         for (Task task : fp.getTaskList()) {
@@ -237,6 +237,33 @@ public class FillFlowsProcess {
                 activity = doc.createElement("bpmn:subProcess");
                 activity.setAttribute("id", task.getId());
                 activity.setAttribute("name", task.getName());
+                task.fillStepsToActivity(objectMap,fp,key);
+                System.out.println(task.getStepNames());
+
+
+                StartEvent startEvent = new StartEvent();
+                Element start = doc.createElement("bpmn:startEvent");
+                start.setAttribute("id", startEvent.getId());
+                activity.appendChild(start);
+
+                EndEvent endEvent = new EndEvent();
+                Element end = doc.createElement("bpmn:endEvent");
+                end.setAttribute("id", endEvent.getId());
+                activity.appendChild(end);
+
+                ArrayList<Element> stepElements = new ArrayList<>();
+                for(Task step : task.getStepNames()){
+                    Element stepElement = doc.createElement("bpmn:task");
+                    stepElement.setAttribute("id", step.getId());
+                    stepElement.setAttribute("name", "Provide " + step.getName());
+                    stepElements.add(stepElement);
+                    activity.appendChild(stepElement);
+                }
+
+
+
+
+
                 process.appendChild(activity);
 
             }

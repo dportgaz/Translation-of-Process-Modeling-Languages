@@ -1,13 +1,20 @@
 package org.bpmn.step1.process.activity;
 
 import org.bpmn.flowsObjects.objecttype.AbstractObjectType;
+import org.bpmn.flowsObjects.objecttype.ObjectTypeMap;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
+import org.bpmn.step1.process.FlowsProcess;
 import org.bpmn.step1.process.dataobject.DataObject;
 import org.bpmn.step1.process.event.EndEvent;
 import org.bpmn.step1.process.event.StartEvent;
 import org.bpmn.step1.process.flow.SequenceFlow;
 
+import javax.lang.model.element.Element;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Task {
 
@@ -39,12 +46,20 @@ public class Task {
 
     HashMap<Double, AbstractObjectType> steps = new HashMap<>();
 
+    ArrayList<Task> stepNamesByTask = new ArrayList<>();
+
+    private ArrayList<String> stepNamesByName = new ArrayList<>();
+
     public Task() {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
     }
 
     public HashMap<Double, AbstractObjectType> getSteps() {
         return steps;
+    }
+
+    public ArrayList<Task> getStepNames() {
+        return stepNamesByTask;
     }
 
     public String getProperty() {
@@ -152,4 +167,38 @@ public class Task {
         return this.name;
     }
 
+    public void fillStepsToActivity(ObjectTypeMap objectMap, FlowsProcess fp, String key) throws FileNotFoundException {
+
+        objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
+            for (Double d : steps.keySet()) {
+                if (obj != null) {
+                    if (obj.getMethodName().equals("UpdateStepAttributeType") && obj.getParameters().get(0).equals(d)) {
+
+                        Double temp = (Double) obj.getParameters().get(1);
+                        try {
+                            objectMap.getObjectTypeObjects().get(key).forEach(obj2 -> {
+                                if (obj2 != null) {
+                                    Pattern p = Pattern.compile("^Update.*AttributeType$");
+                                    Matcher m = p.matcher(obj2.getMethodName());
+
+                                    if (m.find() && obj2.getParameters().get(0).equals(temp)) {
+                                        Task t = new Task();
+                                        t.setName((String) obj2.getParameters().get(1));
+                                        t.setCreatedEntityId(temp);
+                                        if(!stepNamesByName.contains(t.getName())) {
+                                            stepNamesByTask.add(t);
+                                            stepNamesByName.add(t.getName());
+                                        }
+                                    }
+                                }
+                            });
+                        } catch (FileNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+            }
+        });
+    }
 }
+
