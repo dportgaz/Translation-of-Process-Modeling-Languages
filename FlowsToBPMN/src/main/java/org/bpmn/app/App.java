@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.bpmn.step1.fillxml.fillXML;
+import org.bpmn.step_one.fillxml.fillXML;
 
 
 public class App {
@@ -14,18 +14,18 @@ public class App {
             throws ParserConfigurationException, TransformerException, FileNotFoundException {
 
 
-        /*
+
 
 
         String filePHoodle = "FlowsToBPMN/src/resources/flows/phoodle.json";
         fillXML.createBPMN(filePHoodle, "PHoodle.xml");
-        */
 
 
 
+/*
         String fileRecruitment = "FlowsToBPMN/src/resources/flows/recruitment.json";
         fillXML.createBPMN(fileRecruitment, "Recruitment.xml");
 
-
+*/
     }
 }
