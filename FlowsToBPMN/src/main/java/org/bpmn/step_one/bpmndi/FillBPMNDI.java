@@ -17,6 +17,15 @@ import static org.bpmn.step_one.fillxml.fillXML.getCollaborationID;
 
 public class FillBPMNDI {
 
+    final double participantX = 70.0;
+    final double participantWidth = 1530.0;
+    final double participantHeight = 500.0;
+    final double participantYInc = 550.0;
+    final double startEventYInc = 200.0;
+    final double startEventX = 200.0;
+    final double startEventWidth = 36.0;
+    final double startEventHeight = 36.0;
+
     public void fillBPMNDI(Document doc, String bpmndiagramID, String filename, Element rootElement) throws FileNotFoundException {
 
         Element bpmndiagram = doc.createElement("bpmndi:BPMNDiagram");
@@ -28,17 +37,22 @@ public class FillBPMNDI {
         bpmnlane.setAttribute("bpmnElement", getCollaborationID());
         bpmndiagram.appendChild(bpmnlane);
 
-
-        for (FlowsParticipant p : FillFlowsParticipant.getParticipants()) {
+        double participantStartY = 100.0;
+        double startEventStartY = participantHeight / 5;
+        for (FlowsParticipant participant : FillFlowsParticipant.getParticipants()) {
 
             // add participant shape
-            addParticipantsShape(doc, bpmnlane, p);
+            addParticipantsShape(doc, bpmnlane, participant, participantStartY);
+            participantStartY += participantYInc;
 
+
+            // add StartEvent shape; every StartEvent starts at the same position of every pool
+            addStartEventShape(doc, bpmnlane, participant, startEventStartY);
+            startEventStartY += startEventYInc;
+
+            /*
             // add flows edge
             addFlowsEdge(doc, bpmnlane, p);
-
-            // add startevent shape
-            addStartEventShape(doc, bpmnlane, p);
 
             // add activities
             addActivitiesShape(doc, bpmnlane, p);
@@ -51,6 +65,7 @@ public class FillBPMNDI {
 
             // add labels
             // addLabels(doc, bpmnlane, p);
+            */
 
         }
 
@@ -102,22 +117,24 @@ public class FillBPMNDI {
 
     }
 
-    public void addStartEventShape(Document doc, Element rootElement, FlowsParticipant p) {
+    public void addStartEventShape(Document doc, Element rootElement, FlowsParticipant p, double starteventStartY) {
 
-        Element start = doc.createElement("bpmndi:BPMNShape");
-        start.setAttribute("id", FillFlowsProcess.getProcessById(p.getProcessRef()).getStartEvent().getId() + "_di");
-        start.setAttribute("bpmnElement", FillFlowsProcess.getProcessById(p.getProcessRef()).getStartEvent().getId());
-        rootElement.appendChild(start);
+        String startEventId = FillFlowsProcess.getProcessById(p.getProcessRef()).getStartEvent().getId();
+        Bounds bounds = new Bounds(doc, this.startEventX, starteventStartY, this.startEventWidth, this.startEventHeight);
+        BPMNShape shape = new BPMNShape(doc, startEventId, bounds);
+        shape.setShape();
+        shape.setBounds();
+        rootElement.appendChild(shape.getBpmnElement());
 
     }
 
-    public void addParticipantsShape(Document doc, Element rootElement, FlowsParticipant p) {
+    public void addParticipantsShape(Document doc, Element rootElement, FlowsParticipant p, double participantY) {
 
-        Element participant = doc.createElement("bpmndi:BPMNShape");
-        participant.setAttribute("id", p.getParticipantID() + "_di");
-        participant.setAttribute("bpmnElement", p.getParticipantID());
-        participant.setAttribute("isHorizontal", "true");
-        rootElement.appendChild(participant);
+        Bounds bounds = new Bounds(doc, this.participantX, participantY, this.participantWidth, this.participantHeight);
+        BPMNShape shape = new BPMNShape(doc, p.getParticipantID(), "true", bounds);
+        shape.setShapeParticipant();
+        shape.setBounds();
+        rootElement.appendChild(shape.getBpmnElement());
 
     }
 
