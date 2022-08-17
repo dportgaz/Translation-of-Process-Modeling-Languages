@@ -24,7 +24,9 @@ import static org.bpmn.step_one.collaboration.participant.FillFlowsParticipant.g
 
 public class FillFlowsProcess {
 
-    static ArrayList<FlowsProcess> processes = new ArrayList<FlowsProcess>();
+    static ArrayList<FlowsProcess> processes = new ArrayList<>();
+    static HashMap<String, FlowsProcess> processMap = new HashMap<>();
+
 
     public void fillProcesses(Document doc, Element rootElement, ConcreteObjectType objectMap) throws FileNotFoundException {
 
@@ -32,6 +34,7 @@ public class FillFlowsProcess {
 
             String key = objectMap.getObjectIdsList().get(i);
             FlowsProcess fp = processes.get(i);
+            processMap.put(fp.getId(), fp);
             Element process = doc.createElement("bpmn:process");
 
             fillProcess(doc, rootElement, process, objectMap, fp, key, i);
@@ -39,6 +42,10 @@ public class FillFlowsProcess {
 
         }
 
+    }
+
+    public static HashMap<String, FlowsProcess> getProcessMap() {
+        return processMap;
     }
 
     public static ArrayList<FlowsProcess> getProcesses() {

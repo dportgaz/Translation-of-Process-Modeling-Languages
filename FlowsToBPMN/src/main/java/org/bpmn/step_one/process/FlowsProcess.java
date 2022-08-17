@@ -214,11 +214,39 @@ public class FlowsProcess {
         return false;
     }
 
+    public SequenceFlow getFlowBySource(String source) {
+
+        for (SequenceFlow sf : getSequenceFlowList()) {
+
+            if (sf.getTargetRef().equals(source)) {
+                return sf;
+            }
+
+        }
+
+        return null;
+
+    }
+
     public SequenceFlow getFlowBySource(Task source) {
 
         for (SequenceFlow sf : getSequenceFlowList()) {
 
             if (sf.getTargetRef().equals(source.getId())) {
+                return sf;
+            }
+
+        }
+
+        return null;
+
+    }
+
+    public SequenceFlow getFlowByTarget(String target) {
+
+        for (SequenceFlow sf : getSequenceFlowList()) {
+
+            if (sf.getSourceRef().equals(target)) {
                 return sf;
             }
 

@@ -12,6 +12,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.bpmn.flowsObjects.ConcreteObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
@@ -24,10 +25,10 @@ import org.w3c.dom.Element;
 public class fillXML {
 
     static String collaborationID = "Collaboration_" + RandomIdGenerator.generateRandomUniqueId(6);
-    static String bpmndiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
+    static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
 
     public static void createBPMN(String jsonFlowsPath, String filename)
-            throws ParserConfigurationException, FileNotFoundException, TransformerException {
+            throws ParserConfigurationException, FileNotFoundException, TransformerException, XPathExpressionException {
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -45,7 +46,7 @@ public class fillXML {
         fillHeader(doc, rootElement);
         fp.fillCollaborationParticipants(doc, collaborationID, jsonFlowsPath, rootElement);
         ffp.fillProcesses(doc, rootElement, objectMap);
-        bpmndi.fillBPMNDI(doc, bpmndiagramID, filename, rootElement);
+        bpmndi.fillBPMNDI(doc, bpmnDiagramID, filename, rootElement);
         //System.out.println(objectMap.getObjectTypeObjects());
 
         createXml(doc, filename);
@@ -74,7 +75,7 @@ public class fillXML {
     }
 
     public static String getBpmndiagramID() {
-        return bpmndiagramID;
+        return bpmnDiagramID;
     }
 
     public static String getCollaborationID() {
