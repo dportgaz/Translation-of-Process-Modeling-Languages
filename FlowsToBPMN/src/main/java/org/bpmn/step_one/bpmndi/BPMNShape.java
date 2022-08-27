@@ -64,4 +64,9 @@ public class BPMNShape {
     public Element getBpmnElement() {
         return bpmnElement;
     }
+
+    @Override
+    public String toString() {
+        return elementId;
+    }
 }

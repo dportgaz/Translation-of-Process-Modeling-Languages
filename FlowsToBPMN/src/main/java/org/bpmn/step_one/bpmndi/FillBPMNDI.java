@@ -67,9 +67,28 @@ public class FillBPMNDI {
 
     ArrayList<BPMNShape> shapes = new ArrayList<>();
 
-    public void f(Document doc, Element rootElement, double x, double y, String e, String pId, ArrayList<SequenceFlow> flows) {
+    public void f(Document doc, Element rootElement, double x, double y, String e, String pId, ArrayList<SequenceFlow> flows, String previous) {
 
         ArrayList<String> list = new ArrayList<>();
+
+        // extract in method to recognize if activity, event or gateway
+        Pattern activityPattern = Pattern.compile("Activity*");
+        Pattern eventPattern = Pattern.compile("Event*");
+        Pattern gatewayPattern = Pattern.compile("Gateway*");
+        Matcher activityMatcher = activityPattern.matcher(e);
+        Matcher eventMatcher = eventPattern.matcher(e);
+        Matcher gatewayMatcher = gatewayPattern.matcher(e);
+        Matcher activityMatcherPrev = null;
+        Matcher eventMatcherPrev = null;
+        Matcher gatewayMatcherPrev = null;
+        Bounds tempBounds = null;
+
+        if (previous != null) {
+
+            activityMatcherPrev = activityPattern.matcher(previous);
+            eventMatcherPrev = eventPattern.matcher(previous);
+            gatewayMatcherPrev = gatewayPattern.matcher(previous);
+        }
 
         for (SequenceFlow sf : flows) {
 
@@ -78,25 +97,41 @@ public class FillBPMNDI {
             //System.out.println("SOURCE: " + source + " e: " + e + " target: " + target);
 
             if (e.equals(source)) {
-                Bounds tempBounds = null;
                 if (!printMark.contains(e)) {
-                    System.out.println("x=" + x + " y=" + y + " " + e);
 
+                    if (previous != null) {
 
-                    // extract in method to recognize if activity, event or gateway
-                    Pattern activityPattern = Pattern.compile("Activity*");
-                    Pattern eventPattern = Pattern.compile("Event*");
-                    Pattern gatewayPattern = Pattern.compile("Gateway*");
-                    Matcher activityMatcher = activityPattern.matcher(e);
-                    Matcher eventMatcher = eventPattern.matcher(e);
-                    Matcher gatewayMatcher = gatewayPattern.matcher(e);
-
-                    if(activityMatcher.find()){
-                        tempBounds = new Bounds(doc,x,y,activityWidth, activityHeight);
-                    }else if(eventMatcher.find()){
-                        tempBounds = new Bounds(doc,x,y,eventWidth, eventHeight);
-                    }else if(gatewayMatcher.find()){
-                        tempBounds = new Bounds(doc,x,y,gatewayWidth, gatewayHeight);
+                        if (activityMatcher.find()) {
+                            x += 145;
+                            if (eventMatcherPrev.find()) {
+                                x -= 67;
+                                y -= 22;
+                            } else if (gatewayMatcherPrev.find()) {
+                                x -= 55;
+                                y -= 15;
+                            }
+                            tempBounds = new Bounds(doc, x, y, activityWidth, activityHeight);
+                        } else if (eventMatcher.find()) {
+                            tempBounds = new Bounds(doc, x, y, eventWidth, eventHeight);
+                        } else if (gatewayMatcher.find()) {
+                            x += 160;
+                            if (activityMatcherPrev.find()) {
+                                x -= 20;
+                                y += 15;
+                            } else if (eventMatcherPrev.find()) {
+                                x -= 87;
+                                y -= 7;
+                            }
+                            tempBounds = new Bounds(doc, x, y, gatewayWidth, gatewayHeight);
+                        }
+                    } else {
+                        if (activityMatcher.find()) {
+                            tempBounds = new Bounds(doc, x, y, activityWidth, activityHeight);
+                        } else if (eventMatcher.find()) {
+                            tempBounds = new Bounds(doc, x, y, eventWidth, eventHeight);
+                        } else if (gatewayMatcher.find()) {
+                            tempBounds = new Bounds(doc, x, y, gatewayWidth, gatewayHeight);
+                        }
                     }
 
                     BPMNShape tempShape = new BPMNShape(doc, e, tempBounds);
@@ -107,6 +142,7 @@ public class FillBPMNDI {
 
                     shapes.add(tempShape);
                     printMark.add(e);
+                    System.out.println("x=" + x + " y=" + y + " " + e);
                 }
 
                 if (!targetMark.contains(target)) {
@@ -119,33 +155,39 @@ public class FillBPMNDI {
 
 
         }
-        x += flowsLength;
+        //x += flowsLength;
         int cntElements = list.size();
-        int offSet = 0;
         if (cntElements > 1) {
-            if(cntElements % 2 == 0){
-
-            }else{
-
-            }
             for (int t = cntElements - 1; t >= 0; t--) {
-                y -= flowsHeight;
-                f(doc, rootElement, x, y, list.get(t),pId, flows);
+                f(doc, rootElement, x, y, list.get(t), pId, flows, e);
+                y -= 100;
             }
         } else if (cntElements == 1) {
-            f(doc, rootElement, x, y, list.get(0),pId, flows);
+            f(doc, rootElement, x, y, list.get(0), pId, flows, e);
         } else if (!printMark.contains(e)) {
-            double tempX = x - flowsLength;
+            //double tempX = x - flowsLength;
             String end = getProcessMap().get(pId).getEndEvent().getId();
             printMark.add(end);
-            System.out.println("x=" + tempX + " y=" + y + " " + end);
-            Bounds tempBounds = new Bounds(doc,tempX,y,eventWidth, eventHeight);
+            System.out.println("x=" + x + " y=" + y + " " + end);
+
+            if (gatewayMatcherPrev.find()) {
+                x += 86;
+                y += 7;
+            } else if (activityMatcherPrev.find()) {
+                x += 141;
+                y += 22;
+            }
+            tempBounds = new Bounds(doc, x, y, eventWidth, eventHeight);
             BPMNShape tempShape = new BPMNShape(doc, e, tempBounds);
+            shapes.add(tempShape);
             tempShape.setShapeParticipant();
             tempShape.setBounds();
             rootElement.appendChild(tempShape.getBpmnElement());
         }
+
     }
+
+
 
 
     public void parseFlows(Document doc, Element rootElement, String processId, double x, double y) {
@@ -157,7 +199,10 @@ public class FillBPMNDI {
         printMark.clear();
         targetMark.clear();
 
-        f(doc, rootElement, x, y, start, processId, flows);
+        f(doc, rootElement, x, y, start, processId, flows, null);
+        addFlowsEdge(doc,rootElement,flows);
+        System.out.println(shapes);
+        shapes.clear();
 
 
     }
@@ -188,6 +233,7 @@ public class FillBPMNDI {
             startEventY = participantHeight / 2 - 20 + participantStartY;
 
             System.out.println();
+
 
             /*
             // add flows edge
@@ -331,15 +377,17 @@ public class FillBPMNDI {
 
     }
 
-    public void addFlowsEdge(Document doc, Element rootElement, FlowsParticipant p) {
+    public void addFlowsEdge(Document doc, Element rootElement, ArrayList<SequenceFlow> flows) {
 
-        FlowsProcess fp = FillFlowsProcess.getProcessById(p.getProcessRef());
-
-        for (SequenceFlow sf : fp.getSequenceFlowList()) {
+        for (SequenceFlow sf : flows) {
 
             Element flow = doc.createElement("bpmndi:BPMNEdge");
             flow.setAttribute("id", sf.getId() + "_di");
             flow.setAttribute("bpmnElement", sf.getId());
+
+
+
+
             rootElement.appendChild(flow);
 
         }
