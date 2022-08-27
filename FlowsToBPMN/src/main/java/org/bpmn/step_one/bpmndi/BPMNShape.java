@@ -61,6 +61,14 @@ public class BPMNShape {
 
     }
 
+    public Bounds getBounds() {
+        return bounds;
+    }
+
+    public String getElementId() {
+        return elementId;
+    }
+
     public Element getBpmnElement() {
         return bpmnElement;
     }

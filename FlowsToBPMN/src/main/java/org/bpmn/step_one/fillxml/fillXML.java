@@ -46,7 +46,7 @@ public class fillXML {
         fillHeader(doc, rootElement);
         fp.fillCollaborationParticipants(doc, collaborationID, jsonFlowsPath, rootElement);
         ffp.fillProcesses(doc, rootElement, objectMap);
-        bpmndi.fillBPMNDI(doc, bpmnDiagramID, filename, rootElement);
+        bpmndi.fillBPMNDI(doc, bpmnDiagramID, rootElement);
         //System.out.println(objectMap.getObjectTypeObjects());
 
         createXml(doc, filename);

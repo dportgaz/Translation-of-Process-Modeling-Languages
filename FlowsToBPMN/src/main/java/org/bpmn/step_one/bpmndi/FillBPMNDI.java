@@ -6,6 +6,7 @@ import org.bpmn.step_one.collaboration.participant.FlowsParticipant;
 import org.bpmn.step_one.process.FillFlowsProcess;
 import org.bpmn.step_one.process.FlowsProcess;
 import org.bpmn.step_one.process.activity.Task;
+import org.bpmn.step_one.process.dataobject.DataObject;
 import org.bpmn.step_one.process.flow.SequenceFlow;
 import org.bpmn.step_one.process.gateway.ExclusiveGateway;
 import org.w3c.dom.Document;
@@ -55,9 +56,19 @@ public class FillBPMNDI {
 
     final double gatewayHeight = 50.0;
 
-    final double flowsLength = 160.0;
+    final double flowsLength = 52.0;
 
     final double flowsHeight = 150.0;
+
+    final double dataObjectWidth = 50.0;
+
+    final double dataObjectHeight = 64.0;
+
+    double poolHeight;
+
+    final double poolHeightOffset = 20;
+
+    double poolWidth;
 
     ArrayList<BPMNShape> temp = new ArrayList<>();
 
@@ -188,27 +199,26 @@ public class FillBPMNDI {
     }
 
 
-
-
     public void parseFlows(Document doc, Element rootElement, String processId, double x, double y) {
 
         //bring elements of pool in order according to flows
 
         String start = getProcessMap().get(processId).getStartEvent().getId();
         ArrayList<SequenceFlow> flows = getProcessMap().get(processId).getSequenceFlowList();
+        ArrayList<Task> tasks = getProcessMap().get(processId).getTaskList();
         printMark.clear();
         targetMark.clear();
 
         f(doc, rootElement, x, y, start, processId, flows, null);
-        addFlowsEdge(doc,rootElement,flows);
+        addFlowsEdge(doc, rootElement, flows);
+        addDataObjects(doc, rootElement, tasks);
         System.out.println(shapes);
         shapes.clear();
 
 
     }
 
-    public void fillBPMNDI(Document doc, String bpmndiagramID, String filename, Element rootElement) throws
-            FileNotFoundException, XPathExpressionException {
+    public void fillBPMNDI(Document doc, String bpmndiagramID, Element rootElement) {
 
         Element bpmndiagram = doc.createElement("bpmndi:BPMNDiagram");
         bpmndiagram.setAttribute("id", bpmndiagramID);
@@ -256,142 +266,118 @@ public class FillBPMNDI {
 
     }
 
-    /*
-    public void addPoolElements(Document doc, Element rootElement, FlowsParticipant participant, double startEventStartY) {
-
-        String processId = participant.getProcessRef();
-        String startId = getProcessMap().get(processId).getStartEvent().getId();
-
-        addStartEventShape(doc, rootElement, participant, startEventStartY);
-        parseFlows(processId);
-        String element = flows.get(startId);
-
-        Pattern activityPattern = Pattern.compile("Activity*");
-        Pattern gatewayPattern = Pattern.compile("Gateway*");
-
-        int cnt = 0;
-
-
-        while (element != null) {
-
-            Matcher activityMatcher = activityPattern.matcher(element);
-            Matcher gatewayMatcher = gatewayPattern.matcher(element);
-
-            if (activityMatcher.find()) {
-
-                cnt++;
-                Bounds bounds = new Bounds(doc, this.startEventX + this.flowsLength*cnt, startEventStartY - 20, this.activityWidth, this.activityHeight);
-                BPMNShape shape = new BPMNShape(doc, element, bounds);
-                shape.setShape();
-                shape.setBounds();
-                rootElement.appendChild(shape.getBpmnElement());
-
-
-            } else if (gatewayMatcher.find()) {
-
-                cnt++;
-                Bounds bounds = new Bounds(doc, this.startEventX + this.flowsLength*cnt, startEventStartY - 5, this.gatewayWidth, this.gatewayHeight);
-                BPMNShape shape = new BPMNShape(doc, element, bounds);
-                shape.setShape();
-                shape.setBounds();
-                rootElement.appendChild(shape.getBpmnElement());
-
-            }
-
-            String temp = element;
-            element = flows.get(element);
-            flows.remove(temp);
-            System.out.println(element);
-
-
-        }
-
-    }
-    */
-
-
-    public void addActivitiesShape(Document doc, Element bpmnlane, FlowsParticipant p) {
-
-        FlowsProcess fp = FillFlowsProcess.getProcessById(p.getProcessRef());
-
-        for (Task task : fp.getTaskList()) {
-
-            Element taskTemp = doc.createElement("bpmndi:BPMNShape");
-            taskTemp.setAttribute("id", task.getId() + "_di");
-            taskTemp.setAttribute("bpmnElement", task.getId());
-            bpmnlane.appendChild(taskTemp);
-
-        }
-
-    }
-
-    public void addEndEventShape(Document doc, Element bpmnlane, FlowsParticipant p) {
-
-        Element end = doc.createElement("bpmndi:BPMNShape");
-        end.setAttribute("id", FillFlowsProcess.getProcessById(p.getProcessRef()).getEndEvent().getId() + "_di");
-        end.setAttribute("bpmnElement", FillFlowsProcess.getProcessById(p.getProcessRef()).getEndEvent().getId());
-        bpmnlane.appendChild(end);
-
-    }
-
-    public void addGatewaysShape(Document doc, Element bpmnlane, FlowsParticipant p) {
-
-        FlowsProcess fp = FillFlowsProcess.getProcessById(p.getProcessRef());
-
-        for (ExclusiveGateway gate : fp.getGateways()) {
-
-            Element flow = doc.createElement("bpmndi:BPMNShape");
-            flow.setAttribute("id", gate.getId() + "_di");
-            flow.setAttribute("bpmnElement", gate.getId());
-            bpmnlane.appendChild(flow);
-
-        }
-
-    }
-
-    public void addLabels(Document doc, Element bpmnlane, FlowsParticipant p) {
-
-        Element start = doc.createElement("bpmndi:BPMNLabel");
-        bpmnlane.appendChild(start);
-
-    }
-
-    public void addStartEventShape(Document doc, Element rootElement, FlowsParticipant p, double startEventStartY) {
-
-        String startEventId = FillFlowsProcess.getProcessById(p.getProcessRef()).getStartEvent().getId();
-        Bounds bounds = new Bounds(doc, this.startEventX, startEventStartY, this.eventWidth, this.eventHeight);
-        BPMNShape shape = new BPMNShape(doc, startEventId, bounds);
-        shape.setShape();
-        shape.setBounds();
-        rootElement.appendChild(shape.getBpmnElement());
-
-    }
-
     public void addParticipantsShape(Document doc, Element rootElement, FlowsParticipant p, double participantY) {
 
         Bounds bounds = new Bounds(doc, this.participantX, participantY, this.participantWidth, this.participantHeight);
         BPMNShape shape = new BPMNShape(doc, p.getParticipantID(), "true", bounds);
         shape.setShapeParticipant();
         shape.setBounds();
+        poolHeight = shape.getBounds().getY();
+        poolWidth = shape.getBounds().getWidth();
         rootElement.appendChild(shape.getBpmnElement());
 
+    }
+
+    private BPMNShape getBPMNShapeByFlow(ArrayList<SequenceFlow> flows, String sfId) {
+
+        for (BPMNShape bs : shapes) {
+
+            if (bs.getElementId().equals(sfId)) {
+                return bs;
+            }
+
+        }
+
+        return null;
+
+    }
+
+    private BPMNShape getBPMNShapeByTask(String taskId) {
+
+        for (BPMNShape bs : shapes) {
+
+            if (bs.getElementId().equals(taskId)) {
+                return bs;
+            }
+
+        }
+
+        return null;
+
+    }
+
+    private BPMNShape getFirstTaskShape() {
+
+        for (BPMNShape bs : shapes) {
+            Pattern activityPattern = Pattern.compile("Activity*");
+            Matcher activityMatcher = activityPattern.matcher(bs.getElementId());
+            if (activityMatcher.find()) {
+                return bs;
+            }
+        }
+
+        return null;
+
+    }
+
+    public void addDataObjects(Document doc, Element rootElement, ArrayList<Task> tasks) {
+
+        for (Task task : tasks) {
+            DataObject d = task.getDataObject();
+            BPMNShape bs = getBPMNShapeByTask(task.getId());
+            if (d != null) {
+
+                Element dataObject = doc.createElement("bpmndi:BPMNShape");
+                dataObject.setAttribute("id", d.getRefId() + "_di");
+                dataObject.setAttribute("bpmnElement", d.getRefId());
+
+                Element dataObjectBounds = doc.createElement("dc:Bounds");
+                dataObjectBounds.setAttribute("x", String.valueOf(bs.getBounds().getX()));
+                dataObjectBounds.setAttribute("y", String.valueOf(poolHeight + poolHeightOffset));
+                dataObjectBounds.setAttribute("width", String.valueOf(dataObjectWidth));
+                dataObjectBounds.setAttribute("height", String.valueOf(dataObjectHeight));
+
+                dataObject.appendChild(dataObjectBounds);
+                rootElement.appendChild(dataObject);
+
+            }
+
+        }
     }
 
     public void addFlowsEdge(Document doc, Element rootElement, ArrayList<SequenceFlow> flows) {
 
         for (SequenceFlow sf : flows) {
 
+            BPMNShape bsSource = getBPMNShapeByFlow(flows, sf.getSourceRef());
+            BPMNShape bsTarget = getBPMNShapeByFlow(flows, sf.getTargetRef());
+
             Element flow = doc.createElement("bpmndi:BPMNEdge");
             flow.setAttribute("id", sf.getId() + "_di");
             flow.setAttribute("bpmnElement", sf.getId());
 
+            double xStart = bsSource.getBounds().getX() + bsSource.getBounds().getWidth();
+            double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2;
 
+            double xEnd = bsTarget.getBounds().getX();
+            double yEnd = bsTarget.getBounds().getY() + bsTarget.getBounds().getHeight() / 2;
 
+            Element waypointStart = doc.createElement("di:waypoint");
+            waypointStart.setAttribute("x", String.valueOf(xStart));
+            waypointStart.setAttribute("y", String.valueOf(yStart));
 
+            Element waypointEnd = doc.createElement("di:waypoint");
+            waypointEnd.setAttribute("x", String.valueOf(xEnd));
+            waypointEnd.setAttribute("y", String.valueOf(yEnd));
+
+            flow.appendChild(waypointStart);
+            flow.appendChild(waypointEnd);
             rootElement.appendChild(flow);
 
         }
 
 
     }
+
 }
+
