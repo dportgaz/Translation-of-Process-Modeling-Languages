@@ -20,6 +20,7 @@ import javax.xml.xpath.XPathFactory;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,8 +42,10 @@ public class FillBPMNDI {
 
     final double startEventYInc = 200.0;
     final double startEventX = 200.0;
-    final double startEventWidth = 36.0;
-    final double startEventHeight = 36.0;
+
+    final double eventWidth = 36.0;
+
+    final double eventHeight = 36.0;
 
     final double activityWidth = 100.0;
 
@@ -54,40 +57,109 @@ public class FillBPMNDI {
 
     final double flowsLength = 160.0;
 
-    public void parseFlows(String processId) {
+    final double flowsHeight = 150.0;
+
+    ArrayList<BPMNShape> temp = new ArrayList<>();
+
+    HashSet<String> printMark = new HashSet<>();
+
+    HashSet<String> targetMark = new HashSet<>();
+
+    ArrayList<BPMNShape> shapes = new ArrayList<>();
+
+    public void f(Document doc, Element rootElement, double x, double y, String e, String pId, ArrayList<SequenceFlow> flows) {
+
+        ArrayList<String> list = new ArrayList<>();
+
+        for (SequenceFlow sf : flows) {
+
+            String source = sf.getSourceRef();
+            String target = sf.getTargetRef();
+            //System.out.println("SOURCE: " + source + " e: " + e + " target: " + target);
+
+            if (e.equals(source)) {
+                Bounds tempBounds = null;
+                if (!printMark.contains(e)) {
+                    System.out.println("x=" + x + " y=" + y + " " + e);
+
+
+                    // extract in method to recognize if activity, event or gateway
+                    Pattern activityPattern = Pattern.compile("Activity*");
+                    Pattern eventPattern = Pattern.compile("Event*");
+                    Pattern gatewayPattern = Pattern.compile("Gateway*");
+                    Matcher activityMatcher = activityPattern.matcher(e);
+                    Matcher eventMatcher = eventPattern.matcher(e);
+                    Matcher gatewayMatcher = gatewayPattern.matcher(e);
+
+                    if(activityMatcher.find()){
+                        tempBounds = new Bounds(doc,x,y,activityWidth, activityHeight);
+                    }else if(eventMatcher.find()){
+                        tempBounds = new Bounds(doc,x,y,eventWidth, eventHeight);
+                    }else if(gatewayMatcher.find()){
+                        tempBounds = new Bounds(doc,x,y,gatewayWidth, gatewayHeight);
+                    }
+
+                    BPMNShape tempShape = new BPMNShape(doc, e, tempBounds);
+
+                    tempShape.setShapeParticipant();
+                    tempShape.setBounds();
+                    rootElement.appendChild(tempShape.getBpmnElement());
+
+                    shapes.add(tempShape);
+                    printMark.add(e);
+                }
+
+                if (!targetMark.contains(target)) {
+                    list.add(target);
+                    //System.out.println("LIST: " + list);
+                    targetMark.add(target);
+                }
+
+            }
+
+
+        }
+        x += flowsLength;
+        int cntElements = list.size();
+        int offSet = 0;
+        if (cntElements > 1) {
+            if(cntElements % 2 == 0){
+
+            }else{
+
+            }
+            for (int t = cntElements - 1; t >= 0; t--) {
+                y -= flowsHeight;
+                f(doc, rootElement, x, y, list.get(t),pId, flows);
+            }
+        } else if (cntElements == 1) {
+            f(doc, rootElement, x, y, list.get(0),pId, flows);
+        } else if (!printMark.contains(e)) {
+            double tempX = x - flowsLength;
+            String end = getProcessMap().get(pId).getEndEvent().getId();
+            printMark.add(end);
+            System.out.println("x=" + tempX + " y=" + y + " " + end);
+            Bounds tempBounds = new Bounds(doc,tempX,y,eventWidth, eventHeight);
+            BPMNShape tempShape = new BPMNShape(doc, e, tempBounds);
+            tempShape.setShapeParticipant();
+            tempShape.setBounds();
+            rootElement.appendChild(tempShape.getBpmnElement());
+        }
+    }
+
+
+    public void parseFlows(Document doc, Element rootElement, String processId, double x, double y) {
 
         //bring elements of pool in order according to flows
 
-        elements.clear();
-        ArrayList<SequenceFlow> tempFlows = getProcessMap().get(processId).getSequenceFlowList();
+        String start = getProcessMap().get(processId).getStartEvent().getId();
+        ArrayList<SequenceFlow> flows = getProcessMap().get(processId).getSequenceFlowList();
+        printMark.clear();
+        targetMark.clear();
 
-        String endEventId = getProcessMap().get(processId).getEndEvent().getId();
-        String element = getProcessMap().get(processId).getStartEvent().getId();
+        f(doc, rootElement, x, y, start, processId, flows);
 
-        while (element != null) {
-            for (SequenceFlow sf : tempFlows) {
-                if (sf.getSourceRef().equals(element)) {
-                    elements.add(element);
-                    element = sf.getTargetRef();
-                }
-            }
-            if (endEventId.equals(element)) {
-                elements.add(element);
-                System.out.println("LIST: " + elements);
-                return;
-            }
-        }
 
-    }
-
-    public boolean listContains(String element) {
-
-        for (String source : elements) {
-            if (source.equals(element)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void fillBPMNDI(Document doc, String bpmndiagramID, String filename, Element rootElement) throws
@@ -103,19 +175,19 @@ public class FillBPMNDI {
         bpmndiagram.appendChild(bpmnlane);
 
         double participantStartY = 100.0;
-        double startEventStartY = participantHeight / 2 - 20 + participantStartY;
+        double startEventY = participantHeight / 2 - 20 + participantStartY;
         for (FlowsParticipant participant : FillFlowsParticipant.getParticipants()) {
 
-            // add participant shape
+            // add pools
             addParticipantsShape(doc, bpmnlane, participant, participantStartY);
 
-            // add StartEvent shape; every StartEvent starts at the same position of every pool
-            //addPoolElements(doc, bpmnlane, participant, startEventStartY);
-            parseFlows(participant.getProcessRef());
+            parseFlows(doc, bpmnlane, participant.getProcessRef(), startEventX, startEventY);
 
             // adapt positions for next participant/pool
             participantStartY += participantYInc;
-            startEventStartY = participantHeight / 2 - 20 + participantStartY;
+            startEventY = participantHeight / 2 - 20 + participantStartY;
+
+            System.out.println();
 
             /*
             // add flows edge
@@ -241,7 +313,7 @@ public class FillBPMNDI {
     public void addStartEventShape(Document doc, Element rootElement, FlowsParticipant p, double startEventStartY) {
 
         String startEventId = FillFlowsProcess.getProcessById(p.getProcessRef()).getStartEvent().getId();
-        Bounds bounds = new Bounds(doc, this.startEventX, startEventStartY, this.startEventWidth, this.startEventHeight);
+        Bounds bounds = new Bounds(doc, this.startEventX, startEventStartY, this.eventWidth, this.eventHeight);
         BPMNShape shape = new BPMNShape(doc, startEventId, bounds);
         shape.setShape();
         shape.setBounds();
