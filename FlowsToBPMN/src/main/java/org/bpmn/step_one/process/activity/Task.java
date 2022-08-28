@@ -47,6 +47,16 @@ public class Task {
 
     ArrayList<Task> stepNamesByTask = new ArrayList<>();
 
+    boolean isSubprocess;
+
+    public void setIsSubprocess(){
+        this.isSubprocess = true;
+    }
+
+    public boolean getIsSubprocess(){
+        return this.isSubprocess;
+    }
+
     private ArrayList<String> stepNamesByName = new ArrayList<>();
 
     public Task() {
@@ -70,7 +80,7 @@ public class Task {
     }
 
     public String getDataOutputAssociation() {
-        return dataOutputAssociation;
+        return this.dataOutputAssociation;
     }
 
     public Task getAfter() {
@@ -114,7 +124,7 @@ public class Task {
     }
 
     public String getDataInputAssociation() {
-        return dataInputAssociation;
+        return this.dataInputAssociation;
     }
 
     public void setDataObject(DataObject dataObject) {

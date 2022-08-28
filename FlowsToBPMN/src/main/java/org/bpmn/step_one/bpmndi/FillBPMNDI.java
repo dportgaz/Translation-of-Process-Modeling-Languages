@@ -80,7 +80,7 @@ public class FillBPMNDI {
 
     ArrayList<BPMNShape> shapes = new ArrayList<>();
 
-    public void f(Document doc, Element rootElement, double x, double y, String e, String pId, ArrayList<SequenceFlow> flows, String previous) {
+    public void f(Document doc, Element rootElement, double x, double y, String e, String pId, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous) {
 
         ArrayList<String> list = new ArrayList<>();
 
@@ -147,7 +147,7 @@ public class FillBPMNDI {
                         }
                     }
 
-                    BPMNShape tempShape = new BPMNShape(doc, e, tempBounds);
+                    BPMNShape tempShape = new BPMNShape(doc, e, tempBounds, tasks);
 
                     tempShape.setShapeParticipant();
                     tempShape.setBounds();
@@ -172,11 +172,11 @@ public class FillBPMNDI {
         int cntElements = list.size();
         if (cntElements > 1) {
             for (int t = cntElements - 1; t >= 0; t--) {
-                f(doc, rootElement, x, y, list.get(t), pId, flows, e);
+                f(doc, rootElement, x, y, list.get(t), pId, tasks, flows, e);
                 y -= 100;
             }
         } else if (cntElements == 1) {
-            f(doc, rootElement, x, y, list.get(0), pId, flows, e);
+            f(doc, rootElement, x, y, list.get(0), pId,tasks, flows, e);
         } else if (!printMark.contains(e)) {
             //double tempX = x - flowsLength;
             String end = getProcessMap().get(pId).getEndEvent().getId();
@@ -211,7 +211,7 @@ public class FillBPMNDI {
         printMark.clear();
         targetMark.clear();
 
-        f(doc, rootElement, x, y, start, processId, flows, null);
+        f(doc, rootElement, x, y, start, processId,tasks, flows, null);
         addFlowsEdge(doc, rootElement, flows);
         addDataObjects(doc, rootElement, tasks);
         System.out.println(shapes);
@@ -343,6 +343,7 @@ public class FillBPMNDI {
                 Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
                 dataObjectFlowOutput.setAttribute("id", task.getDataOutputAssociation() + "_di");
                 dataObjectFlowOutput.setAttribute("bpmnElement", task.getDataOutputAssociation());
+                System.out.println("WEIRD: " + task.getDataOutputAssociation());
 
                 Element waypointOutStart = doc.createElement("di:waypoint");
                 Element waypointOutEnd = doc.createElement("di:waypoint");
@@ -357,6 +358,22 @@ public class FillBPMNDI {
 
                 if (task.getDataInputAssociation() != null) {
 
+
+                    Element dataObjectFlowInput = doc.createElement("bpmndi:BPMNEdge");
+                    dataObjectFlowInput.setAttribute("id", task.getDataInputAssociation() + "_di");
+                    dataObjectFlowInput.setAttribute("bpmnElement", task.getDataInputAssociation());
+
+                    Element waypointInStart = doc.createElement("di:waypoint");
+                    Element waypointInEnd = doc.createElement("di:waypoint");
+                    waypointInStart.setAttribute("x", String.valueOf(xTask + dataObjectWidth / 2));
+                    waypointInStart.setAttribute("y", String.valueOf(bs.getBounds().getY()));
+                    waypointInEnd.setAttribute("x", String.valueOf(bs.getBounds().getX() + bs.getBounds().getWidth() / 2));
+                    waypointInEnd.setAttribute("y", String.valueOf(poolHeight + poolHeightOffset - dataObjectHeight + 300));
+
+                    dataObjectFlowInput.appendChild(waypointInStart);
+                    dataObjectFlowInput.appendChild(waypointInEnd);
+
+                    rootElement.appendChild(dataObjectFlowInput);
                 }
 
                 rootElement.appendChild(dataObject);

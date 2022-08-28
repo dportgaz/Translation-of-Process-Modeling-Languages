@@ -240,6 +240,7 @@ public class FillFlowsProcess {
             } else {
 
                 // add activities as subprocess
+                task.setIsSubprocess();
                 activity = doc.createElement("bpmn:subProcess");
                 activity.setAttribute("id", task.getId());
                 activity.setAttribute("name", task.getName());

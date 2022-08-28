@@ -1,7 +1,11 @@
 package org.bpmn.step_one.bpmndi;
 
+import org.bpmn.step_one.collaboration.participant.FillFlowsParticipant;
+import org.bpmn.step_one.process.activity.Task;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import java.util.ArrayList;
 
 public class BPMNShape {
 
@@ -11,6 +15,7 @@ public class BPMNShape {
     private String isHorizontal;
     private Bounds bounds;
     private Element bpmnElement;
+    private boolean isSubprocess = false;
 
 
     public BPMNShape(Document doc, String elementId, String isHorizontal, Bounds bounds) {
@@ -34,11 +39,29 @@ public class BPMNShape {
 
     }
 
+    public BPMNShape(Document doc, String elementId, Bounds bounds, ArrayList<Task> tasks) {
+
+        this.doc = doc;
+        this.elementId = elementId;
+        this.elementIdDi = elementId + "_di";
+        this.bounds = bounds;
+        this.bpmnElement = doc.createElement("bpmndi:BPMNShape");
+
+        for(Task task : tasks){
+            if(task.getId().equals(elementId) && task.getIsSubprocess()){
+                this.isSubprocess = true;
+            }
+        }
+    }
+
     public void setShapeParticipant() {
 
         bpmnElement.setAttribute("id", elementIdDi);
         bpmnElement.setAttribute("bpmnElement", elementId);
-        bpmnElement.setAttribute("isHorizontal", isHorizontal);
+        //bpmnElement.setAttribute("isHorizontal", isHorizontal);
+        if(isSubprocess) {
+            bpmnElement.setAttribute("isExpanded", "false");
+        }
 
     }
 
