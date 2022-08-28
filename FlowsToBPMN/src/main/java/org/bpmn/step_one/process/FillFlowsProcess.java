@@ -578,13 +578,21 @@ public class FillFlowsProcess {
                     LinkedTreeMap link = (LinkedTreeMap) obj.getParameters().get(1);
                     LinkedTreeMap innerLeft = (LinkedTreeMap) link.get("Left");
                     LinkedTreeMap innerRight = (LinkedTreeMap) link.get("Right");
+                    Double expressionFunction = (Double) link.get("ExpressionFunction");
                     if (stepId.equals(id)) {
 
                         String att = findAttributeOfPredicate((Double) innerLeft.get("AttributeTypeId"), objectMap, key);
+                        String expr = "";
 
+                        //TODO restlichen Opearationen noch ergänzen
+                        if (expressionFunction == 26.0) {
+                            expr = ">=";
+                        } else if (expressionFunction == 30.0) {
+                            expr = "<";
+                        }
 
                         Predicate p = new Predicate();
-                        p.setCondition(att + " " + innerRight.get("Value"));
+                        p.setCondition("[" + att + "]" + " " + expr + " " + innerRight.get("Value"));
                         return p;
                     }
                 }
