@@ -22,7 +22,7 @@ import org.bpmn.step_one.process.FillFlowsProcess;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class fillXML {
+public class fillXMLStepOne {
 
     static String collaborationID = "Collaboration_" + RandomIdGenerator.generateRandomUniqueId(6);
     static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);

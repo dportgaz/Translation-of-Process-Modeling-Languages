@@ -587,7 +587,10 @@ public class FillFlowsProcess {
                         //TODO restlichen Opearationen noch ergänzen
                         if (expressionFunction == 26.0) {
                             expr = ">=";
-                        } else if (expressionFunction == 30.0) {
+                        } else if (expressionFunction == 27.0) {
+                            expr = "=";
+                        }
+                        else if (expressionFunction == 30.0) {
                             expr = "<";
                         }
 

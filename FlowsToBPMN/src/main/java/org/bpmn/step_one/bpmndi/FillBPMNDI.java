@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.step_one.fillxml.fillXML.getCollaborationID;
+import static org.bpmn.step_one.fillxml.fillXMLStepOne.getCollaborationID;
 import static org.bpmn.step_one.process.FillFlowsProcess.getProcessMap;
 import static org.bpmn.step_one.process.FillFlowsProcess.getProcesses;
 
