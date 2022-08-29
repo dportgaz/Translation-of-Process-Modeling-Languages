@@ -3,6 +3,7 @@ package org.bpmn.step_one.process.activity;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.flowsObjects.ConcreteObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
+import org.bpmn.step_one.collaboration.participant.FillFlowsParticipant;
 import org.bpmn.step_one.process.FlowsProcess;
 import org.bpmn.step_one.process.dataobject.DataObject;
 import org.bpmn.step_one.process.event.EndEvent;
@@ -48,6 +49,26 @@ public class Task {
     ArrayList<Task> stepNamesByTask = new ArrayList<>();
 
     boolean isSubprocess;
+
+    FillFlowsParticipant participant;
+
+    String inputAssoSource;
+
+    public void setInputAssoSource(String inputAssoSource) {
+        this.inputAssoSource = inputAssoSource;
+    }
+
+    public String getInputAssoSource() {
+        return inputAssoSource;
+    }
+
+    public void setParticipant(FillFlowsParticipant participant) {
+        this.participant = participant;
+    }
+
+    public FillFlowsParticipant getParticipant() {
+        return participant;
+    }
 
     public void setIsSubprocess(){
         this.isSubprocess = true;

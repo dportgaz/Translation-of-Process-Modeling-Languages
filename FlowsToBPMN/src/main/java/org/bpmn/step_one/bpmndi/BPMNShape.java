@@ -65,6 +65,17 @@ public class BPMNShape {
 
     }
 
+    public void setShapeParticipantIH() {
+
+        bpmnElement.setAttribute("id", elementIdDi);
+        bpmnElement.setAttribute("bpmnElement", elementId);
+        bpmnElement.setAttribute("isHorizontal", isHorizontal);
+        if(isSubprocess) {
+            bpmnElement.setAttribute("isExpanded", "false");
+        }
+
+    }
+
     public void setShape() {
 
         bpmnElement.setAttribute("id", elementIdDi);

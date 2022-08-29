@@ -340,10 +340,13 @@ public class FillFlowsProcess {
             activity.appendChild(out);
 
             // add property
+            /*
             Element prop = doc.createElement("bpmn:property");
             prop.setAttribute("id", task.getProperty());
             prop.setAttribute("name", "__targetRef_placeholder");
             activity.appendChild(prop);
+
+             */
 
             // add data input association
 
@@ -353,8 +356,9 @@ public class FillFlowsProcess {
                 dataObjectRef.setAttribute("id", task.getDataInputAssociation());
                 Element source = doc.createElement("bpmn:sourceRef");
                 Element target = doc.createElement("bpmn:targetRef");
-                target.setTextContent(task.getProperty());
-                source.setTextContent(task.getBefore().getDataObject().getRefId());
+                //target.setTextContent(task.getProperty());
+                task.setInputAssoSource(task.getBefore().getDataObject().getRefId());
+                source.setTextContent(task.getInputAssoSource());
                 dataObjectRef.appendChild(source);
                 dataObjectRef.appendChild(target);
                 activity.appendChild(dataObjectRef);
@@ -521,7 +525,7 @@ public class FillFlowsProcess {
                                 }
                                 // task.setDataInputAssociation();
                                 teemo.setDataOutputAssociation();
-                                teemo.setProperty();
+                                //teemo.setProperty();
                             }
                         }
                     } else {
@@ -535,7 +539,7 @@ public class FillFlowsProcess {
                         }
                         // task.setDataInputAssociation();
                         task.setDataOutputAssociation();
-                        task.setProperty();
+                        //task.setProperty();
 
                         fp.addTask(task);
                     }
@@ -719,7 +723,8 @@ public class FillFlowsProcess {
             flow.setAttribute("sourceRef", sequenceFlow.getSourceRef());
             flow.setAttribute("targetRef", sequenceFlow.getTargetRef());
 
-            if (fp.getDecisionFlows().containsKey(sequenceFlow.getId())) {
+            if (fp.getDecisionFlows().containsKey(sequenceFlow.getId()) && fp.getPredicateList().size() > 0) {
+                //System.out.println("://////////////// : " + fp.getPredicateList());
                 sequenceFlow.setName(fp.getPredicateList().get(decisionFlowsCnt).getCondition());
                 decisionFlowsCnt++;
                 flow.setAttribute("name", sequenceFlow.getName());
