@@ -19,11 +19,12 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.bpmndi.FillBPMNDI;
 import org.bpmn.step_one.collaboration.participant.FillFlowsParticipant;
 import org.bpmn.step_one.process.FillFlowsProcess;
+import org.bpmn.step_two.FillFlowsProcess2;
 import org.bpmn.step_two.User;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class fillXMLStepOne {
+public class fillXMLStepTwo {
 
     static String collaborationID = "Collaboration_" + RandomIdGenerator.generateRandomUniqueId(6);
     static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -38,17 +39,19 @@ public class fillXMLStepOne {
         Element rootElement = doc.createElement("bpmn:definitions");
         doc.appendChild(rootElement);
 
-        User p = new User();
-        FillFlowsParticipant fp = new FillFlowsParticipant(doc, jsonFlowsPath);
+        User u = new User();
         ConcreteObjectType objectMap = new ConcreteObjectType(jsonFlowsPath);
-        FillFlowsProcess ffp = new FillFlowsProcess();
-        FillBPMNDI bpmndi = new FillBPMNDI();
+        //FillFlowsProcess ffp = new FillFlowsProcess();
+        FillFlowsProcess2 ffp2 = new FillFlowsProcess2();
+        // FillBPMNDI bpmndi = new FillBPMNDI();
 
 
         fillHeader(doc, rootElement);
-        fp.fillCollaborationParticipants(doc, collaborationID, jsonFlowsPath, rootElement);
-        ffp.fillProcesses(doc, rootElement, objectMap);
-        bpmndi.fillBPMNDI(doc, bpmnDiagramID, rootElement);
+        u.testStepTwoParticipants(objectMap);
+        u.fillCollaborationParticipantsPermission(doc, collaborationID, rootElement);
+        //ffp.fillProcesses(doc, rootElement, objectMap);
+        ffp2.executeFLowsProcess2(doc, rootElement, objectMap);
+        //bpmndi.fillBPMNDI(doc, bpmnDiagramID, rootElement);
         //System.out.println(objectMap.getObjectTypeObjects());
 
         createXml(doc, filename);

@@ -37,9 +37,8 @@ public class ConcreteObjectType extends AbstractObjectType {
     public ConcreteObjectType(String filename) throws FileNotFoundException {
         setAllObjects(filename);
         setObjectAndUserTypeObjectsSeparately(filename);
-        //System.out.println(getAllObjects(filename));
-        //System.out.println(getObjectTypeObjects(filename));
-        //System.out.println(getUserTypeObjects(filename));
+        System.out.println("HERENOW: " + getAllObjects(filename));
+        System.out.println("HERENOW222: " +getUserTypeObjects());
     }
 
     public void setAllObjects(String filename) throws FileNotFoundException {
@@ -81,7 +80,7 @@ public class ConcreteObjectType extends AbstractObjectType {
         return objectTypeObjectsMap;
     }
 
-    public HashMap<String, ArrayList<AbstractObjectType>> getUserTypeObjects(String filename) throws FileNotFoundException {
+    public HashMap<String, ArrayList<AbstractObjectType>> getUserTypeObjects() throws FileNotFoundException {
         return userTypeObjectsMap;
     }
 

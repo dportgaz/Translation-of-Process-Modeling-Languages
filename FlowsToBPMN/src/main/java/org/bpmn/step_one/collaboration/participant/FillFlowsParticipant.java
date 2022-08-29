@@ -19,11 +19,11 @@ import java.util.Collections;
 
 public class FillFlowsParticipant {
 
+    static ArrayList<FlowsParticipant> flowsParticipants = new ArrayList<>();
+
     public FillFlowsParticipant(Document doc, String filename) throws FileNotFoundException {
         setParticipants(test3(doc, filename));
     }
-
-    static ArrayList<FlowsParticipant> flowsParticipants = new ArrayList<>();
 
     public FlowsObjectNameList fillFlowsObjectNameList(Document doc, String filename) throws FileNotFoundException {
 

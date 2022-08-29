@@ -26,9 +26,7 @@ public class FillFlowsProcess {
 
     static ArrayList<FlowsProcess> processes = new ArrayList<>();
     static HashMap<String, FlowsProcess> processMap = new HashMap<>();
-
-    static ArrayList<Task> allTasks = new ArrayList<>();
-
+    public static ArrayList<Task> allTasks = new ArrayList<>();
 
     public void fillProcesses(Document doc, Element rootElement, ConcreteObjectType objectMap) throws FileNotFoundException {
 
@@ -41,7 +39,6 @@ public class FillFlowsProcess {
 
             fillProcess(doc, rootElement, process, objectMap, fp, key, i);
 
-
         }
 
     }
@@ -52,16 +49,6 @@ public class FillFlowsProcess {
 
     public static ArrayList<FlowsProcess> getProcesses() {
         return processes;
-    }
-
-    public static FlowsProcess getProcessById(String id) {
-        for (FlowsProcess fp : processes) {
-            // System.out.println("DASHIER: " + fp.getId() + "_____UNDDASHIER: " + id);
-            if (fp.getId().equals(id)) {
-                return fp;
-            }
-        }
-        return null;
     }
 
     public FillFlowsProcess() throws FileNotFoundException {
@@ -106,8 +93,7 @@ public class FillFlowsProcess {
         addProcessHeader(rootElement, fp, process, i);
         addStartEvent(doc, fp, process);
         addPredicates(objectMap, key, i, fp, doc, process);
-        // addPredicateSteps(objectMap, key, i, fp, doc, process);
-        // System.out.println(fp.getPredicateStepTypes());
+        // System.out.println(fp.getPredic ateStepTypes());
         // System.out.println(fp.getPredicateList());
         addActivities(objectMap, key, i, fp, doc, process);
         addSequenceFlows(objectMap, key, i, fp, doc, process);
@@ -492,6 +478,16 @@ public class FillFlowsProcess {
         return false;
     }
 
+    public static Task getTask(Double createdEntityId){
+
+        for(Task task : allTasks){
+            if(task.getCreatedEntityId().equals(createdEntityId)){
+                return task;
+            }
+        }
+        return null;
+
+    }
 
     public void addActivities(ConcreteObjectType objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
 
@@ -634,32 +630,6 @@ public class FillFlowsProcess {
         return null;
     }
 
-
-    /*
-    public void addPredicateSteps(ObjectTypeMap objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
-
-        // add predicate steptypes
-        objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
-            if (obj != null) {
-                if (obj.getMethodName().equals("AddStepType")) {
-
-                    for (Predicate p : fp.getPredicateList()) {
-
-                        if (p.getCreatedEntityId().equals(obj.getCreatedEntityId())) {
-                            fp.addPredicateStepType(obj);
-                        }
-
-                    }
-                }
-            }
-        });
-
-        System.out.println(fp.getPredicateStepTypes());
-    }
-
-     */
-
-
     public void addSequenceFlows(ConcreteObjectType objectMap, String key, int i, FlowsProcess fp, Document doc, Element
             process) throws FileNotFoundException {
 
@@ -785,15 +755,6 @@ public class FillFlowsProcess {
             }
         }
 
-    }
-
-    public Task getTaskById(FlowsProcess fp, String id) {
-        for (Task task : fp.getTaskList()) {
-            if (task.getId().equals(id)) {
-                return task;
-            }
-        }
-        return null;
     }
 
     private AbstractObjectType getPredicate(Double source, ConcreteObjectType objectMap, String key) throws
