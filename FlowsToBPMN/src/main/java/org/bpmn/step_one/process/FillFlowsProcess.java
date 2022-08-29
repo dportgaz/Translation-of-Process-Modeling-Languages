@@ -494,7 +494,8 @@ public class FillFlowsProcess {
     public void addActivities(ConcreteObjectType objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
 
         // add activities
-        String participantName = getParticipants().get(i).getName();
+        FlowsParticipant participant = getParticipants().get(i);
+        String participantName = participant.getName();
 
         objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
             if (obj != null) {
@@ -504,6 +505,7 @@ public class FillFlowsProcess {
 
                     task.setCreatedEntityId((Double) obj.getParameters().get(0));
                     task.setName(activityName);
+                    task.setParticipant(participant);
 
                     // Fixes New State and double Edit/Submit/etc. problem
                     // System.out.println(obj + "  EARLY: " + fp.getTaskList());
@@ -547,6 +549,9 @@ public class FillFlowsProcess {
                 }
             }
         });
+        for(Task task : fp.getTaskList()){
+            System.out.println(task.getId() + " " + task.getParticipant().getName());
+        }
         addSteps(objectMap, key, i, fp, doc, process);
     }
 

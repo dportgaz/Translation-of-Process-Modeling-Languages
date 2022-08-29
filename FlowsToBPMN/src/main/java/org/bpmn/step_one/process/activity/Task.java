@@ -4,6 +4,7 @@ import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.flowsObjects.ConcreteObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.participant.FillFlowsParticipant;
+import org.bpmn.step_one.collaboration.participant.FlowsParticipant;
 import org.bpmn.step_one.process.FlowsProcess;
 import org.bpmn.step_one.process.dataobject.DataObject;
 import org.bpmn.step_one.process.event.EndEvent;
@@ -50,7 +51,7 @@ public class Task {
 
     boolean isSubprocess;
 
-    FillFlowsParticipant participant;
+    FlowsParticipant participant;
 
     String inputAssoSource;
 
@@ -62,11 +63,11 @@ public class Task {
         return inputAssoSource;
     }
 
-    public void setParticipant(FillFlowsParticipant participant) {
+    public void setParticipant(FlowsParticipant participant) {
         this.participant = participant;
     }
 
-    public FillFlowsParticipant getParticipant() {
+    public FlowsParticipant getParticipant() {
         return participant;
     }
 

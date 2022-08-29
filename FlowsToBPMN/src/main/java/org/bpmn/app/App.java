@@ -16,7 +16,7 @@ public class App {
 
 
         String filePHoodle = "FlowsToBPMN/src/resources/flows/PhoodleDoodle.json";
-        fillXMLStepOne.createBPMN(filePHoodle, "PHoodle_Step123.xml");
+        fillXMLStepOne.createBPMN(filePHoodle, "PHoodle.xml");
 
 
 /*
