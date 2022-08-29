@@ -27,6 +27,8 @@ public class FillFlowsProcess {
     static ArrayList<FlowsProcess> processes = new ArrayList<>();
     static HashMap<String, FlowsProcess> processMap = new HashMap<>();
 
+    static ArrayList<Task> allTasks = new ArrayList<>();
+
 
     public void fillProcesses(Document doc, Element rootElement, ConcreteObjectType objectMap) throws FileNotFoundException {
 
@@ -544,12 +546,13 @@ public class FillFlowsProcess {
                         //task.setProperty();
 
                         fp.addTask(task);
+                        allTasks.add(task);
                     }
 
                 }
             }
         });
-        for(Task task : fp.getTaskList()){
+        for(Task task : allTasks){
             System.out.println(task.getId() + " " + task.getParticipant().getName());
         }
         addSteps(objectMap, key, i, fp, doc, process);
