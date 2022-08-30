@@ -15,16 +15,18 @@ public class App {
     public static void main(String[] args)
             throws ParserConfigurationException, TransformerException, FileNotFoundException, XPathExpressionException {
 
-
+/*
         String filePHoodle = "FlowsToBPMN/src/resources/flows/PhoodleDoodle.json";
         fillXMLStepOne.createBPMN(filePHoodle, "PHoodle_Step1.xml");
         fillXMLStepTwo.createBPMN(filePHoodle, "PHoodle_Step2.xml");
 
+ */
 
-/*
+
+
         String fileRecruitment = "FlowsToBPMN/src/resources/flows/recruitment.json";
         fillXMLStepOne.createBPMN(fileRecruitment, "Recruitment.xml");
-*/
+
 
 
     }
