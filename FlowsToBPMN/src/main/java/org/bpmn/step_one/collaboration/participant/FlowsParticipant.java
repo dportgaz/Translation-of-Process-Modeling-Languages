@@ -1,9 +1,12 @@
 package org.bpmn.step_one.collaboration.participant;
 
 import org.bpmn.randomidgenerator.RandomIdGenerator;
+import org.bpmn.step_one.process.activity.Task;
 import org.bpmn.step_one.process.event.StartEvent;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import java.util.ArrayList;
 
 public class FlowsParticipant {
 
@@ -11,9 +14,14 @@ public class FlowsParticipant {
     String processRef;
     String name;
     Double updatedEntityId;
-
     Element flowsProcessElement;
     StartEvent startEvent;
+
+    ArrayList<Task> tasks = new ArrayList<Task>();
+
+    public ArrayList<Task> getTasks() {
+        return tasks;
+    }
 
     public Element getFlowsProcessElement() {
         return flowsProcessElement;

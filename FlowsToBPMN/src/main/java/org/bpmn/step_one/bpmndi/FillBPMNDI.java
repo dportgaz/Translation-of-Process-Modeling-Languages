@@ -381,7 +381,7 @@ public class FillBPMNDI {
 
                 if (task.getDataInputAssociation() != null) {
 
-                    DataObject dataObjectIn = findDataObjectById(tasks, task.getInputAssoSource());
+                    DataObject dataObjectIn = findDataObjectById(tasks, task.getInputAssociationSource());
                     String dataObjectInX = dataObjectIn.getX();
                     String dataObjectInY = dataObjectIn.getY();
 

@@ -92,10 +92,10 @@ public class FillFlowsProcess {
 
         addProcessHeader(rootElement, fp, process, i);
         addStartEvent(doc, fp, process);
+        addActivities(objectMap, key, i, fp, doc, process);
         addPredicates(objectMap, key, i, fp, doc, process);
         // System.out.println(fp.getPredic ateStepTypes());
         // System.out.println(fp.getPredicateList());
-        addActivities(objectMap, key, i, fp, doc, process);
         addSequenceFlows(objectMap, key, i, fp, doc, process);
         addDataObjects(objectMap, key, i, fp, doc, process);
         // addEndEvent(doc, fp, process, objectMap, key);
@@ -345,8 +345,8 @@ public class FillFlowsProcess {
                 Element source = doc.createElement("bpmn:sourceRef");
                 Element target = doc.createElement("bpmn:targetRef");
                 //target.setTextContent(task.getProperty());
-                task.setInputAssoSource(task.getBefore().getDataObject().getRefId());
-                source.setTextContent(task.getInputAssoSource());
+                task.setInputAssociationSource(task.getBefore().getDataObject().getRefId());
+                source.setTextContent(task.getInputAssociationSource());
                 dataObjectRef.appendChild(source);
                 dataObjectRef.appendChild(target);
                 activity.appendChild(dataObjectRef);

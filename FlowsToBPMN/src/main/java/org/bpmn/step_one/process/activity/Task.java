@@ -11,6 +11,7 @@ import org.bpmn.step_one.process.event.EndEvent;
 import org.bpmn.step_one.process.event.StartEvent;
 import org.bpmn.step_one.process.flow.SequenceFlow;
 
+import javax.swing.text.Element;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +40,8 @@ public class Task {
 
     Task after;
 
+    Task step;
+
     StartEvent beforeEvent;
 
     EndEvent afterEvent;
@@ -53,14 +56,16 @@ public class Task {
 
     FlowsParticipant participant;
 
-    String inputAssoSource;
+    String inputAssociationSource;
 
-    public void setInputAssoSource(String inputAssoSource) {
-        this.inputAssoSource = inputAssoSource;
+    Element taskElement;
+
+    public void setInputAssociationSource(String inputAssoSource) {
+        this.inputAssociationSource = inputAssoSource;
     }
 
-    public String getInputAssoSource() {
-        return inputAssoSource;
+    public String getInputAssociationSource() {
+        return inputAssociationSource;
     }
 
     public void setParticipant(FlowsParticipant participant) {

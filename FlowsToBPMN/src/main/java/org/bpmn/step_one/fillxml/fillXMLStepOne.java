@@ -38,7 +38,6 @@ public class fillXMLStepOne {
         Element rootElement = doc.createElement("bpmn:definitions");
         doc.appendChild(rootElement);
 
-        User p = new User();
         FillFlowsParticipant fp = new FillFlowsParticipant(doc, jsonFlowsPath);
         ConcreteObjectType objectMap = new ConcreteObjectType(jsonFlowsPath);
         FillFlowsProcess ffp = new FillFlowsProcess();

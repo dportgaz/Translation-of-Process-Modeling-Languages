@@ -30,13 +30,17 @@ public class FillFlowsProcess2 {
 
         //fill Processes
         boolean first = true;
-        for (FlowsParticipant p : permissionParticipants) {
+        for (FlowsParticipant participant : permissionParticipants) {
             if (first) {
-                setProcessRoot(doc, rootElement, p, "true");
+                setProcessRoot(doc, rootElement, participant, "true");
             } else {
-                setProcessRoot(doc, rootElement, p, "false");
+                setProcessRoot(doc, rootElement, participant, "false");
             }
-            setStartEvent(doc, p);
+            setStartEvent(doc, participant);
+        }
+
+        for(Task task : FillFlowsProcess.allTasks){
+            System.out.println(task.getId() + " , " + task.getIsSubprocess());
         }
 
     }
@@ -50,10 +54,12 @@ public class FillFlowsProcess2 {
                 if (obj != null && obj.getMethodName().equals("AddStateExecutionPermissionToGlobalRole")) {
 
                     Double participantId = (Double) obj.getParameters().get(0);
+                    FlowsParticipant participant = User.getUser(participantId);
                     Double taskId = (Double) obj.getParameters().get(1);
 
                     Task task = FillFlowsProcess.getTask(taskId);
                     task.setParticipant(User.getUser(participantId));
+                    participant.getTasks().add(task);
 
                 }
             });
@@ -83,6 +89,12 @@ public class FillFlowsProcess2 {
 
         p.setStartEvent(startEvent);
         processElement.appendChild(startEventElement);
+
+    }
+
+    public void setTasks(Document doc, FlowsParticipant p){
+
+
 
     }
 }
