@@ -35,6 +35,10 @@ public class fProcess {
         }
     }
 
+    public Element getElementfProcess() {
+        return elementfProcess;
+    }
+
     public String getfProcessId() {
         return fProcessId;
     }

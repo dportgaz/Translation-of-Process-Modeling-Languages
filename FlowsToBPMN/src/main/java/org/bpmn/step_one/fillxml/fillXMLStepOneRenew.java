@@ -20,8 +20,11 @@ import org.bpmn.flowsObjects.ConcreteObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.Collaboration;
 
+import org.bpmn.step_one.collaboration.participant.Participant;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import static org.bpmn.step_one.collaboration.Collaboration.participants;
 
 public class fillXMLStepOneRenew {
 
@@ -38,7 +41,7 @@ public class fillXMLStepOneRenew {
         doc = docBuilder.newDocument();
         Element definitionsElement = doc.createElement("bpmn:definitions");
         doc.appendChild(definitionsElement);
-        fillHeader(doc, definitionsElement);
+        setHeader(definitionsElement);
 
         ConcreteObjectType objects = new ConcreteObjectType(jsonFlowsPath);
         HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects = objects.getObjectTypeObjects();
@@ -48,6 +51,7 @@ public class fillXMLStepOneRenew {
         Element collaborationElement = collaboration.getElementCollaboration();
 
         definitionsElement.appendChild(collaborationElement);
+        setProcesses(definitionsElement);
 
 
         /*
@@ -66,7 +70,17 @@ public class fillXMLStepOneRenew {
         createXml(doc, filename);
     }
 
-    public static void fillHeader(Document doc, Element rootElement) {
+    private static void setProcesses(Element definitionsElement){
+
+        for(Participant participant : participants){
+
+            definitionsElement.appendChild(participant.getProcessRef().getElementfProcess());
+
+        }
+
+    }
+
+    private static void setHeader(Element rootElement) {
         rootElement.setAttribute("xmlns:bpmn", "http://www.omg.org/spec/BPMN/20100524/MODEL");
         rootElement.setAttribute("xmlns:bpmndi", "http://www.omg.org/spec/BPMN/20100524/DI");
         rootElement.setAttribute("xmlns:dc", "http://www.omg.org/spec/DD/20100524/DC");
