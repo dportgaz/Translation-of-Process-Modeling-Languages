@@ -1,4 +1,4 @@
-package org.bpmn.step_one.collaboration.participant.flowsobjectname;
+package org.bpmn.flowsObjects.flowsobjectname;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

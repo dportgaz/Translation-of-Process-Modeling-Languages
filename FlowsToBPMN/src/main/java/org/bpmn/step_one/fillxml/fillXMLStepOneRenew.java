@@ -15,12 +15,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.flowsObjects.ConcreteObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.Collaboration;
 
 import org.bpmn.step_one.collaboration.participant.Participant;
+import org.bpmn.step_one.process.FlowsProcess;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -53,7 +55,6 @@ public class fillXMLStepOneRenew {
         definitionsElement.appendChild(collaborationElement);
         setProcesses(definitionsElement);
 
-
         /*
         ConcreteObjectType objectMap = new ConcreteObjectType(jsonFlowsPath);
         FillFlowsProcess ffp = new FillFlowsProcess();
@@ -74,7 +75,7 @@ public class fillXMLStepOneRenew {
 
         for(Participant participant : participants){
 
-            definitionsElement.appendChild(participant.getProcessRef().getElementfProcess());
+            definitionsElement.appendChild(participant.getProcessRef().getElementFlowsProcess());
 
         }
 

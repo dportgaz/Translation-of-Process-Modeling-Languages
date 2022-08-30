@@ -1,4 +1,4 @@
-package org.bpmn.step_one.collaboration.participant.flowsobjectname;
+package org.bpmn.flowsObjects.flowsobjectname;
 
 import java.util.ArrayList;
 

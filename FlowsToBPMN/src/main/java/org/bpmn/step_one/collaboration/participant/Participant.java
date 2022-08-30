@@ -1,26 +1,21 @@
 package org.bpmn.step_one.collaboration.participant;
 
+import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 
-import org.bpmn.step_one.process.fProcess;
-import org.w3c.dom.Document;
+import org.bpmn.step_one.process.FlowsProcess;
 import org.w3c.dom.Element;
-
-import java.util.ArrayList;
 
 import static org.bpmn.step_one.fillxml.fillXMLStepOneRenew.doc;
 
 public class Participant {
 
-    String participantID;
+    String id;
     String name;
-    fProcess processRef;
+    FlowsProcess processRef;
     Double updatedEntityId;
-
     Element participantElement;
-    Element processElement;
 
-    // StartEvent startEvent;
     // ArrayList<Task> tasks = new ArrayList<Task>();
 
     /*
@@ -30,34 +25,16 @@ public class Participant {
 
      */
 
-    public Element getFlowsProcessElement() {
-        return processElement;
-    }
-
-    public void setProcessElement(Element processElement) {
-        this.processElement = processElement;
-    }
-
-    /*
-    public void setStartEvent(StartEvent startEvent) {
-        this.startEvent = startEvent;
-    }
-
-    public StartEvent getStartEvent() {
-        return startEvent;
-    }
-
-     */
 
     public Double getUpdatedEntityId() {
         return updatedEntityId;
     }
 
-    public String getParticipantID() {
-        return this.participantID;
+    public String getId() {
+        return this.id;
     }
 
-    public fProcess getProcessRef() {
+    public FlowsProcess getProcessRef() {
         return this.processRef;
     }
 
@@ -65,10 +42,13 @@ public class Participant {
         return this.name;
     }
 
+    public Element getParticipantElement() {
+        return this.participantElement;
+    }
+
     public Participant(String name) {
-        this.participantID = "Participant_" + RandomIdGenerator.generateRandomUniqueId(6);
-        String fProcessId = "Process_" + RandomIdGenerator.generateRandomUniqueId(6);
-        this.processRef = new fProcess(fProcessId);
+        this.id = "Participant_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.processRef = new FlowsProcess();
         this.name = name;
         this.participantElement = doc.createElement("bpmn:participant");
         setParticipantElement();
@@ -76,13 +56,10 @@ public class Participant {
 
     private void setParticipantElement() {
 
-        this.participantElement.setAttribute("id", this.participantID);
+        this.participantElement.setAttribute("id", this.id);
         this.participantElement.setAttribute("name", this.name);
-        this.participantElement.setAttribute("processRef", this.processRef.getfProcessId());
+        this.participantElement.setAttribute("processRef", this.processRef.getId());
 
     }
 
-    public Element getParticipantElement() {
-        return participantElement;
-    }
 }
