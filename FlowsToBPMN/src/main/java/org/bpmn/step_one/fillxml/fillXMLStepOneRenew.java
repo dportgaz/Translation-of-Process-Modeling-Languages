@@ -2,6 +2,8 @@ package org.bpmn.step_one.fillxml;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -12,33 +14,43 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPathExpressionException;
 
+import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.flowsObjects.ConcreteObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.step_one.bpmndi.FillBPMNDI;
-import org.bpmn.step_one.collaboration.participant.FillFlowsParticipant;
-import org.bpmn.step_one.process.FillFlowsProcess;
-import org.bpmn.step_two.User;
+import org.bpmn.step_one.collaboration.Collaboration;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class fillXMLStepOne {
+public class fillXMLStepOneRenew {
 
-    static String collaborationID = "Collaboration_" + RandomIdGenerator.generateRandomUniqueId(6);
+    public static Document doc;
+
     static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
 
     public static void createBPMN(String jsonFlowsPath, String filename)
-            throws ParserConfigurationException, FileNotFoundException, TransformerException, XPathExpressionException {
+            throws ParserConfigurationException, FileNotFoundException, TransformerException {
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
-        Document doc = docBuilder.newDocument();
-        Element rootElement = doc.createElement("bpmn:definitions");
-        doc.appendChild(rootElement);
+        doc = docBuilder.newDocument();
+        Element definitionsElement = doc.createElement("bpmn:definitions");
+        doc.appendChild(definitionsElement);
+        fillHeader(doc, definitionsElement);
 
-        FillFlowsParticipant fp = new FillFlowsParticipant(doc, jsonFlowsPath);
+        ConcreteObjectType objects = new ConcreteObjectType(jsonFlowsPath);
+        HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects = objects.getObjectTypeObjects();
+
+        Collaboration collaboration = new Collaboration();
+        collaboration.setParticipants(objectTypeObjects);
+        Element collaborationElement = collaboration.getElementCollaboration();
+
+        definitionsElement.appendChild(collaborationElement);
+
+
+        /*
         ConcreteObjectType objectMap = new ConcreteObjectType(jsonFlowsPath);
         FillFlowsProcess ffp = new FillFlowsProcess();
         FillBPMNDI bpmndi = new FillBPMNDI();
@@ -49,6 +61,7 @@ public class fillXMLStepOne {
         ffp.fillProcesses(doc, rootElement, objectMap);
         bpmndi.fillBPMNDI(doc, bpmnDiagramID, rootElement);
         //System.out.println(objectMap.getObjectTypeObjects());
+        */
 
         createXml(doc, filename);
     }
@@ -73,13 +86,5 @@ public class fillXMLStepOne {
         StreamResult streamResult = new StreamResult(new File("FlowsToBPMN/src/resources/bpmn/" + filename));
         transformer.transform(domSource, streamResult);
 
-    }
-
-    public static String getBpmndiagramID() {
-        return bpmnDiagramID;
-    }
-
-    public static String getCollaborationID() {
-        return collaborationID;
     }
 }
