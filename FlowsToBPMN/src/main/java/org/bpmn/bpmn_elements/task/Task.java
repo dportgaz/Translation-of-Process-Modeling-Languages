@@ -1,15 +1,24 @@
 package org.bpmn.bpmn_elements.task;
 
+import com.google.gson.internal.LinkedTreeMap;
+import org.bpmn.bpmn_elements.association.DataInputAssociation;
+import org.bpmn.bpmn_elements.association.DataOutputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
+import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.participant.Participant;
+import org.bpmn.step_one.process.Subprocess;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.bpmn.step_one.fillxml.fillXMLStepOneRenew.doc;
 
 public class Task {
 
@@ -25,11 +34,11 @@ public class Task {
 
     // SequenceFlow outgoing;
 
-    String dataInputAssociation;
+    DataInputAssociation dataInputAssociation;
 
-    String dataOutputAssociation;
+    DataOutputAssociation dataOutputAssociation;
 
-    DataObject dataObject;
+    private DataObject dataObject;
 
     Task before;
 
@@ -43,7 +52,7 @@ public class Task {
 
     String property;
 
-    HashSet<AbstractObjectType> steps = new HashSet<>();
+    private HashSet<Step> steps = new HashSet<>();
 
     ArrayList<Task> stepNamesByTask = new ArrayList<>();
 
@@ -53,14 +62,63 @@ public class Task {
 
     Element elementTask;
 
+    Element elementDataOutputAssociation;
+
+    Element elementDataInputAssociation;
+
     public Task(Double createdEntityId, String name, Participant participant) {
+        this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.createdEntityId = createdEntityId;
+        this.name = "Provide " + name;
+        this.participant = participant;
+        this.elementTask = doc.createElement("bpmn:task");
+        this.elementTask.setAttribute("id", this.id);
+        this.elementTask.setAttribute("name", this.name);
+    }
+
+    public Task(Double createdEntityId, String name, Participant participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
         this.name = name;
         this.participant = participant;
         this.dataObject = new DataObject(this);
+        this.steps = setSteps(objectTypeObjects);
+        setTaskElement();
     }
 
+    private void setTaskElement() {
+        if (this.steps.size() > 0) {
+            this.isSubprocess = true;
+            this.elementTask = doc.createElement("bpmn:subProcess");
+            setSubProcess();
+        } else {
+            this.isSubprocess = false;
+            this.elementTask = doc.createElement("bpmn:task");
+        }
+        this.elementTask.setAttribute("id", this.id);
+        this.elementTask.setAttribute("name", this.name);
+    }
+
+    private void setSubProcess() {
+
+        StartEvent startEvent = new StartEvent();
+        this.elementTask.appendChild(startEvent.getElementStartEvent());
+
+        for(Step step : steps){
+            this.elementTask.appendChild(step.getElementTask());
+        }
+
+    }
+
+    /*
+    private addStepsToTask() {
+        for (Step step : steps) {
+            this.elementTask.appendChild(step.getElementTask());
+        }
+    }
+
+
+     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -103,6 +161,10 @@ public class Task {
         return participant;
     }
 
+    public Element getElementTask() {
+        return elementTask;
+    }
+
     public void setIsSubprocess() {
         this.isSubprocess = true;
     }
@@ -113,7 +175,7 @@ public class Task {
 
     private ArrayList<String> stepNamesByName = new ArrayList<>();
 
-    public HashSet<AbstractObjectType> getSteps() {
+    public HashSet<Step> getSteps() {
         return steps;
     }
 
@@ -129,7 +191,7 @@ public class Task {
         this.property = "Property_" + RandomIdGenerator.generateRandomUniqueId(6);
     }
 
-    public String getDataOutputAssociation() {
+    public DataOutputAssociation getDataOutputAssociation() {
         return this.dataOutputAssociation;
     }
 
@@ -172,14 +234,20 @@ public class Task {
     }
 
     public void setDataOutputAssociation() {
-        this.dataOutputAssociation = "DataOutputAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
+
+        this.dataOutputAssociation = new DataOutputAssociation();
+        this.elementTask.appendChild(this.dataOutputAssociation.getElementDataOutputAssociation());
+
     }
 
     public void setDataInputAssociation() {
-        this.dataInputAssociation = "DataInputAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
+
+        this.dataInputAssociation = new DataInputAssociation();
+        this.elementTask.appendChild(this.dataInputAssociation.getElementDataInputAssociation());
+
     }
 
-    public String getDataInputAssociation() {
+    public DataInputAssociation getDataInputAssociation() {
         return this.dataInputAssociation;
     }
 
@@ -188,7 +256,7 @@ public class Task {
     }
 
     public DataObject getDataObject() {
-        return dataObject;
+        return this.dataObject;
     }
 
     public void setName(String name) {
@@ -237,40 +305,64 @@ public class Task {
         return this.name;
     }
 
-    /*
-    public void fillStepsToActivity(ConcreteObjectType objectMap, FlowsProcess fp, String key) throws FileNotFoundException {
+    public HashSet<Step> setSteps(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
-        objectMap.getObjectTypeObjects().get(key).forEach(obj -> {
-            for (Double d : steps.keySet()) {
-                if (obj != null) {
-                    if (obj.getMethodName().equals("UpdateStepAttributeType") && obj.getParameters().get(0).equals(d)) {
+        String participantKey = this.participant.getKey();
+        objectTypeObjects.get(participantKey).forEach(obj -> {
 
-                        Double temp = (Double) obj.getParameters().get(1);
-                        try {
-                            objectMap.getObjectTypeObjects().get(key).forEach(obj2 -> {
-                                if (obj2 != null) {
-                                    Pattern p = Pattern.compile("^Update.*AttributeType$");
-                                    Matcher m = p.matcher(obj2.getMethodName());
+            if (obj != null && obj.getMethodName().equals("AddStepType")) {
+                Double tempId = (Double) obj.getParameters().get(0);
+                if (this.getCreatedEntityId().equals(tempId)) {
+                    // trim steps by removing default steps
+                    objectTypeObjects.get(participantKey).forEach(obj2 -> {
+                        if (obj2 != null
+                                && obj2.getMethodName().equals("UpdateStepAttributeType")
+                                && obj2.getParameters().get(0).equals(obj.getCreatedEntityId())
+                                && !stepIsPredicate(objectTypeObjects, (Double) obj2.getParameters().get(1))) {
+                            this.steps.add(this.getStep(objectTypeObjects, obj));
+                        }
+                    });
+                }
+            }
+        });
+        return steps;
+    }
 
-                                    if (m.find() && obj2.getParameters().get(0).equals(temp)) {
-                                        Task t = new Task();
-                                        t.setName((String) obj2.getParameters().get(1));
-                                        t.setCreatedEntityId(temp);
-                                        if (!stepNamesByName.contains(t.getName())) {
-                                            stepNamesByTask.add(t);
-                                            stepNamesByName.add(t.getName());
-                                        }
-                                    }
-                                }
-                            });
-                        } catch (FileNotFoundException e) {
-                            throw new RuntimeException(e);
+    private boolean stepIsPredicate(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, Double id) {
+        for (AbstractObjectType obj : objectTypeObjects.get(this.participant.getKey())) {
+            if (obj != null && obj.getMethodName().equals("UpdatePredicateStepTypeExpression")) {
+                LinkedTreeMap link = (LinkedTreeMap) obj.getParameters().get(1);
+                LinkedTreeMap innerLink = (LinkedTreeMap) link.get("Left");
+                if (innerLink.get("AttributeTypeId").equals(id)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private Step getStep(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, AbstractObjectType absObj) {
+
+        String participantKey = this.participant.getKey();
+        Double id = absObj.getCreatedEntityId();
+
+        for (AbstractObjectType obj : objectTypeObjects.get(participantKey)) {
+            if (obj != null && obj.getMethodName().equals("UpdateStepAttributeType") && obj.getParameters().get(0).equals(id)) {
+                Double tempId = (Double) obj.getParameters().get(1);
+                for (AbstractObjectType obj2 : objectTypeObjects.get(participantKey)) {
+                    if (obj2 != null) {
+
+                        Pattern p = Pattern.compile("^Update.*AttributeType$");
+                        Matcher m = p.matcher(obj2.getMethodName());
+
+                        if (m.find() && obj2.getParameters().get(0).equals(tempId)) {
+                            String name = (String) obj2.getParameters().get(1);
+                            return new Step(tempId, name, this.participant, this);
                         }
                     }
                 }
             }
-        });
+        }
+        return null;
     }
-
-     */
 }

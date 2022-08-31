@@ -2,6 +2,10 @@ package org.bpmn.bpmn_elements.dataobject;
 
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
+import org.w3c.dom.Element;
+
+
+import static org.bpmn.step_one.fillxml.fillXMLStepOneRenew.doc;
 
 public class DataObject {
 
@@ -16,6 +20,8 @@ public class DataObject {
     String x;
 
     String y;
+
+    Element elementDataObject;
 
     public void setX(String x) {
         this.x = x;
@@ -37,6 +43,21 @@ public class DataObject {
         this.id = "DataObject_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.refId = "DataObjectReference_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.associatedTask = task;
+        this.elementDataObject = doc.createElement("bpmn:dataObjectReference");
+        setElementDataObject();
+    }
+
+    private void setElementDataObject() {
+
+        this.elementDataObject.setAttribute("dataObjectRef", this.id);
+        this.elementDataObject.setAttribute("id", this.refId);
+        String name = "TBD";
+        this.elementDataObject.setAttribute("name", name);
+
+    }
+
+    public Element getElementDataObject() {
+        return elementDataObject;
     }
 
     public void setName(String name) {

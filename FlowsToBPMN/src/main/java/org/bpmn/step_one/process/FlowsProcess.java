@@ -1,6 +1,5 @@
 package org.bpmn.step_one.process;
 
-import com.google.gson.internal.LinkedTreeMap;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.task.Task;
@@ -9,10 +8,10 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.participant.Participant;
 import org.w3c.dom.Element;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 import static org.bpmn.step_one.fillxml.fillXMLStepOneRenew.doc;
 
@@ -72,7 +71,7 @@ public class FlowsProcess {
                 Double createdEntityId = (Double) obj.getParameters().get(0);
                 Participant participant = this.participant;
 
-                Task task = new Task(createdEntityId, taskName, participant);
+                Task task = new Task(createdEntityId, taskName, participant, objectTypeObjects);
 
                 if (this.tasks.size() > 0) {
                     task.setDataInputAssociation();
@@ -84,52 +83,28 @@ public class FlowsProcess {
                 tasks.add(task);
                 // allTasks.add(task);
 
-                this.dataobjects.add(task.getDataObject());
             }
 
         });
 
-        addSteps(objectTypeObjects);
+        // add task elements and dataobject elements to process
+        for (Task task : tasks) {
 
-    }
+            DataObject dObj = task.getDataObject();
+            // TODO: SEITENEFFEKT ENTFERNEN/LOESEN
+            dataobjects.add(dObj);
 
-    private void addSteps(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+            System.out.println("HERE: " + dObj);
+            this.elementFlowsProcess.appendChild(dObj.getElementDataObject());
 
-        String participantKey = this.participant.getKey();
-        objectTypeObjects.get(participantKey).forEach(obj -> {
+            Element tempObj = doc.createElement("bpmn:dataObject");
+            tempObj.setAttribute("id", dObj.getId());
+            this.elementFlowsProcess.appendChild(tempObj);
 
-            for (Task task : this.tasks) {
-                if (obj != null && obj.getMethodName().equals("AddStepType")) {
-                    Double tempId = (Double) obj.getParameters().get(0);
-                    if (task.getCreatedEntityId().equals(tempId)) {
-                        // trim steps by removing default steps
-                        objectTypeObjects.get(participantKey).forEach(obj2 -> {
-                            if (obj2 != null
-                                    && obj2.getMethodName().equals("UpdateStepAttributeType")
-                                    && obj2.getParameters().get(0).equals(obj.getCreatedEntityId())
-                                    && !stepIsPredicate(objectTypeObjects)) {
-                                task.getSteps().add(obj);
+            this.elementFlowsProcess.appendChild(task.getElementTask());
 
-                            }
-                        });
-                    }
-                }
-            }
-        });
-    }
-
-    private boolean stepIsPredicate(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
-
-        for (AbstractObjectType obj : objectTypeObjects.get(this.participant.getKey())) {
-            if (obj != null && obj.getMethodName().equals("UpdatePredicateStepTypeExpression")) {
-                LinkedTreeMap link = (LinkedTreeMap) obj.getParameters().get(1);
-                LinkedTreeMap innerLink = (LinkedTreeMap) link.get("Left");
-                if (innerLink.get("AttributeTypeId").equals(id)) {
-                    return true;
-                }
-            }
         }
-        return false;
+
     }
 
     private void setElementFlowsProcess() {

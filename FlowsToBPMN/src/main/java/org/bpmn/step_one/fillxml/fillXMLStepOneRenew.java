@@ -16,6 +16,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.bpmn.bpmn_elements.event.StartEvent;
+import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.flowsObjects.ConcreteObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
@@ -58,7 +59,11 @@ public class fillXMLStepOneRenew {
         for (Participant participant : participants) {
 
             System.out.print(participant.getName() + ": ");
-            System.out.println(participant.getProcessRef().getTasks() + " \n\tdObj's: " + participant.getProcessRef().getDataobjects());
+            System.out.println(participant.getProcessRef().getTasks()
+                    + " \n\tdObj's: " + participant.getProcessRef().getDataobjects());
+            for(Task task : participant.getProcessRef().getTasks()){
+                System.out.println("\tSteps: " + task.getSteps());
+            }
 
         }
 
