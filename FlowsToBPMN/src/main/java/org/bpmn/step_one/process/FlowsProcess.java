@@ -9,7 +9,6 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.participant.Participant;
 import org.w3c.dom.Element;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,9 +29,10 @@ public class FlowsProcess {
     Participant participant;
     StartEvent startEvent;
 
-    HashSet<Task> tasks = new HashSet<>();
+    // ArrayList, da Reihenfolge der Tasks gewahrt werden soll
+    ArrayList<Task> tasks = new ArrayList<>();
 
-    HashSet<DataObject> dataobjects = new HashSet<>();
+    HashSet<DataObject> dataObjects = new HashSet<>();
 
     HashSet<Predicate> predicates = new HashSet<>();
 
@@ -97,7 +97,7 @@ public class FlowsProcess {
 
             DataObject dObj = task.getDataObject();
             // TODO: SEITENEFFEKT ENTFERNEN/LOESEN
-            dataobjects.add(dObj);
+            dataObjects.add(dObj);
 
             System.out.println("HERE: " + dObj);
             this.elementFlowsProcess.appendChild(dObj.getElementDataObject());
@@ -124,7 +124,6 @@ public class FlowsProcess {
 
             }
         });
-        System.out.println("PREDICATELIST: " + this.predicates);
     }
 
     private void setElementFlowsProcess() {
@@ -141,11 +140,11 @@ public class FlowsProcess {
         return this.elementFlowsProcess;
     }
 
-    public HashSet<DataObject> getDataobjects() {
-        return dataobjects;
+    public HashSet<DataObject> getDataObjects() {
+        return dataObjects;
     }
 
-    public HashSet<Task> getTasks() {
+    public ArrayList<Task> getTasks() {
         return tasks;
     }
 

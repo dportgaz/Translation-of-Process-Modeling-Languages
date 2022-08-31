@@ -15,7 +15,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.flowsObjects.ConcreteObjectType;
@@ -23,7 +22,6 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.Collaboration;
 
 import org.bpmn.step_one.collaboration.participant.Participant;
-import org.bpmn.step_one.process.FlowsProcess;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -60,7 +58,7 @@ public class fillXMLStepOneRenew {
 
             System.out.print(participant.getName() + ": ");
             System.out.println(participant.getProcessRef().getTasks()
-                    + " \n\tdObj's: " + participant.getProcessRef().getDataobjects());
+                    + " \n\tdObj's: " + participant.getProcessRef().getDataObjects());
             for(Task task : participant.getProcessRef().getTasks()){
                 System.out.println("\tSteps: " + task.getSteps());
             }
