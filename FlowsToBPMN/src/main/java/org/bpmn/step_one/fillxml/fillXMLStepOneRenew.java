@@ -55,25 +55,19 @@ public class fillXMLStepOneRenew {
         definitionsElement.appendChild(collaborationElement);
         setProcesses(definitionsElement);
 
-        /*
-        ConcreteObjectType objectMap = new ConcreteObjectType(jsonFlowsPath);
-        FillFlowsProcess ffp = new FillFlowsProcess();
-        FillBPMNDI bpmndi = new FillBPMNDI();
+        for (Participant participant : participants) {
 
+            System.out.print(participant.getName() + ": ");
+            System.out.println(participant.getProcessRef().getTasks() + " \n\tdObj's: " + participant.getProcessRef().getDataobjects());
 
-        fillHeader(doc, rootElement);
-        fp.fillCollaborationParticipants(doc, collaborationID, jsonFlowsPath, rootElement);
-        ffp.fillProcesses(doc, rootElement, objectMap);
-        bpmndi.fillBPMNDI(doc, bpmnDiagramID, rootElement);
-        //System.out.println(objectMap.getObjectTypeObjects());
-        */
+        }
 
         createXml(doc, filename);
     }
 
-    private static void setProcesses(Element definitionsElement){
+    private static void setProcesses(Element definitionsElement) {
 
-        for(Participant participant : participants){
+        for (Participant participant : participants) {
 
             definitionsElement.appendChild(participant.getProcessRef().getElementFlowsProcess());
 

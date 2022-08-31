@@ -53,7 +53,7 @@ public class Collaboration {
                     // work around for json double entry bug in flows json
                     if (!containsParticipant(participantName)) {
 
-                        Participant participant = new Participant(participantName);
+                        Participant participant = new Participant(objects.getKey(), participantName, objectTypeObjects);
                         participants.add(participant);
 
                         // add participant to collaboration element

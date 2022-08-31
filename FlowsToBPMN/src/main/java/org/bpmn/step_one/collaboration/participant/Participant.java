@@ -1,16 +1,21 @@
 package org.bpmn.step_one.collaboration.participant;
 
 import org.bpmn.bpmn_elements.event.StartEvent;
+import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 
 import org.bpmn.step_one.process.FlowsProcess;
 import org.w3c.dom.Element;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.bpmn.step_one.fillxml.fillXMLStepOneRenew.doc;
 
 public class Participant {
 
     String id;
+    String key;
     String name;
     FlowsProcess processRef;
     Double updatedEntityId;
@@ -34,6 +39,10 @@ public class Participant {
         return this.id;
     }
 
+    public String getKey() {
+        return key;
+    }
+
     public FlowsProcess getProcessRef() {
         return this.processRef;
     }
@@ -46,10 +55,11 @@ public class Participant {
         return this.participantElement;
     }
 
-    public Participant(String name) {
+    public Participant(String key, String name, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+        this.key = key;
         this.id = "Participant_" + RandomIdGenerator.generateRandomUniqueId(6);
-        this.processRef = new FlowsProcess();
         this.name = name;
+        this.processRef = new FlowsProcess(this, objectTypeObjects);
         this.participantElement = doc.createElement("bpmn:participant");
         setParticipantElement();
     }
