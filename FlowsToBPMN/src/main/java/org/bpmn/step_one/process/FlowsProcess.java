@@ -2,6 +2,7 @@ package org.bpmn.step_one.process;
 
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.StartEvent;
+import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import static org.bpmn.bpmn_elements.gateway.Predicate.getPredicate;
 import static org.bpmn.step_one.fillxml.fillXMLStepOneRenew.doc;
 
 public class FlowsProcess {
@@ -32,6 +34,8 @@ public class FlowsProcess {
 
     HashSet<DataObject> dataobjects = new HashSet<>();
 
+    HashSet<Predicate> predicates = new HashSet<>();
+
 
     public FlowsProcess(Participant participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
@@ -48,6 +52,7 @@ public class FlowsProcess {
 
         setStartEvent();
         setTasks(objectTypeObjects);
+        addPredicates(objectTypeObjects);
 
     }
 
@@ -105,6 +110,21 @@ public class FlowsProcess {
 
         }
 
+    }
+
+    public void addPredicates(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+
+        objectTypeObjects.get(this.participant.getKey()).forEach(obj -> {
+            if (obj != null && obj.getMethodName().equals("AddPredicateStepType")) {
+
+                Predicate predicate = getPredicate(obj.getCreatedEntityId(), objectTypeObjects.get(this.participant.getKey()));
+
+                predicate.setCreatedEntityId(obj.getCreatedEntityId());
+                this.predicates.add(predicate);
+
+            }
+        });
+        System.out.println("PREDICATELIST: " + this.predicates);
     }
 
     private void setElementFlowsProcess() {
