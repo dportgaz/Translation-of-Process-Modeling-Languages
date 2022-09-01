@@ -3,18 +3,14 @@ package org.bpmn.bpmn_elements.gateway;
 import com.google.gson.internal.LinkedTreeMap;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.step_one.process.FlowsProcess;
-import org.w3c.dom.Element;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Predicate {
 
     String Id;
-
     String condition;
     Double createdEntityId;
 
@@ -48,7 +44,7 @@ public class Predicate {
         return "Id= " + this.createdEntityId + "Value= " + this.getCondition();
     }
 
-    public static Predicate getPredicate(Double id, ArrayList<AbstractObjectType> objectTypeObjects) {
+    public static Predicate parsePredicate(Double id, ArrayList<AbstractObjectType> objectTypeObjects) {
 
         for (AbstractObjectType obj : objectTypeObjects) {
             //System.out.println("3");
@@ -78,6 +74,19 @@ public class Predicate {
                         predicate.setCondition("[" + att + "]" + " " + expr + " " + innerRight.get("Value"));
                         return predicate;
                     }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static AbstractObjectType getPredicate(Double source, ArrayList<AbstractObjectType> objectTypeObjects) {
+
+        for (AbstractObjectType obj : objectTypeObjects) {
+
+            if (obj != null && obj.getCreatedEntityId() != null && obj.getCreatedEntityId().equals(source)) {
+                if (obj.getMethodName().equals("AddPredicateStepType")) {
+                    return obj;
                 }
             }
         }

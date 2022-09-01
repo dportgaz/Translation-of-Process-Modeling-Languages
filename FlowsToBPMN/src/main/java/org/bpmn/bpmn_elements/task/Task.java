@@ -48,7 +48,7 @@ public class Task {
 
     StartEvent beforeEvent;
 
-    // EndEvent afterEvent;
+    EndEvent afterEvent;
 
     String property;
 
@@ -57,6 +57,8 @@ public class Task {
     ArrayList<Task> stepNamesByTask = new ArrayList<>();
 
     boolean isSubprocess;
+
+    boolean isEndTask = false;
 
     String inputAssociationSource;
 
@@ -104,21 +106,29 @@ public class Task {
         StartEvent startEvent = new StartEvent();
         this.elementTask.appendChild(startEvent.getElementStartEvent());
 
-        for(Step step : steps){
-            this.elementTask.appendChild(step.getElementTask());
-        }
-
-    }
-
-    /*
-    private addStepsToTask() {
         for (Step step : steps) {
             this.elementTask.appendChild(step.getElementTask());
         }
+
     }
 
+    public boolean getIsEndTask() {
+        return this.isEndTask;
+    }
 
-     */
+    public void setIsEndTask() {
+        this.isEndTask = true;
+    }
+
+    /*
+        private addStepsToTask() {
+            for (Step step : steps) {
+                this.elementTask.appendChild(step.getElementTask());
+            }
+        }
+
+
+         */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -211,19 +221,16 @@ public class Task {
         this.before = before;
     }
 
-    /*
+
     public EndEvent getAfterEvent() {
         return afterEvent;
     }
 
-     */
 
-    /*
     public void setAfterEvent(EndEvent afterEvent) {
         this.afterEvent = afterEvent;
     }
 
-     */
 
     public StartEvent getBeforeEvent() {
         return beforeEvent;

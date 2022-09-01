@@ -20,13 +20,10 @@ public class App {
         // fillXMLStepTwo.createBPMN(filePHoodle, "PHoodle_Step2.xml");
 
 
-
-
 /*
         String fileRecruitment = "FlowsToBPMN/src/resources/flows/recruitment.json";
         fillXMLStepOneRenew.createBPMN(fileRecruitment, "Recruitment_RENEW.xml");
 */
-
 
     }
 }
