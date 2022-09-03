@@ -74,12 +74,30 @@ public class FlowsProcess {
         setStartEvent();
         setEndEvent();
         setTasks(objectTypeObjects);
+        setDataObjects(objectTypeObjects);
         addPredicates(objectTypeObjects);
         addSequenceFlows(objectTypeObjects);
         addFlowsToActivities();
         addFlowsToEvents();
         addGateways();
 
+    }
+
+    private void setDataObjects(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+
+        for (Task task : tasks) {
+
+            DataObject dObj = task.getDataObject();
+            dataObjects.add(dObj);
+
+            this.elementFlowsProcess.appendChild(dObj.getElementDataObject());
+
+            Element tempObj = doc.createElement("bpmn:dataObject");
+            tempObj.setAttribute("id", dObj.getId());
+            this.elementFlowsProcess.appendChild(tempObj);
+            this.elementFlowsProcess.appendChild(task.getElementTask());
+
+        }
     }
 
     private void setStartEvent() {
@@ -128,7 +146,6 @@ public class FlowsProcess {
 
         });
 
-        // add task elements and dataobject elements to process
         for (Task task : tasks) {
 
             DataObject dObj = task.getDataObject();
@@ -140,7 +157,6 @@ public class FlowsProcess {
             Element tempObj = doc.createElement("bpmn:dataObject");
             tempObj.setAttribute("id", dObj.getId());
             this.elementFlowsProcess.appendChild(tempObj);
-
             this.elementFlowsProcess.appendChild(task.getElementTask());
 
         }
