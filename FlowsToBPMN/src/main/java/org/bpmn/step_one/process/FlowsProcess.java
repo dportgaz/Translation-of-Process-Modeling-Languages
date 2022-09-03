@@ -13,11 +13,9 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.participant.Participant;
 import org.w3c.dom.Element;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -45,7 +43,7 @@ public class FlowsProcess {
 
     EndEvent endEvent;
 
-    ArrayList<ExclusiveGateway> gateways = new ArrayList<>();
+    HashSet<ExclusiveGateway> gateways = new HashSet<>();
 
     ArrayList<SequenceFlow> flows = new ArrayList<>();
 
@@ -80,6 +78,7 @@ public class FlowsProcess {
         addSequenceFlows(objectTypeObjects);
         addFlowsToActivities();
         addFlowsToEvents();
+        addGateways();
 
     }
 
@@ -231,7 +230,7 @@ public class FlowsProcess {
         addEndEventSequenceFlows();
         addLoop(objects);
         addDecision();
-        combineArtifcats();
+        combine();
 
         int decisionFlowsCnt = 0;
         for (SequenceFlow sequenceFlow : flows) {
@@ -316,7 +315,7 @@ public class FlowsProcess {
         }
     }
 
-    private void removeSequenzeFlow(SequenceFlow sequenceFlow) {
+    private void removeSequenceFlow(SequenceFlow sequenceFlow) {
 
         for (int i = 0; i < flows.size(); i++) {
             SequenceFlow sf = flows.get(i);
@@ -328,7 +327,7 @@ public class FlowsProcess {
 
     }
 
-    private void combineArtifcats() {
+    private void combine() {
 
         HashSet<SequenceFlow> temp = new HashSet<>();
         Pattern pattern = Pattern.compile("Gateway_*");
@@ -399,14 +398,14 @@ public class FlowsProcess {
 
                         //TODO: MAYBE BUGGY
                         flowsTemp.add(flows.get(j));
-                        removeSequenzeFlow(flows.get(j));
+                        removeSequenceFlow(flows.get(j));
                         System.out.println("1006");
                     }
                 }
 
                 if (duplicate) {
                     openDecisionFlows(flowsTemp);
-                    removeSequenzeFlow(flows.get(i));
+                    removeSequenceFlow(flows.get(i));
                     System.out.println("1007");
                 }
 
@@ -598,8 +597,8 @@ public class FlowsProcess {
 
     private void addFlowsToEvents() {
 
-        Element out = null;
-        Element in = null;
+        Element out;
+        Element in;
 
         for (Task task : subprocesses) {
             out = doc.createElement("bpmn:outgoing");
@@ -618,6 +617,25 @@ public class FlowsProcess {
         startEvent.getElementStartEvent().appendChild(out);
         endEvent.getElementEndEvent().appendChild(in);
 
+    }
+
+    public void addGateways() {
+
+        for (ExclusiveGateway gate : gateways) {
+            this.elementFlowsProcess.appendChild(gate.getElementExclusiveGateway());
+            for (SequenceFlow sf : flows) {
+                if (sf.getSourceRef().equals(gate.getId())) {
+                    Element out = doc.createElement("bpmn:outgoing");
+                    out.setTextContent(sf.getId());
+                    gate.getElementExclusiveGateway().appendChild(out);
+                }
+                if (sf.getTargetRef().equals(gate.getId())) {
+                    Element inc = doc.createElement("bpmn:incoming");
+                    inc.setTextContent(sf.getId());
+                    gate.getElementExclusiveGateway().appendChild(inc);
+                }
+            }
+        }
     }
 
     public Element getElementFlowsProcess() {
