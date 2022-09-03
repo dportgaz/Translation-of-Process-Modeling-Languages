@@ -1,5 +1,6 @@
 package org.bpmn.bpmn_elements.event;
 
+import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
@@ -12,6 +13,8 @@ public class EndEvent {
     // SequenceFlow outgoing;
     Element elementEndEvent;
 
+    SequenceFlow incoming;
+
     public EndEvent() {
         this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementEndEvent = doc.createElement("bpmn:endEvent");
@@ -20,6 +23,14 @@ public class EndEvent {
 
     public Element getElementEndEvent() {
         return elementEndEvent;
+    }
+
+    public void setIncoming(SequenceFlow incoming) {
+        this.incoming = incoming;
+    }
+
+    public SequenceFlow getIncoming() {
+        return incoming;
     }
 
     public void setElementEndEvent() {

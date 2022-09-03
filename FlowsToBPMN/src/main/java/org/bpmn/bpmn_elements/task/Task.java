@@ -131,8 +131,11 @@ public class Task {
     private void setSubProcess() {
 
         StartEvent startEvent = new StartEvent();
+        EndEvent endEvent = new EndEvent();
         start = startEvent;
+        end = endEvent;
         this.elementTask.appendChild(startEvent.getElementStartEvent());
+        this.elementTask.appendChild(endEvent.getElementEndEvent());
 
         for (Step step : steps) {
             this.elementTask.appendChild(step.getElementTask());

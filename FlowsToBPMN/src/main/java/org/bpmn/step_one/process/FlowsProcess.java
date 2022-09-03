@@ -53,6 +53,8 @@ public class FlowsProcess {
 
     ArrayList<Predicate> predicates = new ArrayList<>();
 
+    ArrayList<Task> subprocesses = new ArrayList<>();
+
     HashMap<String, SequenceFlow> decisionFlows = new HashMap<>();
 
     HashMap<String, ArrayList<String>> decisionTasks = new HashMap<>();
@@ -77,6 +79,7 @@ public class FlowsProcess {
         addPredicates(objectTypeObjects);
         addSequenceFlows(objectTypeObjects);
         addFlowsToActivities();
+        addFlowsToEvents();
 
     }
 
@@ -100,7 +103,7 @@ public class FlowsProcess {
 
     }
 
-    public void setTasks(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    private void setTasks(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
         objectTypeObjects.get(this.participant.getKey()).forEach(obj -> {
 
@@ -176,12 +179,13 @@ public class FlowsProcess {
         return null;
     }
 
-    public void addSequenceFlows(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    private void addSequenceFlows(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
         SequenceFlow startFlow = new SequenceFlow();
         startFlow.setSourceRef(this.startEvent.getId());
         startFlow.setTargetRef(this.tasks.get(0).getId());
         flows.add(startFlow);
+        startEvent.setOutgoing(startFlow);
 
         ArrayList<AbstractObjectType> objects = objectTypeObjects.get(this.participant.getKey());
         for (AbstractObjectType obj : objects) {
@@ -286,12 +290,14 @@ public class FlowsProcess {
 
         for (Task task : tasks) {
             if (task.getIsSubprocess()) {
+                subprocesses.add(task);
                 ArrayList<Step> steps = task.getSteps();
                 SequenceFlow sfStart = new SequenceFlow();
                 sfStart.setSourceRef(task.getStart().getId());
                 sfStart.setTargetRef(steps.get(0).getId());
                 task.getElementTask().appendChild(sfStart.getElementSequenceFlow());
                 task.getFlows().add(sfStart);
+                task.getStart().setOutgoing(sfStart);
                 for (int i = 0; i < task.getSteps().size() - 1; i++) {
                     SequenceFlow sf = new SequenceFlow();
                     sf.setSourceRef(steps.get(i).getId());
@@ -300,13 +306,12 @@ public class FlowsProcess {
                     task.getFlows().add(sf);
                 }
                 SequenceFlow sfEnd = new SequenceFlow();
-                EndEvent end = new EndEvent();
-                task.setEnd(end);
                 sfEnd.setSourceRef(steps.get(task.getSteps().size() - 1).getId());
-                sfEnd.setTargetRef(end.getId());
-                task.getElementTask().appendChild(end.getElementEndEvent());
+                sfEnd.setTargetRef(task.getEnd().getId());
+                task.getElementTask().appendChild(task.getEnd().getElementEndEvent());
                 task.getElementTask().appendChild(sfEnd.getElementSequenceFlow());
                 task.getFlows().add(sfEnd);
+                task.getEnd().setIncoming(sfEnd);
             }
         }
     }
@@ -516,6 +521,7 @@ public class FlowsProcess {
                 sf.setSourceRef(task.getId());
                 sf.setTargetRef(endEvent.getId());
                 flows.add(sf);
+                endEvent.setIncoming(sf);
             }
         }
 
@@ -548,8 +554,7 @@ public class FlowsProcess {
         }
     }
 
-
-    public void addFlowsToActivities() {
+    private void addFlowsToActivities() {
 
         for (Task task : tasks) {
             Element out = null;
@@ -588,6 +593,30 @@ public class FlowsProcess {
             task.getElementTask().appendChild(out);
             task.getElementTask().appendChild(in);
         }
+
+    }
+
+    private void addFlowsToEvents() {
+
+        Element out = null;
+        Element in = null;
+
+        for (Task task : subprocesses) {
+            out = doc.createElement("bpmn:outgoing");
+            in = doc.createElement("bpmn:incoming");
+            out.setTextContent(task.getStart().getOutgoing().getId());
+            in.setTextContent(task.getEnd().getIncoming().getId());
+            System.out.println(task.getStart().getElementStartEvent() + "_A_A_A_");
+            task.getStart().getElementStartEvent().appendChild(out);
+            task.getEnd().getElementEndEvent().appendChild(in);
+        }
+
+        out = doc.createElement("bpmn:outgoing");
+        in = doc.createElement("bpmn:incoming");
+        out.setTextContent(startEvent.getOutgoing().getId());
+        in.setTextContent(endEvent.getIncoming().getId());
+        startEvent.getElementStartEvent().appendChild(out);
+        endEvent.getElementEndEvent().appendChild(in);
 
     }
 

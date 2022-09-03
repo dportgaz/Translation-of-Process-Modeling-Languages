@@ -1,5 +1,6 @@
 package org.bpmn.bpmn_elements.event;
 
+import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -13,6 +14,8 @@ public class StartEvent {
     // SequenceFlow outgoing;
     Element elementStartEvent;
 
+    SequenceFlow outgoing;
+
     public StartEvent() {
         this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementStartEvent = doc.createElement("bpmn:startEvent");
@@ -25,6 +28,14 @@ public class StartEvent {
 
     public void setElementStartEvent() {
         this.elementStartEvent.setAttribute("id", this.id);
+    }
+
+    public void setOutgoing(SequenceFlow outgoing) {
+        this.outgoing = outgoing;
+    }
+
+    public SequenceFlow getOutgoing() {
+        return outgoing;
     }
 
     public String getId() {
