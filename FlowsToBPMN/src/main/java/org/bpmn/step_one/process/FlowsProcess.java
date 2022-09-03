@@ -6,12 +6,14 @@ import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
+import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.participant.Participant;
 import org.w3c.dom.Element;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -206,22 +208,14 @@ public class FlowsProcess {
                         flows.add(sf);
                     }
                 }
-
-
             }
         }
 
-        System.out.println("12");
         addEndEvent();
-        System.out.println("22");
         addEndEventSequenceFlows();
-        System.out.println("32");
         addLoop(objects);
-        System.out.println("42");
         addDecision();
-        System.out.println("52");
         combineArtifcats();
-        System.out.println("62");
 
         int decisionFlowsCnt = 0;
         for (SequenceFlow sequenceFlow : flows) {
@@ -232,17 +226,13 @@ public class FlowsProcess {
             flow.setAttribute("targetRef", sequenceFlow.getTargetRef());
 
             if (decisionFlows.containsKey(sequenceFlow.getId()) && predicates.size() > 0) {
-                //System.out.println("://////////////// : " + fp.getPredicateList());
                 // TODO: MAYBE BUGGY BECAUSE CHANGED TO LIST FROM SET
                 sequenceFlow.setName(predicates.get(decisionFlowsCnt).getCondition());
                 decisionFlowsCnt++;
                 flow.setAttribute("name", sequenceFlow.getName());
             }
             this.elementFlowsProcess.appendChild(flow);
-            System.out.println("1");
         }
-        System.out.println("2");
-        // System.out.println(fp.getTaskList());
 
         for (int k = 0; k < tasks.size(); k++) {
 
@@ -251,11 +241,9 @@ public class FlowsProcess {
             if (k == 0) {
                 task.setBeforeEvent(startEvent);
                 task.setAfter(tasks.get(k + 1));
-                //System.out.println("1: " + task.getBeforeEvent() + " --> " + task + " --> " + task.getAfter());
             } else if (k == tasks.size() - 1) {
                 task.setAfterEvent(endEvent);
                 task.setBefore(tasks.get(k - 1));
-                //System.out.println("2: " + task.getBefore() + " --> " + task + " --> " + task.getAfterEvent());
             } else {
                 if (decisionTasks.containsKey(task.getId())) {
                     task.setBefore(tasks.get(k - 1));
@@ -268,11 +256,9 @@ public class FlowsProcess {
                                 tempTask.setBefore(task);
                                 if (indexAfter < tasks.size()) {
                                     tempTask.setAfter(tasks.get(indexAfter));
-                                    //System.out.println("4: " + tempTask.getBefore() + " --> " + tempTask + " --> " + tempTask.getAfter());
 
                                 } else {
                                     tempTask.setAfterEvent(endEvent);
-                                    //System.out.println("4: " + tempTask.getBefore() + " --> " + tempTask + " --> " + tempTask.getAfterEvent());
                                 }
                             }
                         }
@@ -281,14 +267,39 @@ public class FlowsProcess {
                 } else {
                     task.setBefore(tasks.get(k - 1));
                     task.setAfter(tasks.get(k + 1));
-                    //System.out.println("3: " + task.getBefore() + " --> " + task + " --> " + task.getAfter());
                 }
             }
         }
 
+
+        for (Task task : tasks) {
+            if (task.getIsSubprocess()) {
+                ArrayList<Step> steps = task.getSteps();
+                SequenceFlow sfStart = new SequenceFlow();
+                sfStart.setSourceRef(task.getStart().getId());
+                sfStart.setTargetRef(steps.get(0).getId());
+                task.getElementTask().appendChild(sfStart.getElementSequenceFlow());
+                task.getFlows().add(sfStart);
+                for (int i = 0; i < task.getSteps().size()-1; i++) {
+                    SequenceFlow sf = new SequenceFlow();
+                    sf.setSourceRef(steps.get(i).getId());
+                    sf.setTargetRef(steps.get(i+1).getId());
+                    task.getElementTask().appendChild(sf.getElementSequenceFlow());
+                    task.getFlows().add(sf);
+                }
+                SequenceFlow sfEnd = new SequenceFlow();
+                EndEvent end = new EndEvent();
+                task.setEnd(end);
+                sfEnd.setSourceRef(steps.get(task.getSteps().size()-1).getId());
+                sfEnd.setTargetRef(end.getId());
+                task.getElementTask().appendChild(end.getElementEndEvent());
+                task.getElementTask().appendChild(sfEnd.getElementSequenceFlow());
+                task.getFlows().add(sfEnd);
+            }
+        }
     }
 
-    public void removeSequenzeFlow(SequenceFlow sequenceFlow) {
+    private void removeSequenzeFlow(SequenceFlow sequenceFlow) {
 
         for (int i = 0; i < flows.size(); i++) {
             SequenceFlow sf = flows.get(i);
@@ -300,7 +311,7 @@ public class FlowsProcess {
 
     }
 
-    public void combineArtifcats() {
+    private void combineArtifcats() {
 
         HashSet<SequenceFlow> temp = new HashSet<>();
         Pattern pattern = Pattern.compile("Gateway_*");
@@ -342,7 +353,7 @@ public class FlowsProcess {
         }
     }
 
-    public void addDecision() {
+    private void addDecision() {
 
         Pattern pattern = Pattern.compile("Activity_*");
 
@@ -388,7 +399,7 @@ public class FlowsProcess {
 
     }
 
-    public void openDecisionFlows(ArrayList<SequenceFlow> flowsTemp) {
+    private void openDecisionFlows(ArrayList<SequenceFlow> flowsTemp) {
 
         ExclusiveGateway gate = new ExclusiveGateway();
         gateways.add(gate);
@@ -418,7 +429,7 @@ public class FlowsProcess {
 
     }
 
-    public void addLoop(ArrayList<AbstractObjectType> objects) {
+    private void addLoop(ArrayList<AbstractObjectType> objects) {
 
         // gateways in case of loop
         objects.forEach(obj -> {
@@ -468,7 +479,7 @@ public class FlowsProcess {
 
     }
 
-    public void addEndEvent() {
+    private void addEndEvent() {
         for (Task task : tasks) {
             boolean temp = false;
             for (SequenceFlow sf : flows) {
@@ -482,7 +493,7 @@ public class FlowsProcess {
         }
     }
 
-    public void addEndEventSequenceFlows() {
+    private void addEndEventSequenceFlows() {
 
         EndEvent endEventTemp = new EndEvent();
         endEvent = endEventTemp;
@@ -501,7 +512,7 @@ public class FlowsProcess {
 
     }
 
-    public boolean containsFlow(SequenceFlow flow) {
+    private boolean containsFlow(SequenceFlow flow) {
         for (SequenceFlow sf : this.flows) {
             if (sf.getSourceRef().equals(flow.getSourceRef()) && sf.getTargetRef().equals(flow.getTargetRef())) {
                 return true;
@@ -510,7 +521,7 @@ public class FlowsProcess {
         return false;
     }
 
-    public void removeFlowFromList(SequenceFlow flow) {
+    private void removeFlowFromList(SequenceFlow flow) {
         for (int i = 0; i < flows.size(); i++) {
             if (flows.get(i).getSourceRef().equals(flow.getSourceRef()) && flows.get(i).getTargetRef().equals(flow.getTargetRef())) {
                 flows.remove(i);
@@ -527,6 +538,142 @@ public class FlowsProcess {
             this.elementFlowsProcess.setAttribute("isExecutable", this.isExecutable);
         }
     }
+
+    /*
+    public void addFlowsToActivities(ConcreteObjectType objectMap, String key, int i, FlowsProcess fp, Document doc, Element process) throws FileNotFoundException {
+
+
+        for (Task task : tasks) {
+
+            for (SequenceFlow sf : flows) {
+
+                if (task.getId().equals(sf.getSourceRef())) {
+                    task.setOutgoing(sf);
+                }
+
+                if (task.getId().equals(sf.getTargetRef())) {
+                    task.setIncoming(sf);
+                }
+
+            }
+
+        }
+
+        for (Task task : tasks) {
+
+            ArrayList<SequenceFlow> flowsTemp = new ArrayList<>();
+
+            SequenceFlow sfStart = new SequenceFlow();
+            flowsTemp.add(sfStart);
+
+            sfStart.setSourceRef(startEvent.getId());
+            sfStart.setTargetRef((task.getStepNames().get(0).getId()));
+
+            Element startFlow = doc.createElement("bpmn:outgoing");
+            startFlow.setTextContent(sfStart.getId());
+            start.appendChild(startFlow);
+
+            Element firstStepFlow = doc.createElement("bpmn:incoming");
+            firstStepFlow.setTextContent(sfStart.getId());
+            stepElements.get(0).appendChild(firstStepFlow);
+
+            for (int k = 0; k < task.getStepNames().size() - 1; k++) {
+
+                SequenceFlow sf = new SequenceFlow();
+
+                flowsTemp.add(sf);
+
+                Element tempStepFlowInc = doc.createElement("bpmn:incoming");
+                tempStepFlowInc.setTextContent(sf.getId());
+                stepElements.get(k + 1).appendChild(tempStepFlowInc);
+
+                Element tempStepFlowOut = doc.createElement("bpmn:outgoing");
+                tempStepFlowOut.setTextContent(sf.getId());
+                stepElements.get(k).appendChild(tempStepFlowOut);
+
+                sf.setSourceRef(task.getStepNames().get(k).getId());
+                sf.setTargetRef(task.getStepNames().get(k + 1).getId());
+            }
+
+            SequenceFlow sfEnd = new SequenceFlow();
+            flowsTemp.add(sfEnd);
+
+            sfEnd.setSourceRef((task.getStepNames().get(task.getStepNames().size() - 1).getId()));
+            sfEnd.setTargetRef(endEvent.getId());
+
+            Element endFlow = doc.createElement("bpmn:outgoing");
+            endFlow.setTextContent(sfEnd.getId());
+            stepElements.get(stepElements.size() - 1).appendChild(endFlow);
+
+            Element lastStepFlow = doc.createElement("bpmn:incoming");
+            lastStepFlow.setTextContent(sfEnd.getId());
+            end.appendChild(lastStepFlow);
+
+            for (SequenceFlow sf : flowsTemp) {
+                Element flow = doc.createElement("bpmn:sequenceFlow");
+                flow.setAttribute("id", sf.getId());
+                flow.setAttribute("sourceRef", sf.getSourceRef());
+                flow.setAttribute("targetRef", sf.getTargetRef());
+                activity.appendChild(flow);
+            }
+
+            activity.appendChild(start);
+            activity.appendChild(end);
+            for (Element e : stepElements) {
+                activity.appendChild(e);
+            }
+            process.appendChild(activity);
+
+        }
+
+        // add flows
+        Element inc = doc.createElement("bpmn:incoming");
+        Element out = doc.createElement("bpmn:outgoing");
+        inc.setTextContent(task.getIncoming().getId());
+        out.setTextContent(task.getOutgoing().getId());
+
+        activity.appendChild(inc);
+        activity.appendChild(out);
+
+        // add property
+            /*
+            Element prop = doc.createElement("bpmn:property");
+            prop.setAttribute("id", task.getProperty());
+            prop.setAttribute("name", "__targetRef_placeholder");
+            activity.appendChild(prop);
+             */
+
+    // add data input association
+
+    /*
+        if (task.getDataInputAssociation() != null) {
+            //System.out.println(task + " ___ " + task.getDataInputAssociation());
+            Element dataObjectRef = doc.createElement("bpmn:dataInputAssociation");
+            dataObjectRef.setAttribute("id", task.getDataInputAssociation());
+            Element source = doc.createElement("bpmn:sourceRef");
+            Element target = doc.createElement("bpmn:targetRef");
+            //target.setTextContent(task.getProperty());
+            task.setInputAssociationSource(task.getBefore().getDataObject().getRefId());
+            source.setTextContent(task.getInputAssociationSource());
+            dataObjectRef.appendChild(source);
+            dataObjectRef.appendChild(target);
+            activity.appendChild(dataObjectRef);
+        }
+
+        // add data output association
+        Element dataObjectRef2 = doc.createElement("bpmn:dataOutputAssociation");
+        dataObjectRef2.setAttribute("id", task.getDataOutputAssociation());
+        Element target = doc.createElement("bpmn:targetRef");
+        target.setTextContent(task.getDataObject().getRefId());
+        dataObjectRef2.appendChild(target);
+        activity.appendChild(dataObjectRef2);
+
+    }
+
+}
+
+     */
+
 
     public Element getElementFlowsProcess() {
         return this.elementFlowsProcess;

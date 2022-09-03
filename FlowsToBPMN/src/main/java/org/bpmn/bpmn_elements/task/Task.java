@@ -6,6 +6,7 @@ import org.bpmn.bpmn_elements.association.DataOutputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
+import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.participant.Participant;
@@ -30,9 +31,9 @@ public class Task {
 
     Participant participant;
 
-    // SequenceFlow incoming;
+    SequenceFlow incoming;
 
-    // SequenceFlow outgoing;
+    SequenceFlow outgoing;
 
     DataInputAssociation dataInputAssociation;
 
@@ -52,7 +53,7 @@ public class Task {
 
     String property;
 
-    private HashSet<Step> steps = new HashSet<>();
+    private ArrayList<Step> steps = new ArrayList<>();
 
     ArrayList<Task> stepNamesByTask = new ArrayList<>();
 
@@ -67,6 +68,12 @@ public class Task {
     Element elementDataOutputAssociation;
 
     Element elementDataInputAssociation;
+
+    StartEvent start;
+
+    EndEvent end;
+
+    ArrayList<SequenceFlow> flows = new ArrayList<>();
 
     public Task(Double createdEntityId, String name, Participant participant) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -101,9 +108,30 @@ public class Task {
         this.elementTask.setAttribute("name", this.name);
     }
 
+    public void setStart(StartEvent start) {
+        this.start = start;
+    }
+
+    public StartEvent getStart() {
+        return start;
+    }
+
+    public void setEnd(EndEvent end) {
+        this.end = end;
+    }
+
+    public EndEvent getEnd() {
+        return end;
+    }
+
+    public ArrayList<SequenceFlow> getFlows() {
+        return flows;
+    }
+
     private void setSubProcess() {
 
         StartEvent startEvent = new StartEvent();
+        start = startEvent;
         this.elementTask.appendChild(startEvent.getElementStartEvent());
 
         for (Step step : steps) {
@@ -185,7 +213,7 @@ public class Task {
 
     private ArrayList<String> stepNamesByName = new ArrayList<>();
 
-    public HashSet<Step> getSteps() {
+    public ArrayList<Step> getSteps() {
         return steps;
     }
 
@@ -270,7 +298,6 @@ public class Task {
         this.name = name;
     }
 
-    /*
     public void setIncoming(SequenceFlow incoming) {
         this.incoming = incoming;
     }
@@ -278,7 +305,6 @@ public class Task {
     public void setOutgoing(SequenceFlow outcoming) {
         this.outgoing = outcoming;
     }
-     */
 
     public void setCreatedEntityId(Double createdEntityId) {
         this.createdEntityId = createdEntityId;
@@ -312,7 +338,7 @@ public class Task {
         return this.name;
     }
 
-    public HashSet<Step> setSteps(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public ArrayList<Step> setSteps(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
         String participantKey = this.participant.getKey();
         objectTypeObjects.get(participantKey).forEach(obj -> {
