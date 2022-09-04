@@ -27,9 +27,7 @@ public class DataOutputAssociation {
         this.elementDataOutputAssociation = doc.createElement("bpmn:dataOutputAssociation");
         this.elementDataOutputAssociation.setAttribute("id", this.id);
 
-        this.elementTarget = doc.createElement("bpmn:targetRef");
-        this.elementTarget.setTextContent("TBD");
-        this.elementDataOutputAssociation.appendChild(elementTarget);
+
 
     }
 

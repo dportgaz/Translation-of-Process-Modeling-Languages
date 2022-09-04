@@ -13,6 +13,7 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.participant.Participant;
 import org.w3c.dom.Element;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -77,9 +78,30 @@ public class FlowsProcess {
         setDataObjects(objectTypeObjects);
         addPredicates(objectTypeObjects);
         addSequenceFlows(objectTypeObjects);
+
+        for (Task task : tasks) {
+            System.out.println(task + " Before: " + task.getBefore() + " InputAssociation: " + task.getDataInputAssociation());
+        }
+
+        setAssociations();
         addFlowsToActivities();
         addFlowsToEvents();
         addGateways();
+
+    }
+
+    private void setAssociations() {
+
+        for (Task task : tasks) {
+            // add data input association
+            if (task.getDataInputAssociation() != null) {
+                System.out.println("TASK: " + task);
+                task.setInputAssociationSource(task.getBefore().getDataObject().getRefId());
+            }
+
+            // add data output association
+            task.setOutputAssociationTarget(task.getDataObject().getRefId());
+        }
 
     }
 
@@ -122,7 +144,9 @@ public class FlowsProcess {
 
     private void setTasks(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
-        objectTypeObjects.get(this.participant.getKey()).forEach(obj -> {
+        ArrayList<AbstractObjectType> objects = objectTypeObjects.get(this.participant.getKey());
+        boolean firstTask = true;
+        for (AbstractObjectType obj : objects) {
 
             if (obj != null && obj.getMethodName().equals("UpdateStateType")) {
 
@@ -132,19 +156,24 @@ public class FlowsProcess {
 
                 Task task = new Task(createdEntityId, taskName, participant, objectTypeObjects);
 
-                if (this.tasks.size() > 0) {
+                // fixes double entry json bug
+                if (this.tasks.contains(task)) {
+                    tasks.remove(task);
+                    if (tasks.size() == 0) {
+                        firstTask = true;
+                    }
+                }
+                if (!firstTask) {
                     task.setDataInputAssociation();
                 }
                 task.setDataOutputAssociation();
-                if (this.tasks.contains(task)) {
-                    tasks.remove(task);
-                }
                 tasks.add(task);
+                firstTask = false;
                 // allTasks.add(task);
 
             }
 
-        });
+        }
 
         for (Task task : tasks) {
 
@@ -668,5 +697,17 @@ public class FlowsProcess {
 
     public String getId() {
         return this.id;
+    }
+
+    public EndEvent getEndEvent() {
+        return endEvent;
+    }
+
+    public StartEvent getStartEvent() {
+        return startEvent;
+    }
+
+    public ArrayList<SequenceFlow> getFlows() {
+        return flows;
     }
 }

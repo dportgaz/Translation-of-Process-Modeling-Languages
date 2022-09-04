@@ -63,6 +63,8 @@ public class Task {
 
     String inputAssociationSource;
 
+    String outputAssociationTarget;
+
     Element elementTask;
 
     Element elementDataOutputAssociation;
@@ -188,6 +190,16 @@ public class Task {
 
     public void setInputAssociationSource(String inputAssoSource) {
         this.inputAssociationSource = inputAssoSource;
+        Element source = doc.createElement("bpmn:sourceRef");
+        source.setTextContent(inputAssociationSource);
+        this.dataInputAssociation.getElementDataInputAssociation().appendChild(source);
+    }
+
+    public void setOutputAssociationTarget(String outputAssoTarget) {
+        this.outputAssociationTarget = outputAssoTarget;
+        Element target = doc.createElement("bpmn:targetRef");
+        target.setTextContent(outputAssociationTarget);
+        this.dataOutputAssociation.getElementDataOutputAssociation().appendChild(target);
     }
 
     public String getInputAssociationSource() {

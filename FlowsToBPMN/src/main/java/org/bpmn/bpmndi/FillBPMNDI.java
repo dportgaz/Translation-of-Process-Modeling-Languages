@@ -4,6 +4,9 @@ import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
+import org.bpmn.step_one.collaboration.Collaboration;
+import org.bpmn.step_one.collaboration.participant.Participant;
+import org.bpmn.step_one.process.FlowsProcess;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -12,6 +15,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.bpmn.step_one.collaboration.Collaboration.participants;
 
 public class FillBPMNDI {
 
@@ -64,7 +69,7 @@ public class FillBPMNDI {
 
     ArrayList<Shape> shapes = new ArrayList<>();
 
-    public void f(Document doc, Element rootElement, double x, double y, String e, String pId, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous) {
+    public void f(Document doc, Element rootElement, double x, double y, String e, FlowsProcess fp, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous) {
 
         ArrayList<String> list = new ArrayList<>();
 
@@ -156,14 +161,15 @@ public class FillBPMNDI {
         int cntElements = list.size();
         if (cntElements > 1) {
             for (int t = cntElements - 1; t >= 0; t--) {
-                f(doc, rootElement, x, y, list.get(t), pId, tasks, flows, e);
+                f(doc, rootElement, x, y, list.get(t), fp, tasks, flows, e);
                 y -= 100;
             }
         } else if (cntElements == 1) {
-            f(doc, rootElement, x, y, list.get(0), pId, tasks, flows, e);
+            f(doc, rootElement, x, y, list.get(0), fp, tasks, flows, e);
         } else if (!printMark.contains(e)) {
             //double tempX = x - flowsLength;
-            String end = getProcessMap().get(pId).getEndEvent().getId();
+            //TODO: MAYBE BUGGY
+            String end = fp.getEndEvent().getId();
             printMark.add(end);
             //System.out.println("x=" + x + " y=" + y + " " + end);
 
@@ -185,17 +191,17 @@ public class FillBPMNDI {
     }
 
 
-    public void parseFlows(Document doc, Element rootElement, String processId, double x, double y) {
+    public void parseFlows(Document doc, Element rootElement, FlowsProcess fp, double x, double y) {
 
         //bring elements of pool in order according to flows
 
-        String start = getProcessMap().get(processId).getStartEvent().getId();
-        ArrayList<SequenceFlow> flows = getProcessMap().get(processId).getSequenceFlowList();
-        ArrayList<Task> tasks = getProcessMap().get(processId).getTaskList();
+        String start = fp.getStartEvent().getId();
+        ArrayList<SequenceFlow> flows = fp.getFlows();
+        ArrayList<Task> tasks = fp.getTasks();
         printMark.clear();
         targetMark.clear();
 
-        f(doc, rootElement, x, y, start, processId, tasks, flows, null);
+        f(doc, rootElement, x, y, start, fp, tasks, flows, null);
         addFlowsEdge(doc, rootElement, flows);
         addDataObjects(doc, rootElement, tasks);
         //System.out.println(shapes);
@@ -204,7 +210,7 @@ public class FillBPMNDI {
 
     }
 
-    public void fillBPMNDI(Document doc, String bpmndiagramID, Element rootElement) {
+    public void fillBPMNDI(Document doc, String bpmndiagramID, Element rootElement, Collaboration collaboration) {
 
         Element bpmndiagram = doc.createElement("bpmndi:BPMNDiagram");
         bpmndiagram.setAttribute("id", bpmndiagramID);
@@ -212,12 +218,12 @@ public class FillBPMNDI {
 
         Element bpmnlane = doc.createElement("bpmndi:BPMNPlane");
         bpmnlane.setAttribute("id", "BPMNlane_" + RandomIdGenerator.generateRandomUniqueId(6));
-        bpmnlane.setAttribute("bpmnElement", getCollaborationID());
+        bpmnlane.setAttribute("bpmnElement", collaboration.getId());
         bpmndiagram.appendChild(bpmnlane);
 
         double participantStartY = 100.0;
         double startEventY = participantHeight / 2 - 20 + participantStartY;
-        for (FlowsParticipant participant : FillFlowsParticipant.getParticipants()) {
+        for (Participant participant : participants) {
 
             // add pools
             addParticipantsShape(doc, bpmnlane, participant, participantStartY);
@@ -234,10 +240,10 @@ public class FillBPMNDI {
 
     }
 
-    public void addParticipantsShape(Document doc, Element rootElement, FlowsParticipant p, double participantY) {
+    public void addParticipantsShape(Document doc, Element rootElement, Participant p, double participantY) {
 
         Bounds bounds = new Bounds(doc, this.participantX, participantY, this.participantWidth, this.participantHeight);
-        BPMNShape shape = new BPMNShape(doc, p.getParticipantID(), "true", bounds);
+        Shape shape = new Shape(doc, p.getId(), "true", bounds);
         shape.setShapeParticipantIH();
         shape.setBounds();
         poolHeight = shape.getBounds().getY();
@@ -348,6 +354,7 @@ public class FillBPMNDI {
 
                 if (task.getDataInputAssociation() != null) {
 
+                    System.out.println("WTF: " + task.getDataInputAssociation().getId());
                     DataObject dataObjectIn = findDataObjectById(tasks, task.getInputAssociationSource());
                     String dataObjectInX = dataObjectIn.getX();
                     String dataObjectInY = dataObjectIn.getY();

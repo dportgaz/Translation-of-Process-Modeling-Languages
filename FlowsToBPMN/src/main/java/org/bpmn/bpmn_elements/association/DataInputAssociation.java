@@ -27,9 +27,7 @@ public class DataInputAssociation {
         this.elementDataInputAssociation = doc.createElement("bpmn:dataInputAssociation");
         this.elementDataInputAssociation.setAttribute("id", this.id);
 
-        this.elementSource = doc.createElement("bpmn:sourceRef");
-        this.elementSource.setTextContent("TBD");
-        this.elementDataInputAssociation.appendChild(elementSource);
+
 
     }
 
