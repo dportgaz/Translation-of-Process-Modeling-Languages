@@ -1,4 +1,4 @@
-package org.bpmn.step_one.fillxml;
+package org.bpmn.fillxml;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,70 +15,50 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.bpmn.bpmn_elements.task.Task;
-import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.flowsObjects.ConcreteObjectType;
-import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.step_one.collaboration.Collaboration;
+import org.bpmn.step_one.StepOne;
 
-import org.bpmn.step_one.collaboration.participant.Participant;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import static org.bpmn.step_one.collaboration.Collaboration.participants;
-
-public class fillXMLStepOneRenew {
+public class ExecSteps {
 
     public static Document doc;
 
-    static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
-
-    public static void createBPMN(String jsonFlowsPath, String filename)
+    public static void createBPMN(String jsonFlowsPath, String file)
             throws ParserConfigurationException, FileNotFoundException, TransformerException {
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 
         doc = docBuilder.newDocument();
-        Element definitionsElement = doc.createElement("bpmn:definitions");
-        doc.appendChild(definitionsElement);
-        setHeader(definitionsElement);
+        Element definitionsElement1 = doc.createElement("bpmn:definitions");
+        doc.appendChild(definitionsElement1);
+        setHeader(definitionsElement1);
 
         ConcreteObjectType objects = new ConcreteObjectType(jsonFlowsPath);
         HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects = objects.getObjectTypeObjects();
+        HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects = objects.getUserTypeObjects();
 
-        Collaboration collaboration = new Collaboration();
-        collaboration.setParticipants(objectTypeObjects);
-        Element collaborationElement = collaboration.getElementCollaboration();
+        String fileTempOne = "PHOODLE_STEP_ONE_RENEW";
+        StepOne s1 = new StepOne(fileTempOne, definitionsElement1, objectTypeObjects);
+        s1.execute();
 
-        definitionsElement.appendChild(collaborationElement);
-        setProcesses(definitionsElement);
+        // ____________________________________________________________________________________________________________
 
-        for (Participant participant : participants) {
+        doc = docBuilder.newDocument();
+        Element definitionsElement2 = doc.createElement("bpmn:definitions");
+        doc.appendChild(definitionsElement2);
+        setHeader(definitionsElement2);
 
-            System.out.print(participant.getName() + ": ");
-            System.out.println(participant.getProcessRef().getTasks()
-                    + " \n\tdObj's: " + participant.getProcessRef().getDataObjects());
-            for (Task task : participant.getProcessRef().getTasks()) {
-                System.out.println("\tSteps: " + task.getSteps());
-            }
+        /*
 
-        }
+        String fileTempTwo = "PHOODLE_STEP_Two_RENEW";
+        StepTwo s2 = new StepTwo();
+        s2.executeStepTwo(participants);
 
-        FillBPMNDI di = new FillBPMNDI();
-        di.fillBPMNDI(doc, bpmnDiagramID, definitionsElement, collaboration);
-        createXml(doc, filename);
-    }
-
-    private static void setProcesses(Element definitionsElement) {
-
-        for (Participant participant : participants) {
-
-            definitionsElement.appendChild(participant.getProcessRef().getElementFlowsProcess());
-
-        }
-
+         */
     }
 
     private static void setHeader(Element rootElement) {
@@ -92,13 +72,13 @@ public class fillXMLStepOneRenew {
         rootElement.setAttribute("camunda:diagramRelationId", "e9a61ae0-03e0-4936-9fa3-9d47de87bcfa");
     }
 
-    private static void createXml(Document doc, String filename) throws TransformerException {
+    public static void createXml(Document doc, String file) throws TransformerException {
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         DOMSource domSource = new DOMSource(doc);
-        StreamResult streamResult = new StreamResult(new File("FlowsToBPMN/src/resources/bpmn/" + filename));
+        StreamResult streamResult = new StreamResult(new File("FlowsToBPMN/src/resources/bpmn/" + file));
         transformer.transform(domSource, streamResult);
 
     }

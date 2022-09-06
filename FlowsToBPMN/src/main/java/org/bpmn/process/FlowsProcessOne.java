@@ -1,4 +1,4 @@
-package org.bpmn.step_one.process;
+package org.bpmn.process;
 
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
@@ -9,11 +9,11 @@ import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flowsObjects.AbstractObjectType;
+import org.bpmn.parse_json.Parse;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.step_one.collaboration.participant.Participant;
+import org.bpmn.step_one.collaboration.participant.ParticipantObject;
 import org.w3c.dom.Element;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 import static org.bpmn.bpmn_elements.flows.SequenceFlow.*;
 import static org.bpmn.bpmn_elements.gateway.Predicate.getPredicate;
 import static org.bpmn.bpmn_elements.gateway.Predicate.parsePredicate;
-import static org.bpmn.step_one.fillxml.fillXMLStepOneRenew.doc;
+import static org.bpmn.fillxml.ExecSteps.doc;
 
-public class FlowsProcess {
+public class FlowsProcessOne {
 
     static int countProcess = 0;
 
@@ -36,7 +36,7 @@ public class FlowsProcess {
 
     Element elementFlowsProcess;
 
-    Participant participant;
+    ParticipantObject participant;
     StartEvent startEvent;
 
     // ArrayList, da Reihenfolge der Tasks gewahrt werden soll
@@ -59,7 +59,7 @@ public class FlowsProcess {
     HashMap<String, ArrayList<String>> decisionTasks = new HashMap<>();
 
 
-    public FlowsProcess(Participant participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public FlowsProcessOne(ParticipantObject participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
         this.id = "Process_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementFlowsProcess = doc.createElement("bpmn:process");
@@ -72,17 +72,18 @@ public class FlowsProcess {
 
     private void setFlowsProcess(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
+        Parse parse = new Parse();
+
+        this.tasks = parse.parseTasks(this.participant, objectTypeObjects);
+        this.predicates = parse.parsePredicates(this.participant, objectTypeObjects);
+
         setStartEvent();
         setEndEvent();
-        setTasks(objectTypeObjects);
+        setTasks();
         setDataObjects(objectTypeObjects);
         addPredicates(objectTypeObjects);
+
         addSequenceFlows(objectTypeObjects);
-
-        for (Task task : tasks) {
-            System.out.println(task + " Before: " + task.getBefore() + " InputAssociation: " + task.getDataInputAssociation());
-        }
-
         setAssociations();
         addFlowsToActivities();
         addFlowsToEvents();
@@ -95,7 +96,6 @@ public class FlowsProcess {
         for (Task task : tasks) {
             // add data input association
             if (task.getDataInputAssociation() != null) {
-                System.out.println("TASK: " + task);
                 task.setInputAssociationSource(task.getBefore().getDataObject().getRefId());
             }
 
@@ -142,38 +142,7 @@ public class FlowsProcess {
 
     }
 
-    private void setTasks(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
-
-        ArrayList<AbstractObjectType> objects = objectTypeObjects.get(this.participant.getKey());
-        boolean firstTask = true;
-        for (AbstractObjectType obj : objects) {
-
-            if (obj != null && obj.getMethodName().equals("UpdateStateType")) {
-
-                String taskName = obj.getParameters().get(1) + " " + this.participant.getName();
-                Double createdEntityId = (Double) obj.getParameters().get(0);
-                Participant participant = this.participant;
-
-                Task task = new Task(createdEntityId, taskName, participant, objectTypeObjects);
-
-                // fixes double entry json bug
-                if (this.tasks.contains(task)) {
-                    tasks.remove(task);
-                    if (tasks.size() == 0) {
-                        firstTask = true;
-                    }
-                }
-                if (!firstTask) {
-                    task.setDataInputAssociation();
-                }
-                task.setDataOutputAssociation();
-                tasks.add(task);
-                firstTask = false;
-                // allTasks.add(task);
-
-            }
-
-        }
+    private void setTasks() {
 
         for (Task task : tasks) {
 

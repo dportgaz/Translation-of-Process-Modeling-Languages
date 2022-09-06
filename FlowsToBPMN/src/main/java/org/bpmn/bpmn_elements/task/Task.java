@@ -9,17 +9,15 @@ import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.step_one.collaboration.participant.Participant;
-import org.bpmn.step_one.process.Subprocess;
+import org.bpmn.step_one.collaboration.participant.ParticipantObject;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.step_one.fillxml.fillXMLStepOneRenew.doc;
+import static org.bpmn.fillxml.ExecSteps.doc;
 
 public class Task {
 
@@ -29,7 +27,7 @@ public class Task {
 
     Double createdEntityId;
 
-    Participant participant;
+    ParticipantObject participant;
 
     SequenceFlow incoming;
 
@@ -77,7 +75,7 @@ public class Task {
 
     ArrayList<SequenceFlow> flows = new ArrayList<>();
 
-    public Task(Double createdEntityId, String name, Participant participant) {
+    public Task(Double createdEntityId, String name, ParticipantObject participant) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
         this.name = "Provide " + name;
@@ -87,7 +85,7 @@ public class Task {
         this.elementTask.setAttribute("name", this.name);
     }
 
-    public Task(Double createdEntityId, String name, Participant participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public Task(Double createdEntityId, String name, ParticipantObject participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
         this.name = name;
@@ -206,11 +204,11 @@ public class Task {
         return inputAssociationSource;
     }
 
-    public void setParticipant(Participant participant) {
+    public void setParticipant(ParticipantObject participant) {
         this.participant = participant;
     }
 
-    public Participant getParticipant() {
+    public ParticipantObject getParticipant() {
         return participant;
     }
 

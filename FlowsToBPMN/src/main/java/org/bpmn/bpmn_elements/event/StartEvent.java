@@ -2,10 +2,9 @@ package org.bpmn.bpmn_elements.event;
 
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import static org.bpmn.step_one.fillxml.fillXMLStepOneRenew.doc;
+import static org.bpmn.fillxml.ExecSteps.doc;
 
 public class StartEvent {
 

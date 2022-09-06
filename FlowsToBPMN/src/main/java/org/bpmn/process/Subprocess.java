@@ -1,9 +1,8 @@
-package org.bpmn.step_one.process;
+package org.bpmn.process;
 
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.task.Step;
-import org.bpmn.bpmn_elements.task.Task;
 
 import javax.swing.text.Element;
 import java.util.HashSet;

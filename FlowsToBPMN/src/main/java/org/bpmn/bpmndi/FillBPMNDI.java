@@ -5,8 +5,8 @@ import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.Collaboration;
-import org.bpmn.step_one.collaboration.participant.Participant;
-import org.bpmn.step_one.process.FlowsProcess;
+import org.bpmn.step_one.collaboration.participant.ParticipantObject;
+import org.bpmn.process.FlowsProcessOne;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -69,7 +69,7 @@ public class FillBPMNDI {
 
     ArrayList<Shape> shapes = new ArrayList<>();
 
-    public void f(Document doc, Element rootElement, double x, double y, String e, FlowsProcess fp, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous) {
+    public void f(Document doc, Element rootElement, double x, double y, String e, FlowsProcessOne fp, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous) {
 
         ArrayList<String> list = new ArrayList<>();
 
@@ -191,7 +191,7 @@ public class FillBPMNDI {
     }
 
 
-    public void parseFlows(Document doc, Element rootElement, FlowsProcess fp, double x, double y) {
+    public void parseFlows(Document doc, Element rootElement, FlowsProcessOne fp, double x, double y) {
 
         //bring elements of pool in order according to flows
 
@@ -223,7 +223,7 @@ public class FillBPMNDI {
 
         double participantStartY = 100.0;
         double startEventY = participantHeight / 2 - 20 + participantStartY;
-        for (Participant participant : participants) {
+        for (ParticipantObject participant : participants) {
 
             // add pools
             addParticipantsShape(doc, bpmnlane, participant, participantStartY);
@@ -240,7 +240,7 @@ public class FillBPMNDI {
 
     }
 
-    public void addParticipantsShape(Document doc, Element rootElement, Participant p, double participantY) {
+    public void addParticipantsShape(Document doc, Element rootElement, ParticipantObject p, double participantY) {
 
         Bounds bounds = new Bounds(doc, this.participantX, participantY, this.participantWidth, this.participantHeight);
         Shape shape = new Shape(doc, p.getId(), "true", bounds);

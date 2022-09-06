@@ -1,17 +1,17 @@
 package org.bpmn.step_one.collaboration;
 
+import org.bpmn.ExecStep;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.step_one.collaboration.participant.Participant;
+import org.bpmn.step_one.collaboration.participant.ParticipantObject;
 
+import org.bpmn.step_one.collaboration.participant.ParticipantUser;
 import org.w3c.dom.Element;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
-import static org.bpmn.step_one.fillxml.fillXMLStepOneRenew.doc;
+import static org.bpmn.fillxml.ExecSteps.doc;
 
 public class Collaboration {
 
@@ -19,9 +19,12 @@ public class Collaboration {
 
     Element elementCollaboration;
 
-    public static ArrayList<Participant> participants = new ArrayList<>();
+    public static ArrayList<ParticipantObject> participants = new ArrayList<>();
 
-    public Collaboration() throws FileNotFoundException {
+    public static ArrayList<ParticipantUser> userParticipants = new ArrayList<>();
+
+
+    public Collaboration() {
         this.id = "Collaboration_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementCollaboration = doc.createElement("bpmn:collaboration");
         setElementCollaboration();
@@ -40,11 +43,10 @@ public class Collaboration {
         return this.id;
     }
 
-    public void setParticipants(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public void setParticipantsOne(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
-        for (Map.Entry<String, ArrayList<AbstractObjectType>> objects : objectTypeObjects.entrySet()) {
-
-            objects.getValue().forEach(obj -> {
+        for (String key : objectTypeObjects.keySet()) {
+            objectTypeObjects.get(key).forEach(obj -> {
 
                 if (obj != null && obj.getMethodName().equals("UpdateName")) {
 
@@ -53,7 +55,7 @@ public class Collaboration {
                     // work around for json double entry bug in flows json
                     if (!containsParticipant(participantName)) {
 
-                        Participant participant = new Participant(objects.getKey(), participantName, objectTypeObjects);
+                        ParticipantObject participant = new ParticipantObject(key, participantName, objectTypeObjects);
                         participants.add(participant);
 
                         // add participant to collaboration element
@@ -66,9 +68,30 @@ public class Collaboration {
         }
     }
 
+    //TODO: USER TYPES FINDEN
+    public void setParticipantsTwo(ExecStep step, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
+
+        for (String key : userTypeObjects.keySet()) {
+            userTypeObjects.get(key).forEach(obj -> {
+                if (obj != null && obj.getMethodName().equals("UpdateGlobalRoleName")) {
+
+                    String name = (String) obj.getParameters().get(1);
+                    Double updatedEntityId = obj.getUpdatedEntityId();
+                    ParticipantUser user = new ParticipantUser(key, name, updatedEntityId);
+
+                    if (!userParticipants.contains(user)) {
+                        userParticipants.add(user);
+                    }
+
+                }
+            });
+        }
+
+    }
+
     private boolean containsParticipant(String participantName) {
 
-        for (Participant participant : participants) {
+        for (ParticipantObject participant : participants) {
             if (participant.getName().equals(participantName)) {
                 return true;
             }

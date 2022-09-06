@@ -6,7 +6,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.bpmn.step_one.fillxml.fillXMLStepOneRenew;
+import org.bpmn.fillxml.ExecSteps;
 
 
 public class App {
@@ -16,8 +16,8 @@ public class App {
 
 
         String filePHoodle = "FlowsToBPMN/src/resources/flows/PhoodleDoodle.json";
-        fillXMLStepOneRenew.createBPMN(filePHoodle, "PHoodle_RENEW.xml");
-        // fillXMLStepTwo.createBPMN(filePHoodle, "PHoodle_Step2.xml");
+        ExecSteps.createBPMN(filePHoodle, "PHoodle_RENEW.xml");
+        //FillXMLStepTwoRenew.createBPMN(filePHoodle, "PHoodle_Step2_RENEW.xml");
 
 
 /*

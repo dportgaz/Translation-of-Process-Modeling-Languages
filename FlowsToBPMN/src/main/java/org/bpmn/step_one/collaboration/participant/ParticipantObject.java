@@ -1,24 +1,23 @@
 package org.bpmn.step_one.collaboration.participant;
 
-import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 
-import org.bpmn.step_one.process.FlowsProcess;
+import org.bpmn.process.FlowsProcessOne;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.bpmn.step_one.fillxml.fillXMLStepOneRenew.doc;
+import static org.bpmn.fillxml.ExecSteps.doc;
 
-public class Participant {
+public class ParticipantObject {
 
     String id;
     String key;
     String name;
-    FlowsProcess processRef;
     Double updatedEntityId;
+    FlowsProcessOne processRef;
     Element participantElement;
 
     // ArrayList<Task> tasks = new ArrayList<Task>();
@@ -43,7 +42,7 @@ public class Participant {
         return key;
     }
 
-    public FlowsProcess getProcessRef() {
+    public FlowsProcessOne getProcessRef() {
         return this.processRef;
     }
 
@@ -55,13 +54,15 @@ public class Participant {
         return this.participantElement;
     }
 
-    public Participant(String key, String name, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public ParticipantObject(String key, String name, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+
         this.key = key;
         this.id = "Participant_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.name = name;
-        this.processRef = new FlowsProcess(this, objectTypeObjects);
+        this.processRef = new FlowsProcessOne(this, objectTypeObjects);
         this.participantElement = doc.createElement("bpmn:participant");
         setParticipantElement();
+
     }
 
     private void setParticipantElement() {
