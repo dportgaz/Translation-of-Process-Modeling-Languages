@@ -8,8 +8,9 @@ import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flowsObjects.AbstractObjectType;
+import org.bpmn.parse_json.Parser;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.step_one.collaboration.participant.ParticipantUser;
+import org.bpmn.step_one.collaboration.participant.User;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import static org.bpmn.fillxml.ExecSteps.doc;
+import static org.bpmn.parse_json.Parser.allTasks;
+import static org.bpmn.step_one.collaboration.Collaboration.users;
 
 public class FlowsProcessUser {
 
@@ -28,7 +31,7 @@ public class FlowsProcessUser {
 
     Element elementFlowsProcess;
 
-    ParticipantUser user;
+    User user;
 
     StartEvent startEvent;
 
@@ -51,25 +54,30 @@ public class FlowsProcessUser {
 
     HashMap<String, ArrayList<String>> decisionTasks = new HashMap<>();
 
-    public FlowsProcessUser(ParticipantUser participant) {
+    public FlowsProcessUser(User participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
 
         this.id = "Process_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementFlowsProcess = doc.createElement("bpmn:process");
         this.user = participant;
-        /*
-        setFlowsProcess(objectTypeObjects);
-         */
+        setFlowsProcess(objectTypeObjects, userTypeObjects);
+
         setElementFlowsProcess();
         countProcess++;
 
     }
 
-    private void setFlowsProcess(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    private void setFlowsProcess(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
+
+        Parser parser = new Parser();
+        parser.parsePermissions(userTypeObjects);
+
+        setStartEvent();
+        setEndEvent();
+        setTasks();
 
         /*
         setStartEvent();
         setEndEvent();
-        setTasks();
         setDataObjects(objectTypeObjects);
         addPredicates(objectTypeObjects);
 
@@ -93,7 +101,43 @@ public class FlowsProcessUser {
         }
     }
 
+    private void setStartEvent() {
+
+        StartEvent startEvent = new StartEvent();
+        Element elementStartEvent = startEvent.getElementStartEvent();
+
+        this.startEvent = startEvent;
+        this.elementFlowsProcess.appendChild(elementStartEvent);
+
+    }
+
+    private void setEndEvent() {
+
+        EndEvent endEvent = new EndEvent();
+        Element elementEndEvent = endEvent.getElementEndEvent();
+
+        this.endEvent = endEvent;
+        this.elementFlowsProcess.appendChild(elementEndEvent);
+
+    }
+
+    private void setTasks() {
+
+        for (Task task : allTasks) {
+
+            if (task.getParticipant().getId().equals(this.user.getId())) {
+                tasks.add(task);
+                this.elementFlowsProcess.appendChild(task.getElementTask());
+            }
+
+        }
+    }
+
     public String getId() {
         return id;
+    }
+
+    public Element getElementFlowsProcess() {
+        return elementFlowsProcess;
     }
 }

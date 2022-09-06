@@ -5,8 +5,8 @@ import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.Collaboration;
-import org.bpmn.step_one.collaboration.participant.ParticipantObject;
-import org.bpmn.process.FlowsProcessOne;
+import org.bpmn.step_one.collaboration.participant.Object;
+import org.bpmn.process.FlowsProcessObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -16,7 +16,8 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.step_one.collaboration.Collaboration.participants;
+import static org.bpmn.fillxml.ExecSteps.doc;
+import static org.bpmn.step_one.collaboration.Collaboration.objects;
 
 public class FillBPMNDI {
 
@@ -69,7 +70,7 @@ public class FillBPMNDI {
 
     ArrayList<Shape> shapes = new ArrayList<>();
 
-    public void f(Document doc, Element rootElement, double x, double y, String e, FlowsProcessOne fp, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous) {
+    public void f(Element rootElement, double x, double y, String e, FlowsProcessObject fp, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous) {
 
         ArrayList<String> list = new ArrayList<>();
 
@@ -161,11 +162,11 @@ public class FillBPMNDI {
         int cntElements = list.size();
         if (cntElements > 1) {
             for (int t = cntElements - 1; t >= 0; t--) {
-                f(doc, rootElement, x, y, list.get(t), fp, tasks, flows, e);
+                f(rootElement, x, y, list.get(t), fp, tasks, flows, e);
                 y -= 100;
             }
         } else if (cntElements == 1) {
-            f(doc, rootElement, x, y, list.get(0), fp, tasks, flows, e);
+            f(rootElement, x, y, list.get(0), fp, tasks, flows, e);
         } else if (!printMark.contains(e)) {
             //double tempX = x - flowsLength;
             //TODO: MAYBE BUGGY
@@ -191,7 +192,7 @@ public class FillBPMNDI {
     }
 
 
-    public void parseFlows(Document doc, Element rootElement, FlowsProcessOne fp, double x, double y) {
+    public void parseFlows(Element rootElement, FlowsProcessObject fp, double x, double y) {
 
         //bring elements of pool in order according to flows
 
@@ -201,16 +202,16 @@ public class FillBPMNDI {
         printMark.clear();
         targetMark.clear();
 
-        f(doc, rootElement, x, y, start, fp, tasks, flows, null);
-        addFlowsEdge(doc, rootElement, flows);
-        addDataObjects(doc, rootElement, tasks);
+        f(rootElement, x, y, start, fp, tasks, flows, null);
+        addFlowsEdge(rootElement, flows);
+        addDataObjects(rootElement, tasks);
         //System.out.println(shapes);
         shapes.clear();
 
 
     }
 
-    public void fillBPMNDI(Document doc, String bpmndiagramID, Element rootElement, Collaboration collaboration) {
+    public void fillBPMNDI(String bpmndiagramID, Element rootElement, Collaboration collaboration) {
 
         Element bpmndiagram = doc.createElement("bpmndi:BPMNDiagram");
         bpmndiagram.setAttribute("id", bpmndiagramID);
@@ -223,12 +224,12 @@ public class FillBPMNDI {
 
         double participantStartY = 100.0;
         double startEventY = participantHeight / 2 - 20 + participantStartY;
-        for (ParticipantObject participant : participants) {
+        for (Object participant : objects) {
 
             // add pools
-            addParticipantsShape(doc, bpmnlane, participant, participantStartY);
+            addParticipantsShape(bpmnlane, participant, participantStartY);
 
-            parseFlows(doc, bpmnlane, participant.getProcessRef(), startEventX, startEventY);
+            parseFlows(bpmnlane, participant.getProcessRef(), startEventX, startEventY);
 
             // adapt positions for next participant/pool
             participantStartY += participantYInc;
@@ -240,7 +241,7 @@ public class FillBPMNDI {
 
     }
 
-    public void addParticipantsShape(Document doc, Element rootElement, ParticipantObject p, double participantY) {
+    public void addParticipantsShape(Element rootElement, Object p, double participantY) {
 
         Bounds bounds = new Bounds(doc, this.participantX, participantY, this.participantWidth, this.participantHeight);
         Shape shape = new Shape(doc, p.getId(), "true", bounds);
@@ -251,7 +252,7 @@ public class FillBPMNDI {
 
     }
 
-    private Shape getBPMNShapeByFlow(ArrayList<SequenceFlow> flows, String sfId) {
+    private Shape getBPMNShapeByFlow(String sfId) {
 
         for (Shape bs : shapes) {
 
@@ -279,20 +280,6 @@ public class FillBPMNDI {
 
     }
 
-    private Shape getFirstTaskShape() {
-
-        for (Shape bs : shapes) {
-            Pattern activityPattern = Pattern.compile("Activity*");
-            Matcher activityMatcher = activityPattern.matcher(bs.getElementId());
-            if (activityMatcher.find()) {
-                return bs;
-            }
-        }
-
-        return null;
-
-    }
-
     private DataObject findDataObjectById(ArrayList<Task> tasks, String id) {
 
         for (Task task : tasks) {
@@ -303,7 +290,7 @@ public class FillBPMNDI {
         return null;
     }
 
-    public void addDataObjects(Document doc, Element rootElement, ArrayList<Task> tasks) {
+    public void addDataObjects(Element rootElement, ArrayList<Task> tasks) {
         Shape firstBsTask = getBPMNShapeByTask(tasks.get(0).getId());
         double xTask = firstBsTask.getBounds().getX();
 
@@ -386,12 +373,12 @@ public class FillBPMNDI {
         }
     }
 
-    public void addFlowsEdge(Document doc, Element rootElement, ArrayList<SequenceFlow> flows) {
+    public void addFlowsEdge(Element rootElement, ArrayList<SequenceFlow> flows) {
 
         for (SequenceFlow sf : flows) {
 
-            Shape bsSource = getBPMNShapeByFlow(flows, sf.getSourceRef());
-            Shape bsTarget = getBPMNShapeByFlow(flows, sf.getTargetRef());
+            Shape bsSource = getBPMNShapeByFlow(sf.getSourceRef());
+            Shape bsTarget = getBPMNShapeByFlow(sf.getTargetRef());
 
             Element flow = doc.createElement("bpmndi:BPMNEdge");
             flow.setAttribute("id", sf.getId() + "_di");

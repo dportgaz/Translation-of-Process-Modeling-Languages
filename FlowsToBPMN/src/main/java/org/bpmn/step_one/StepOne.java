@@ -5,7 +5,8 @@ import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.Collaboration;
-import org.bpmn.step_one.collaboration.participant.ParticipantObject;
+import org.bpmn.step_one.collaboration.participant.Object;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.xml.transform.TransformerException;
@@ -13,9 +14,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.bpmn.fillxml.ExecSteps.*;
-import static org.bpmn.step_one.collaboration.Collaboration.participants;
+import static org.bpmn.step_one.collaboration.Collaboration.objects;
 
 public class StepOne {
+
+    Document doc;
     ExecStep step;
     String file;
     Element definitionsElement;
@@ -41,14 +44,14 @@ public class StepOne {
         setProcesses(definitionsElement);
 
         FillBPMNDI di = new FillBPMNDI();
-        di.fillBPMNDI(doc, bpmnDiagramID, definitionsElement, collaboration);
-        createXml(doc, file);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);
+        createXml(file);
 
     }
 
     private void setProcesses(Element definitionsElement) {
 
-        for (ParticipantObject participant : participants) {
+        for (Object participant : objects) {
 
             definitionsElement.appendChild(participant.getProcessRef().getElementFlowsProcess());
 

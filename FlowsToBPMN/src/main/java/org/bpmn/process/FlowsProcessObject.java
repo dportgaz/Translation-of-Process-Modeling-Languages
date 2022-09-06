@@ -9,9 +9,9 @@ import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flowsObjects.AbstractObjectType;
-import org.bpmn.parse_json.Parse;
+import org.bpmn.parse_json.Parser;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.step_one.collaboration.participant.ParticipantObject;
+import org.bpmn.step_one.collaboration.participant.Object;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ import static org.bpmn.bpmn_elements.gateway.Predicate.getPredicate;
 import static org.bpmn.bpmn_elements.gateway.Predicate.parsePredicate;
 import static org.bpmn.fillxml.ExecSteps.doc;
 
-public class FlowsProcessOne {
+public class FlowsProcessObject {
 
     static int countProcess = 0;
 
@@ -36,7 +36,7 @@ public class FlowsProcessOne {
 
     Element elementFlowsProcess;
 
-    ParticipantObject participant;
+    Object participant;
     StartEvent startEvent;
 
     // ArrayList, da Reihenfolge der Tasks gewahrt werden soll
@@ -59,7 +59,7 @@ public class FlowsProcessOne {
     HashMap<String, ArrayList<String>> decisionTasks = new HashMap<>();
 
 
-    public FlowsProcessOne(ParticipantObject participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public FlowsProcessObject(Object participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
         this.id = "Process_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementFlowsProcess = doc.createElement("bpmn:process");
@@ -72,15 +72,15 @@ public class FlowsProcessOne {
 
     private void setFlowsProcess(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
-        Parse parse = new Parse();
+        Parser parser = new Parser();
 
-        this.tasks = parse.parseTasks(this.participant, objectTypeObjects);
-        this.predicates = parse.parsePredicates(this.participant, objectTypeObjects);
+        this.tasks = parser.parseTasks(this.participant, objectTypeObjects);
+        this.predicates = parser.parsePredicates(this.participant, objectTypeObjects);
 
         setStartEvent();
         setEndEvent();
         setTasks();
-        setDataObjects(objectTypeObjects);
+        setDataObjects();
         addPredicates(objectTypeObjects);
 
         addSequenceFlows(objectTypeObjects);
@@ -105,7 +105,15 @@ public class FlowsProcessOne {
 
     }
 
-    private void setDataObjects(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    private void setTasks() {
+
+        for (Task task : tasks) {
+            this.elementFlowsProcess.appendChild(task.getElementTask());
+        }
+
+    }
+
+    private void setDataObjects() {
 
         for (Task task : tasks) {
 
@@ -139,25 +147,6 @@ public class FlowsProcessOne {
 
         this.endEvent = endEvent;
         this.elementFlowsProcess.appendChild(elementEndEvent);
-
-    }
-
-    private void setTasks() {
-
-        for (Task task : tasks) {
-
-            DataObject dObj = task.getDataObject();
-            // TODO: SEITENEFFEKT ENTFERNEN/LOESEN
-            dataObjects.add(dObj);
-
-            this.elementFlowsProcess.appendChild(dObj.getElementDataObject());
-
-            Element tempObj = doc.createElement("bpmn:dataObject");
-            tempObj.setAttribute("id", dObj.getId());
-            this.elementFlowsProcess.appendChild(tempObj);
-            this.elementFlowsProcess.appendChild(task.getElementTask());
-
-        }
 
     }
 

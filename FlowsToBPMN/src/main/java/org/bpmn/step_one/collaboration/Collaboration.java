@@ -1,11 +1,10 @@
 package org.bpmn.step_one.collaboration;
 
-import org.bpmn.ExecStep;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.step_one.collaboration.participant.ParticipantObject;
+import org.bpmn.step_one.collaboration.participant.Object;
 
-import org.bpmn.step_one.collaboration.participant.ParticipantUser;
+import org.bpmn.step_one.collaboration.participant.User;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -19,9 +18,9 @@ public class Collaboration {
 
     Element elementCollaboration;
 
-    public static ArrayList<ParticipantObject> participants = new ArrayList<>();
+    public static ArrayList<Object> objects = new ArrayList<>();
 
-    public static ArrayList<ParticipantUser> userParticipants = new ArrayList<>();
+    public static ArrayList<User> users = new ArrayList<>();
 
 
     public Collaboration() {
@@ -55,8 +54,8 @@ public class Collaboration {
                     // work around for json double entry bug in flows json
                     if (!containsParticipant(participantName)) {
 
-                        ParticipantObject participant = new ParticipantObject(key, participantName, objectTypeObjects);
-                        participants.add(participant);
+                        Object participant = new Object(this, key, participantName, objectTypeObjects);
+                        objects.add(participant);
 
                         // add participant to collaboration element
                         elementCollaboration.appendChild(participant.getParticipantElement());
@@ -66,10 +65,12 @@ public class Collaboration {
 
             });
         }
+        for (Object participant : objects) {
+            participant.setProcessRef(objectTypeObjects);
+        }
     }
 
-    //TODO: USER TYPES FINDEN
-    public void setParticipantsTwo(ExecStep step, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
+    public void setParticipantsTwo(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
 
         for (String key : userTypeObjects.keySet()) {
             userTypeObjects.get(key).forEach(obj -> {
@@ -77,21 +78,28 @@ public class Collaboration {
 
                     String name = (String) obj.getParameters().get(1);
                     Double updatedEntityId = obj.getUpdatedEntityId();
-                    ParticipantUser user = new ParticipantUser(key, name, updatedEntityId);
+                    User participant = new User(this, key, name, updatedEntityId, objectTypeObjects, userTypeObjects);
 
-                    if (!userParticipants.contains(user)) {
-                        userParticipants.add(user);
+                    if (!users.contains(participant)) {
+                        users.add(participant);
                     }
+
+                    // add participant to collaboration element
+                    elementCollaboration.appendChild(participant.getParticipantElement());
 
                 }
             });
+        }
+
+        for (User participant : users) {
+            participant.setProcessRef(objectTypeObjects, userTypeObjects);
         }
 
     }
 
     private boolean containsParticipant(String participantName) {
 
-        for (ParticipantObject participant : participants) {
+        for (Object participant : objects) {
             if (participant.getName().equals(participantName)) {
                 return true;
             }
@@ -100,4 +108,14 @@ public class Collaboration {
 
     }
 
+    public static User getUser(Double id) {
+
+        for (User user : users) {
+            System.out.println("USERNAME: " + user.getName() + " , UID: " + user.getUpdatedEntityId() + " , id: " + id);
+            if (user.getUpdatedEntityId().equals(id)) {
+                return user;
+            }
+        }
+        return null;
+    }
 }

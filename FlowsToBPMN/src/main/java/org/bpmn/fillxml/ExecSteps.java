@@ -19,14 +19,18 @@ import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.flowsObjects.ConcreteObjectType;
 import org.bpmn.step_one.StepOne;
 
+import org.bpmn.step_two.StepTwo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 public class ExecSteps {
 
     public static Document doc;
 
-    public static void createBPMN(String jsonFlowsPath, String file)
+    public static Document doc2;
+
+    public void createBPMN(String jsonFlowsPath, String file)
             throws ParserConfigurationException, FileNotFoundException, TransformerException {
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -41,24 +45,22 @@ public class ExecSteps {
         HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects = objects.getObjectTypeObjects();
         HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects = objects.getUserTypeObjects();
 
-        String fileTempOne = "PHOODLE_STEP_ONE_RENEW";
+        String fileTempOne = "PHOODLE_STEP_ONE_RENEW.xml";
         StepOne s1 = new StepOne(fileTempOne, definitionsElement1, objectTypeObjects);
         s1.execute();
 
         // ____________________________________________________________________________________________________________
 
-        doc = docBuilder.newDocument();
+        doc.removeChild(doc.getFirstChild());
         Element definitionsElement2 = doc.createElement("bpmn:definitions");
         doc.appendChild(definitionsElement2);
         setHeader(definitionsElement2);
 
-        /*
+        String fileTempTwo = "PHOODLE_STEP_TWO_RENEW.xml";
+        StepTwo s2 = new StepTwo(fileTempTwo, definitionsElement2, userTypeObjects, objectTypeObjects);
+        s2.execute();
 
-        String fileTempTwo = "PHOODLE_STEP_Two_RENEW";
-        StepTwo s2 = new StepTwo();
-        s2.executeStepTwo(participants);
 
-         */
     }
 
     private static void setHeader(Element rootElement) {
@@ -72,7 +74,7 @@ public class ExecSteps {
         rootElement.setAttribute("camunda:diagramRelationId", "e9a61ae0-03e0-4936-9fa3-9d47de87bcfa");
     }
 
-    public static void createXml(Document doc, String file) throws TransformerException {
+    public static void createXml(String file) throws TransformerException {
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();

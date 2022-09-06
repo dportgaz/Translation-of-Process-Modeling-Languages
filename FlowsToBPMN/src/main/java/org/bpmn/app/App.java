@@ -15,8 +15,9 @@ public class App {
             throws ParserConfigurationException, TransformerException, FileNotFoundException, XPathExpressionException {
 
 
+        ExecSteps execution = new ExecSteps();
         String filePHoodle = "FlowsToBPMN/src/resources/flows/PhoodleDoodle.json";
-        ExecSteps.createBPMN(filePHoodle, "PHoodle_RENEW.xml");
+        execution.createBPMN(filePHoodle, "PHoodle_RENEW.xml");
         //FillXMLStepTwoRenew.createBPMN(filePHoodle, "PHoodle_Step2_RENEW.xml");
 
 

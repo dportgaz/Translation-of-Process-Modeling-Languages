@@ -3,18 +3,21 @@ package org.bpmn.parse_json;
 import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flowsObjects.AbstractObjectType;
-import org.bpmn.step_one.collaboration.participant.ParticipantObject;
+import org.bpmn.step_one.collaboration.Collaboration;
+import org.bpmn.step_one.collaboration.participant.Object;
+import org.bpmn.step_one.collaboration.participant.Participant;
+import org.bpmn.step_one.collaboration.participant.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.bpmn.bpmn_elements.gateway.Predicate.parsePredicate;
 
-public class Parse {
+public class Parser {
 
     public static ArrayList<Task> allTasks = new ArrayList<>();
 
-    public ArrayList<Task> parseTasks(ParticipantObject participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public ArrayList<Task> parseTasks(Participant participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
         ArrayList<AbstractObjectType> objects = objectTypeObjects.get(participant.getKey());
         ArrayList<Task> tasks = new ArrayList<>();
@@ -52,7 +55,7 @@ public class Parse {
         return tasks;
     }
 
-    public ArrayList<Predicate> parsePredicates(ParticipantObject participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public ArrayList<Predicate> parsePredicates(Object participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
         ArrayList<AbstractObjectType> objects = objectTypeObjects.get(participant.getKey());
         ArrayList<Predicate> predicates = new ArrayList<>();
@@ -70,27 +73,22 @@ public class Parse {
         return predicates;
     }
 
-    /*
-    public ArrayList<Participant> parseUsers(HashMap<String, ArrayList<AbstractObjectType>> users) {
+    public void parsePermissions(HashMap<String, ArrayList<AbstractObjectType>> users) {
+        for (String key : users.keySet()) {
+            users.get(key).forEach(obj -> {
+                if (obj != null && obj.getMethodName().equals("AddStateExecutionPermissionToGlobalRole")) {
 
-        ArrayList<Participant> permissionParticipants = new ArrayList<>();
-        for (String userId : users.keySet()) {
-            users.get(userId).forEach(obj -> {
-                if (obj != null && obj.getMethodName().equals("UpdateGlobalRoleName")) {
+                    Double participantId = (Double) obj.getParameters().get(0);
+                    Double taskId = (Double) obj.getParameters().get(1);
+                    User user = Collaboration.getUser(participantId);
 
-                    String name = (String) obj.getParameters().get(1);
-                    Double updatedEntityId = obj.getUpdatedEntityId();
-                    Participant participant = new Participant("two", userId, name, updatedEntityId);
-
-                    if (!permissionParticipants.contains(participant)) {
-                        permissionParticipants.add(participant);
+                    for (Task task : allTasks) {
+                        if (task.getCreatedEntityId().equals(taskId)) {
+                            task.setParticipant(user);
+                        }
                     }
-
                 }
             });
         }
-
     }
-
-     */
-            }
+}
