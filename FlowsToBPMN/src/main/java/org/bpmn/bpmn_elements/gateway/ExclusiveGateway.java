@@ -43,4 +43,9 @@ public class ExclusiveGateway {
     public void addOutgoing(SequenceFlow outgoing) {
         outgoings.add(outgoing);
     }
+
+    @Override
+    public String toString() {
+        return this.id;
+    }
 }

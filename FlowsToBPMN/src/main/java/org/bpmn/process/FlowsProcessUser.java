@@ -1,5 +1,6 @@
 package org.bpmn.process;
 
+import org.bpmn.bpmn_elements.Loop;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
@@ -17,13 +18,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import static org.bpmn.bpmn_elements.gateway.Predicate.parsePredicate;
 import static org.bpmn.fillxml.ExecSteps.doc;
-import static org.bpmn.parse_json.Parser.allTasks;
+import static org.bpmn.step_one.StepOne.*;
 import static org.bpmn.step_one.collaboration.Collaboration.users;
 
 public class FlowsProcessUser {
 
     static int countProcess = 0;
+
+    static boolean hasLoop = false;
 
     String id;
 
@@ -74,14 +78,11 @@ public class FlowsProcessUser {
         setStartEvent();
         setEndEvent();
         setTasks();
+        setDataObjects();
+        setSequenceFlows();
 
         /*
-        setStartEvent();
-        setEndEvent();
-        setDataObjects(objectTypeObjects);
-        addPredicates(objectTypeObjects);
 
-        addSequenceFlows(objectTypeObjects);
         setAssociations();
         addFlowsToActivities();
         addFlowsToEvents();
@@ -131,6 +132,71 @@ public class FlowsProcessUser {
             }
 
         }
+    }
+
+    private void setDataObjects() {
+
+        for (Task task : tasks) {
+
+            DataObject dObj = task.getDataObject();
+            dataObjects.add(dObj);
+
+            this.elementFlowsProcess.appendChild(dObj.getElementDataObject());
+
+            Element tempObj = doc.createElement("bpmn:dataObject");
+            tempObj.setAttribute("id", dObj.getId());
+            this.elementFlowsProcess.appendChild(tempObj);
+            this.elementFlowsProcess.appendChild(task.getElementTask());
+
+        }
+    }
+
+    private void setSequenceFlows() {
+
+        boolean endIsSet = false;
+        for (int i = 0; i < tasks.size() - 1; i++) {
+            SequenceFlow sf;
+            Task task = tasks.get(i);
+            Loop loop = getLoopByTask(task);
+
+            if (loop != null) {
+                for (SequenceFlow loopFlow : loop.getFlows()) {
+                    flows.add(loopFlow);
+                    this.elementFlowsProcess.appendChild(loopFlow.getElementSequenceFlow());
+                }
+                if (i == 0) {
+                    sf = new SequenceFlow(startEvent.getId(), loop.getFirstGate().getId());
+                    flows.add(sf);
+                    this.elementFlowsProcess.appendChild(sf.getElementSequenceFlow());
+                }
+                i++;
+                if (i == tasks.size() - 1) {
+                    sf = new SequenceFlow(loop.getSecondGate().getId(), endEvent.getId());
+                    endIsSet = true;
+                } else {
+                    sf = new SequenceFlow(loop.getSecondGate().getId(), tasks.get(i + 1).getId());
+                }
+            } else {
+                sf = new SequenceFlow(tasks.get(i).getId(), task.getId());
+            }
+            flows.add(sf);
+            this.elementFlowsProcess.appendChild(sf.getElementSequenceFlow());
+        }
+
+        if (!endIsSet) {
+            SequenceFlow sf = new SequenceFlow(tasks.get(tasks.size() - 1).getId(), endEvent.getId());
+            flows.add(sf);
+            this.elementFlowsProcess.appendChild(sf.getElementSequenceFlow());
+        }
+    }
+
+    public Loop getLoopByTask(Task task) {
+        for (Loop loop : loops) {
+            if (loop.getFirst().getId().equals(task.getId())) {
+                return loop;
+            }
+        }
+        return null;
     }
 
     public String getId() {

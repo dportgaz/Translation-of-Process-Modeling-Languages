@@ -63,7 +63,7 @@ public class DataObject {
                 break;
             }
         }
-        obj = new StringBuilder(obj).reverse().toString();
+        obj = new StringBuilder(obj).reverse().toString().substring(1, obj.length());
 
         String state = "[";
         for(int j = 0; j < i; j++){

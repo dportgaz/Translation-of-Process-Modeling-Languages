@@ -12,10 +12,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.bpmn.bpmn_elements.gateway.Predicate.parsePredicate;
+import static org.bpmn.step_one.StepOne.allTasks;
 
 public class Parser {
-
-    public static ArrayList<Task> allTasks = new ArrayList<>();
 
     public ArrayList<Task> parseTasks(Participant participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 

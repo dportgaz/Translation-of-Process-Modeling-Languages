@@ -1,6 +1,10 @@
 package org.bpmn.step_one;
 
 import org.bpmn.ExecStep;
+import org.bpmn.bpmn_elements.Loop;
+import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
+import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
@@ -12,17 +16,24 @@ import org.w3c.dom.Element;
 import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static org.bpmn.fillxml.ExecSteps.*;
 import static org.bpmn.step_one.collaboration.Collaboration.objects;
 
 public class StepOne {
-
-    Document doc;
     ExecStep step;
     String file;
     Element definitionsElement;
     HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects;
+
+    public static ArrayList<Task> allTasks = new ArrayList();
+
+    public static ArrayList<SequenceFlow> allFlows = new ArrayList();
+
+    public static ArrayList<ExclusiveGateway> allGateways = new ArrayList();
+
+    public static HashSet<Loop> loops = new HashSet<>();
 
     static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
 

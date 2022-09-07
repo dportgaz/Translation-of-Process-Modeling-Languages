@@ -1,5 +1,6 @@
 package org.bpmn.process;
 
+import org.bpmn.bpmn_elements.Loop;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
@@ -25,6 +26,7 @@ import static org.bpmn.bpmn_elements.flows.SequenceFlow.*;
 import static org.bpmn.bpmn_elements.gateway.Predicate.getPredicate;
 import static org.bpmn.bpmn_elements.gateway.Predicate.parsePredicate;
 import static org.bpmn.fillxml.ExecSteps.doc;
+import static org.bpmn.step_one.StepOne.*;
 
 public class FlowsProcessObject {
 
@@ -57,7 +59,6 @@ public class FlowsProcessObject {
     HashMap<String, SequenceFlow> decisionFlows = new HashMap<>();
 
     HashMap<String, ArrayList<String>> decisionTasks = new HashMap<>();
-
 
     public FlowsProcessObject(Object participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
@@ -162,6 +163,7 @@ public class FlowsProcessObject {
 
             }
         });
+        System.out.println("PREDICATES: " + predicates);
     }
 
     private AbstractObjectType findObjectById(Double id, ArrayList<AbstractObjectType> objectTypeObjects) {
@@ -289,7 +291,6 @@ public class FlowsProcessObject {
             }
         }
 
-
         for (Task task : tasks) {
             if (task.getIsSubprocess()) {
                 subprocesses.add(task);
@@ -315,6 +316,9 @@ public class FlowsProcessObject {
                 task.getFlows().add(sfEnd);
                 task.getEnd().setIncoming(sfEnd);
             }
+        }
+        for (SequenceFlow sf : flows) {
+            allFlows.add(sf);
         }
     }
 
@@ -453,15 +457,24 @@ public class FlowsProcessObject {
         // gateways in case of loop
         objects.forEach(obj -> {
             if (obj != null && obj.getMethodName().equals("AddBackwardsTransitionType")) {
+
+                Loop loop = new Loop();
+
                 Double source = (Double) obj.getParameters().get(1);
                 Double target = (Double) obj.getParameters().get(0);
 
                 Double sourceObjectId = findObjectById(source, objects).getCreatedEntityId();
                 Double targetObjectId = findObjectById(target, objects).getCreatedEntityId();
 
-                SequenceFlow sf = new SequenceFlow();
                 Task sourceTask = findTaskById(sourceObjectId);
                 Task targetTask = findTaskById(targetObjectId);
+
+                loop.getFlows().add(new SequenceFlow(sourceTask.getId(), targetTask.getId()));
+
+                loop.addTask(sourceTask);
+                loop.setFirst(sourceTask);
+                loop.addTask(targetTask);
+                loop.setSecond(targetTask);
 
                 SequenceFlow flowBeforeStart = getFlowBySource(sourceTask, flows);
                 SequenceFlow flowAfterEnd = getFlowByTarget(targetTask, flows);
@@ -471,6 +484,14 @@ public class FlowsProcessObject {
 
                 gateways.add(startGate);
                 gateways.add(endGate);
+
+                loop.getFlows().add(new SequenceFlow(startGate.getId(), sourceTask.getId()));
+                loop.getFlows().add(new SequenceFlow(targetTask.getId(), endGate.getId()));
+
+                loop.addGate(startGate);
+                loop.setFirstGate(startGate);
+                loop.addGate(endGate);
+                loop.setSecondGate(endGate);
 
                 SequenceFlow sf1 = new SequenceFlow();
                 sf1.setSourceRef(flowBeforeStart.getSourceRef());
@@ -490,7 +511,8 @@ public class FlowsProcessObject {
                 flows.add(sf2);
                 flows.add(sf3);
 
-
+                loop.addFlow(sf3);
+                loops.add(loop);
             }
 
 
@@ -625,6 +647,7 @@ public class FlowsProcessObject {
     public void addGateways() {
 
         for (ExclusiveGateway gate : gateways) {
+            allGateways.add(gate);
             this.elementFlowsProcess.appendChild(gate.getElementExclusiveGateway());
             for (SequenceFlow sf : flows) {
                 if (sf.getSourceRef().equals(gate.getId())) {

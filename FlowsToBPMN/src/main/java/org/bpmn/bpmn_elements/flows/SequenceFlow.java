@@ -30,6 +30,14 @@ public class SequenceFlow {
         setElementSequenceFlow();
     }
 
+    public SequenceFlow(String sourceRef, String targetRef) {
+        this.id = "Flow_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.elementSequenceFlow = doc.createElement("bpmn:sequenceFlow");
+        setElementSequenceFlow();
+        setSourceRef(sourceRef);
+        setTargetRef(targetRef);
+    }
+
     private void setElementSequenceFlow() {
         this.elementSequenceFlow.setAttribute("id", this.id);
     }
