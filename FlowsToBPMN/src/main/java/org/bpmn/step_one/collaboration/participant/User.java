@@ -41,8 +41,8 @@ public class User extends Participant {
 
     }
 
-    public void setProcessRef(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
-        this.processRef = new FlowsProcessUser(this, objectTypeObjects, userTypeObjects);
+    public void setProcessRef(HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
+        this.processRef = new FlowsProcessUser(this, userTypeObjects);
         this.participantElement.setAttribute("processRef", this.processRef.getId());
     }
 

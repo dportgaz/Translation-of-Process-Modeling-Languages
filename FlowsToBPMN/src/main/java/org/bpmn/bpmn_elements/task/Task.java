@@ -187,15 +187,19 @@ public class Task {
         return true;
     }
 
-    public void setInputAssociationSource(String inputAssoSource) {
-        this.inputAssociationSource = inputAssoSource;
-        Element source = doc.createElement("bpmn:sourceRef");
-        source.setTextContent(inputAssociationSource);
-        this.dataInputAssociation.getElementDataInputAssociation().appendChild(source);
+    public void setInputAssociationSource(DataObject dataObject) {
+        this.inputAssociationSource = dataObject.getRefId();
+        this.dataInputAssociation.setSourceRef(dataObject);
+        if (this.inputAssociationSource != null) {
+            Element source = doc.createElement("bpmn:sourceRef");
+            source.setTextContent(inputAssociationSource);
+            this.dataInputAssociation.getElementDataInputAssociation().appendChild(source);
+        }
     }
 
-    public void setOutputAssociationTarget(String outputAssoTarget) {
-        this.outputAssociationTarget = outputAssoTarget;
+    public void setOutputAssociationTarget(DataObject dataObject) {
+        this.outputAssociationTarget = dataObject.getRefId();
+        this.dataOutputAssociation.setTargetRef(dataObject);
         Element target = doc.createElement("bpmn:targetRef");
         target.setTextContent(outputAssociationTarget);
         this.dataOutputAssociation.getElementDataOutputAssociation().appendChild(target);
@@ -296,6 +300,12 @@ public class Task {
 
     }
 
+    public void setDataInputAssociation(DataInputAssociation dataInputAssociation) {
+
+        this.dataInputAssociation = dataInputAssociation;
+
+    }
+
     public DataInputAssociation getDataInputAssociation() {
         return this.dataInputAssociation;
     }
@@ -318,6 +328,14 @@ public class Task {
 
     public void setOutgoing(SequenceFlow outcoming) {
         this.outgoing = outcoming;
+    }
+
+    public SequenceFlow getOutgoing() {
+        return outgoing;
+    }
+
+    public SequenceFlow getIncoming() {
+        return incoming;
     }
 
     public void setCreatedEntityId(Double createdEntityId) {

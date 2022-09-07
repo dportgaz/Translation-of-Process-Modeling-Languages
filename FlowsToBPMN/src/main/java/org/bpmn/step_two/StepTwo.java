@@ -2,6 +2,7 @@
 package org.bpmn.step_two;
 
 import org.bpmn.ExecStep;
+import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.step_one.collaboration.Collaboration;
@@ -46,10 +47,9 @@ public class StepTwo {
         definitionsElement.appendChild(collaborationElement);
         setProcesses(definitionsElement);
 
-        /*
+
         FillBPMNDI di = new FillBPMNDI();
-        di.fillBPMNDI(doc, bpmnDiagramID, definitionsElement, collaboration);
-         */
+        di.fillBPMNDITwo(bpmnDiagramID, definitionsElement, collaboration);
 
         createXml(file);
 

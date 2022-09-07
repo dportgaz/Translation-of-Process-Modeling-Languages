@@ -1,9 +1,11 @@
 package org.bpmn.step_one;
 
 import org.bpmn.ExecStep;
+import org.bpmn.bpmn_elements.Decision;
 import org.bpmn.bpmn_elements.Loop;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
+import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.flowsObjects.AbstractObjectType;
@@ -35,6 +37,8 @@ public class StepOne {
 
     public static HashSet<Loop> loops = new HashSet<>();
 
+    public static ArrayList<Predicate> predicates = new ArrayList<>();
+
     static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
 
 
@@ -56,6 +60,7 @@ public class StepOne {
 
         FillBPMNDI di = new FillBPMNDI();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);
+
         createXml(file);
 
     }

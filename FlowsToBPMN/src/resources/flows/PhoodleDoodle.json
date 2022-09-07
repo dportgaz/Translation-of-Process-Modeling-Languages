@@ -1314,27 +1314,7 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -3859130774772507799,
-        "MethodName": "UpdateStateType",
-        "Parameters": [
-          -8635508476309272584,
-          "Edit"
-        ],
-        "UpdatedEntityId": -8635508476309272584
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -9138820340600656578,
-        "MethodName": "UpdateStateType",
-        "Parameters": [
-          8632076530194074132,
-          "Publish"
-        ],
-        "UpdatedEntityId": 8632076530194074132
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -4663365876432661182,
         "MethodName": "UpdateStateType",
         "Parameters": [
           8632076530194074132,
@@ -1370,16 +1350,6 @@
           -8635508476309272584
         ],
         "CreatedEntityId": 7147938898935371981
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -7385274231021819694,
-        "MethodName": "UpdateStateType",
-        "Parameters": [
-          -6002067423338480940,
-          "End"
-        ],
-        "UpdatedEntityId": -6002067423338480940
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
@@ -1870,16 +1840,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 2843321416192631697,
-        "MethodName": "UpdateStateType",
-        "Parameters": [
-          -1150263423060936523,
-          "Rate"
-        ],
-        "UpdatedEntityId": -1150263423060936523
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": 3803820815677243524,
         "MethodName": "UpdateStateType",
         "Parameters": [
@@ -1906,16 +1866,6 @@
           -2188376679875751658
         ],
         "CreatedEntityId": 8284364260015102720
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -7722143509592013691,
-        "MethodName": "UpdateStateType",
-        "Parameters": [
-          3303836783817250438,
-          "Failed"
-        ],
-        "UpdatedEntityId": 3303836783817250438
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",

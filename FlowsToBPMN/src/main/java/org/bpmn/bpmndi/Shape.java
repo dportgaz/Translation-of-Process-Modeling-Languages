@@ -6,9 +6,10 @@ import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 
+import static org.bpmn.fillxml.ExecSteps.doc;
+
 public class Shape {
 
-    Document doc;
     private String elementId;
     private String elementIdDi;
     private String isHorizontal;
@@ -17,9 +18,8 @@ public class Shape {
     private boolean isSubprocess = false;
 
 
-    public Shape(Document doc, String elementId, String isHorizontal, Bounds bounds) {
+    public Shape(String elementId, String isHorizontal, Bounds bounds) {
 
-        this.doc = doc;
         this.elementId = elementId;
         this.elementIdDi = elementId + "_di";
         this.isHorizontal = isHorizontal;
@@ -28,9 +28,14 @@ public class Shape {
 
     }
 
-    public Shape(Document doc, String elementId, Bounds bounds) {
+    private void setElement() {
+        bpmnElement.setAttribute("bpmnElement", elementId);
+        bpmnElement.setAttribute("id", elementIdDi);
+        bpmnElement.appendChild(bounds.getElementBounds());
+    }
 
-        this.doc = doc;
+    public Shape(String elementId, Bounds bounds) {
+
         this.elementId = elementId;
         this.elementIdDi = elementId + "_di";
         this.bounds = bounds;
@@ -38,9 +43,28 @@ public class Shape {
 
     }
 
-    public Shape(Document doc, String elementId, Bounds bounds, ArrayList<Task> tasks) {
+    private void setElement(boolean isSubprocess) {
+        bpmnElement.setAttribute("bpmnElement", elementId);
+        bpmnElement.setAttribute("id", elementIdDi);
+        if(isSubprocess){
+            bpmnElement.setAttribute("isExpanded", "false");
+        }
+        bpmnElement.appendChild(bounds.getElementBounds());
+    }
 
-        this.doc = doc;
+    public Shape(String elementId, Bounds bounds, boolean isSubprocess) {
+
+        this.elementId = elementId;
+        this.elementIdDi = elementId + "_di";
+        this.bounds = bounds;
+        this.bpmnElement = doc.createElement("bpmndi:BPMNShape");
+        setElement(isSubprocess);
+
+    }
+
+
+    public Shape(String elementId, Bounds bounds, ArrayList<Task> tasks) {
+
         this.elementId = elementId;
         this.elementIdDi = elementId + "_di";
         this.bounds = bounds;

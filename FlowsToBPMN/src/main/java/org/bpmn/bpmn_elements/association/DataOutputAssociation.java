@@ -27,12 +27,14 @@ public class DataOutputAssociation {
         this.elementDataOutputAssociation = doc.createElement("bpmn:dataOutputAssociation");
         this.elementDataOutputAssociation.setAttribute("id", this.id);
 
-
-
     }
 
     public void setTargetRef(DataObject targetRef) {
         this.targetRef = targetRef;
+    }
+
+    public DataObject getTargetRef() {
+        return targetRef;
     }
 
     public void setElementTarget(Element elementTarget) {

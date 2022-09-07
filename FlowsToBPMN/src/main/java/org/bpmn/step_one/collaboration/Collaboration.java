@@ -92,7 +92,7 @@ public class Collaboration {
         }
 
         for (User participant : users) {
-            participant.setProcessRef(objectTypeObjects, userTypeObjects);
+            participant.setProcessRef(userTypeObjects);
         }
 
     }

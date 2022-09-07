@@ -1,12 +1,14 @@
 package org.bpmn.process;
 
 import org.bpmn.bpmn_elements.Loop;
+import org.bpmn.bpmn_elements.association.DataOutputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
+import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.parse_json.Parser;
@@ -58,32 +60,34 @@ public class FlowsProcessUser {
 
     HashMap<String, ArrayList<String>> decisionTasks = new HashMap<>();
 
-    public FlowsProcessUser(User participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
+    public FlowsProcessUser(User participant, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
 
         this.id = "Process_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementFlowsProcess = doc.createElement("bpmn:process");
         this.user = participant;
-        setFlowsProcess(objectTypeObjects, userTypeObjects);
+        setFlowsProcess(userTypeObjects);
 
         setElementFlowsProcess();
         countProcess++;
 
     }
 
-    private void setFlowsProcess(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
+    private void setFlowsProcess(HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
 
         Parser parser = new Parser();
         parser.parsePermissions(userTypeObjects);
 
-        setStartEvent();
-        setEndEvent();
+        // setStartEvent();
+        // setEndEvent();
         setTasks();
+
         setDataObjects();
-        setSequenceFlows();
+        //setSequenceFlows();
+        resetInputAssociations();
+
+        //TODO: noch incomings und outgoings von tasks entfernen
 
         /*
-
-        setAssociations();
         addFlowsToActivities();
         addFlowsToEvents();
         addGateways();
@@ -92,6 +96,22 @@ public class FlowsProcessUser {
 
     }
 
+    private void sortTasks() {
+
+        //TODO: Sort tasks according to coordination process
+
+    }
+
+    private void resetInputAssociations() {
+
+        for (Task task : tasks) {
+            if (task.getDataInputAssociation() != null) {
+                task.getElementTask().removeChild(task.getDataInputAssociation().getElementDataInputAssociation());
+                task.setDataInputAssociation(null);
+            }
+        }
+
+    }
     private void setElementFlowsProcess() {
         this.elementFlowsProcess.setAttribute("id", this.id);
         if (countProcess == 0) {
@@ -126,12 +146,22 @@ public class FlowsProcessUser {
 
         for (Task task : allTasks) {
 
+
             if (task.getParticipant().getId().equals(this.user.getId())) {
+                if (task.getIsSubprocess()) {
+                    System.out.println("TASKNAME : " + task.getName());
+                    for (Step step : task.getSteps()) {
+                        System.out.println(step.getIncoming() + " " + step.getOutgoing());
+                    }
+                }
                 tasks.add(task);
                 this.elementFlowsProcess.appendChild(task.getElementTask());
             }
 
+            ;
+
         }
+        sortTasks();
     }
 
     private void setDataObjects() {
@@ -139,13 +169,10 @@ public class FlowsProcessUser {
         for (Task task : tasks) {
 
             DataObject dObj = task.getDataObject();
+
             dataObjects.add(dObj);
 
             this.elementFlowsProcess.appendChild(dObj.getElementDataObject());
-
-            Element tempObj = doc.createElement("bpmn:dataObject");
-            tempObj.setAttribute("id", dObj.getId());
-            this.elementFlowsProcess.appendChild(tempObj);
             this.elementFlowsProcess.appendChild(task.getElementTask());
 
         }
@@ -160,6 +187,8 @@ public class FlowsProcessUser {
             Loop loop = getLoopByTask(task);
 
             if (loop != null) {
+                gateways.add(loop.getFirstGate());
+                gateways.add(loop.getSecondGate());
                 for (SequenceFlow loopFlow : loop.getFlows()) {
                     flows.add(loopFlow);
                     this.elementFlowsProcess.appendChild(loopFlow.getElementSequenceFlow());
@@ -205,5 +234,13 @@ public class FlowsProcessUser {
 
     public Element getElementFlowsProcess() {
         return elementFlowsProcess;
+    }
+
+    public StartEvent getStartEvent() {
+        return startEvent;
+    }
+
+    public ArrayList<Task> getTasks() {
+        return tasks;
     }
 }

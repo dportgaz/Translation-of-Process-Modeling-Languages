@@ -18,6 +18,7 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -52,8 +53,6 @@ public class FlowsProcessObject {
 
     HashSet<DataObject> dataObjects = new HashSet<>();
 
-    ArrayList<Predicate> predicates = new ArrayList<>();
-
     ArrayList<Task> subprocesses = new ArrayList<>();
 
     HashMap<String, SequenceFlow> decisionFlows = new HashMap<>();
@@ -76,19 +75,36 @@ public class FlowsProcessObject {
         Parser parser = new Parser();
 
         this.tasks = parser.parseTasks(this.participant, objectTypeObjects);
-        this.predicates = parser.parsePredicates(this.participant, objectTypeObjects);
+        predicates = parser.parsePredicates(this.participant, objectTypeObjects);
 
         setStartEvent();
         setEndEvent();
         setTasks();
         setDataObjects();
-        addPredicates(objectTypeObjects);
-
         addSequenceFlows(objectTypeObjects);
+
         setAssociations();
         addFlowsToActivities();
         addFlowsToEvents();
         addGateways();
+
+        fillDecision();
+
+        for(Task task : tasks){
+            System.out.println("TEMPO: " + task.getName() + " , " + task.getIsEndTask());
+        }
+
+    }
+
+    private void fillDecision() {
+
+        for(Map.Entry entry : decisionTasks.entrySet()){
+            System.out.println(entry);
+        }
+        System.out.println("_:__:_:_:_:_:_:_:_::_:_:_:_:_:_:_:_:_::_:_:_:_:_:_:_");
+        for(Map.Entry entry : decisionFlows.entrySet()){
+            System.out.println(entry);
+        }
 
     }
 
@@ -97,11 +113,12 @@ public class FlowsProcessObject {
         for (Task task : tasks) {
             // add data input association
             if (task.getDataInputAssociation() != null) {
-                task.setInputAssociationSource(task.getBefore().getDataObject().getRefId());
+                task.setInputAssociationSource(task.getBefore().getDataObject());
             }
 
             // add data output association
-            task.setOutputAssociationTarget(task.getDataObject().getRefId());
+            task.setOutputAssociationTarget(task.getDataObject());
+            System.out.println("BUH: " + task.getDataOutputAssociation().getTargetRef().getId());
         }
 
     }
@@ -149,21 +166,6 @@ public class FlowsProcessObject {
         this.endEvent = endEvent;
         this.elementFlowsProcess.appendChild(elementEndEvent);
 
-    }
-
-    public void addPredicates(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
-
-        objectTypeObjects.get(this.participant.getKey()).forEach(obj -> {
-            if (obj != null && obj.getMethodName().equals("AddPredicateStepType")) {
-
-                Predicate predicate = parsePredicate(obj.getCreatedEntityId(), objectTypeObjects.get(this.participant.getKey()));
-
-                predicate.setCreatedEntityId(obj.getCreatedEntityId());
-                this.predicates.add(predicate);
-
-            }
-        });
-        System.out.println("PREDICATES: " + predicates);
     }
 
     private AbstractObjectType findObjectById(Double id, ArrayList<AbstractObjectType> objectTypeObjects) {

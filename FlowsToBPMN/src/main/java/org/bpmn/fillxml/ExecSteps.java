@@ -15,6 +15,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.bpmn.bpmn_elements.task.Step;
+import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flowsObjects.AbstractObjectType;
 import org.bpmn.flowsObjects.ConcreteObjectType;
 import org.bpmn.step_one.StepOne;
@@ -23,6 +25,8 @@ import org.bpmn.step_two.StepTwo;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import static org.bpmn.step_one.StepOne.allTasks;
 
 public class ExecSteps {
 
@@ -48,6 +52,16 @@ public class ExecSteps {
         String fileTempOne = "PHOODLE_STEP_ONE_RENEW.xml";
         StepOne s1 = new StepOne(fileTempOne, definitionsElement1, objectTypeObjects);
         s1.execute();
+
+        for (Task task : allTasks) {
+
+
+            if (task.getIsSubprocess()) {
+                System.out.println("TASKNAME123 : " + task.getName());
+                    System.out.println(task.getFlows());
+            }
+
+        }
 
         // ____________________________________________________________________________________________________________
 

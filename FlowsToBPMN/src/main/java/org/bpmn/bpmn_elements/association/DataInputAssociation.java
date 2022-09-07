@@ -27,12 +27,14 @@ public class DataInputAssociation {
         this.elementDataInputAssociation = doc.createElement("bpmn:dataInputAssociation");
         this.elementDataInputAssociation.setAttribute("id", this.id);
 
-
-
     }
 
-    public void setTarget(DataObject source) {
+    public void setSourceRef(DataObject source) {
         this.sourceRef = source;
+    }
+
+    public DataObject getSource() {
+        return sourceRef;
     }
 
     public void setElementSource(Element elementSource) {
