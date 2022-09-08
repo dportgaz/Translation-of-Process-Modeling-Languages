@@ -6,8 +6,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.bpmn.step_one.fillxml.fillXMLStepOne;
-import org.bpmn.step_one.fillxml.fillXMLStepTwo;
+import org.bpmn.fillxml.ExecSteps;
 
 
 public class App {
@@ -16,16 +15,16 @@ public class App {
             throws ParserConfigurationException, TransformerException, FileNotFoundException, XPathExpressionException {
 
 
+        ExecSteps execution = new ExecSteps();
         String filePHoodle = "FlowsToBPMN/src/resources/flows/PhoodleDoodle.json";
-        fillXMLStepOne.createBPMN(filePHoodle, "PHoodle_Step1.xml");
-        fillXMLStepTwo.createBPMN(filePHoodle, "PHoodle_Step2.xml");
+        execution.createBPMN(filePHoodle, "PHoodle_RENEW.xml");
+        //FillXMLStepTwoRenew.createBPMN(filePHoodle, "PHoodle_Step2_RENEW.xml");
 
 
 /*
         String fileRecruitment = "FlowsToBPMN/src/resources/flows/recruitment.json";
-        fillXMLStepOne.createBPMN(fileRecruitment, "Recruitment.xml");
+        fillXMLStepOneRenew.createBPMN(fileRecruitment, "Recruitment_RENEW.xml");
 */
-
 
     }
 }

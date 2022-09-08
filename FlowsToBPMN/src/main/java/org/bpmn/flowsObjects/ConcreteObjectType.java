@@ -3,9 +3,9 @@ package org.bpmn.flowsObjects;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
-import org.bpmn.step_one.collaboration.participant.flowsobject.AbstractFlowsObject;
-import org.bpmn.step_one.collaboration.participant.flowsobject.FlowsObjectJsonDeserializer;
-import org.bpmn.step_one.collaboration.participant.flowsobject.FlowsObjectList;
+import org.bpmn.flowsObjects.flowsobject.AbstractFlowsObject;
+import org.bpmn.flowsObjects.flowsobject.FlowsObjectJsonDeserializer;
+import org.bpmn.flowsObjects.flowsobject.FlowsObjectList;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,10 +15,10 @@ import java.util.HashMap;
 
 public class ConcreteObjectType extends AbstractObjectType {
 
-    public HashMap<String, ArrayList<AbstractObjectType>> ObjectTypeActionLogs;
-    static ConcreteObjectType allObjectTypesMap;
-    static HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjectsMap = new HashMap<>();
-    static HashMap<String, ArrayList<AbstractObjectType>> userTypeObjectsMap = new HashMap<>();
+    HashMap<String, ArrayList<AbstractObjectType>> ObjectTypeActionLogs;
+    ConcreteObjectType allObjectTypes;
+    HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects = new HashMap<>();
+    HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects = new HashMap<>();
 
     @Override
     public String toString() {
@@ -26,9 +26,8 @@ public class ConcreteObjectType extends AbstractObjectType {
         String retString = "";
 
         for (String name : ObjectTypeActionLogs.keySet()) {
-            String key = name;
             String value = ObjectTypeActionLogs.get(name).toString();
-            retString += key + "= {" + value + "}" + "\n";
+            retString += name + "= {" + value + "}" + "\n";
         }
 
         return retString;
@@ -37,15 +36,13 @@ public class ConcreteObjectType extends AbstractObjectType {
     public ConcreteObjectType(String filename) throws FileNotFoundException {
         setAllObjects(filename);
         setObjectAndUserTypeObjectsSeparately(filename);
-        System.out.println("HERENOW: " + getAllObjects(filename));
-        System.out.println("HERENOW222: " +getUserTypeObjects());
     }
 
     public void setAllObjects(String filename) throws FileNotFoundException {
 
         Gson gsonFlowsObjectTypeJsonDeserializer = new GsonBuilder().registerTypeAdapter(AbstractObjectType.class, new FlowsObjectTypeJsonDeserializer()).create();
 
-        allObjectTypesMap = gsonFlowsObjectTypeJsonDeserializer.fromJson(new JsonReader(new FileReader(filename)), ConcreteObjectType.class);
+        allObjectTypes = gsonFlowsObjectTypeJsonDeserializer.fromJson(new JsonReader(new FileReader(filename)), ConcreteObjectType.class);
 
     }
 
@@ -65,29 +62,29 @@ public class ConcreteObjectType extends AbstractObjectType {
 
         for (String key : this.getAllObjects(filename).keySet()) {
             if (nameIdList.contains(key)) {
-                objectTypeObjectsMap.put(key, this.getAllObjects(filename).get(key));
+                objectTypeObjects.put(key, this.getAllObjects(filename).get(key));
             } else {
-                userTypeObjectsMap.put(key, this.getAllObjects(filename).get(key));
+                userTypeObjects.put(key, this.getAllObjects(filename).get(key));
             }
         }
     }
 
     public HashMap<String, ArrayList<AbstractObjectType>> getAllObjects(String filename) throws FileNotFoundException {
-        return allObjectTypesMap.ObjectTypeActionLogs;
+        return allObjectTypes.ObjectTypeActionLogs;
     }
 
     public HashMap<String, ArrayList<AbstractObjectType>> getObjectTypeObjects() throws FileNotFoundException {
-        return objectTypeObjectsMap;
+        return objectTypeObjects;
     }
 
     public HashMap<String, ArrayList<AbstractObjectType>> getUserTypeObjects() throws FileNotFoundException {
-        return userTypeObjectsMap;
+        return userTypeObjects;
     }
 
     public ArrayList<String> getObjectIdsList() {
         ArrayList<String> temp = new ArrayList<>();
 
-        for (String key : objectTypeObjectsMap.keySet()) {
+        for (String key : objectTypeObjects.keySet()) {
             temp.add(key);
         }
 
