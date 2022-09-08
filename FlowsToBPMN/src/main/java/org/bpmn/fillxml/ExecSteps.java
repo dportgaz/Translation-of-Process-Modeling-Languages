@@ -53,16 +53,6 @@ public class ExecSteps {
         StepOne s1 = new StepOne(fileTempOne, definitionsElement1, objectTypeObjects);
         s1.execute();
 
-        for (Task task : allTasks) {
-
-
-            if (task.getIsSubprocess()) {
-                System.out.println("TASKNAME123 : " + task.getName());
-                    System.out.println(task.getFlows());
-            }
-
-        }
-
         // ____________________________________________________________________________________________________________
 
         doc.removeChild(doc.getFirstChild());

@@ -105,7 +105,6 @@ public class FillBPMNDI {
 
             String source = sf.getSourceRef();
             String target = sf.getTargetRef();
-            //System.out.println("SOURCE: " + source + " e: " + e + " target: " + target);
 
             if (e.equals(source)) {
                 if (!printMark.contains(e)) {
@@ -153,12 +152,10 @@ public class FillBPMNDI {
 
                     shapes.add(tempShape);
                     printMark.add(e);
-                    //System.out.println("x=" + x + " y=" + y + " " + e);
                 }
 
                 if (!targetMark.contains(target)) {
                     list.add(target);
-                    //System.out.println("LIST: " + list);
                     targetMark.add(target);
                 }
 
@@ -180,7 +177,6 @@ public class FillBPMNDI {
             //TODO: MAYBE BUGGY
             String end = fp.getEndEvent().getId();
             printMark.add(end);
-            //System.out.println("x=" + x + " y=" + y + " " + end);
 
             if (gatewayMatcherPrev.find()) {
                 x += 86;
@@ -213,7 +209,6 @@ public class FillBPMNDI {
         f(rootElement, x, y, start, fp, tasks, flows, null);
         addFlowsEdge(rootElement, flows);
         addDataObjects(rootElement, tasks);
-        //System.out.println(shapes);
         shapes.clear();
 
     }
@@ -278,7 +273,6 @@ public class FillBPMNDI {
             participantStartY += participantYInc;
             startEventY = participantHeight / 2 - 20 + participantStartY;
 
-            System.out.println();
 
         }
 
@@ -309,7 +303,6 @@ public class FillBPMNDI {
             participantStartY += participantYInc;
             startEventY = participantHeight / 2 - 20 + participantStartY;
 
-            System.out.println();
 
         }
 
@@ -429,7 +422,6 @@ public class FillBPMNDI {
 
                 if (task.getDataInputAssociation() != null) {
 
-                    System.out.println("WTF: " + task.getDataInputAssociation().getId());
                     DataObject dataObjectIn = findDataObjectById(tasks, task.getInputAssociationSource());
                     String dataObjectInX = dataObjectIn.getX();
                     String dataObjectInY = dataObjectIn.getY();

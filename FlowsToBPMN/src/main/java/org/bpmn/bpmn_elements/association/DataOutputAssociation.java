@@ -7,7 +7,7 @@ import org.w3c.dom.Element;
 
 import static org.bpmn.fillxml.ExecSteps.doc;
 
-public class DataOutputAssociation {
+public class DataOutputAssociation extends Association{
 
     String id;
     DataObject targetRef;

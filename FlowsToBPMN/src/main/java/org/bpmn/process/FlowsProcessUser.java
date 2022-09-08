@@ -84,6 +84,7 @@ public class FlowsProcessUser {
         setDataObjects();
         //setSequenceFlows();
         resetInputAssociations();
+        resetFlows();
 
         //TODO: noch incomings und outgoings von tasks entfernen
 
@@ -94,6 +95,20 @@ public class FlowsProcessUser {
 
          */
 
+    }
+
+    private void resetFlows() {
+
+        for (Task task : tasks) {
+            if (task.getIncoming() != null) {
+                task.getElementTask().removeChild(task.getElementIncoming());
+                task.setIncoming(null);
+            }
+            if (task.getOutgoing() != null) {
+                task.getElementTask().removeChild(task.getElementOutgoing());
+                task.setOutgoing(null);
+            }
+        }
     }
 
     private void sortTasks() {
@@ -112,6 +127,7 @@ public class FlowsProcessUser {
         }
 
     }
+
     private void setElementFlowsProcess() {
         this.elementFlowsProcess.setAttribute("id", this.id);
         if (countProcess == 0) {
@@ -145,21 +161,11 @@ public class FlowsProcessUser {
     private void setTasks() {
 
         for (Task task : allTasks) {
-
-
             if (task.getParticipant().getId().equals(this.user.getId())) {
-                if (task.getIsSubprocess()) {
-                    System.out.println("TASKNAME : " + task.getName());
-                    for (Step step : task.getSteps()) {
-                        System.out.println(step.getIncoming() + " " + step.getOutgoing());
-                    }
-                }
+
                 tasks.add(task);
                 this.elementFlowsProcess.appendChild(task.getElementTask());
             }
-
-            ;
-
         }
         sortTasks();
     }

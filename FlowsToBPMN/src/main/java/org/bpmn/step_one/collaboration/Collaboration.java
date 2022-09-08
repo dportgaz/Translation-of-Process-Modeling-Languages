@@ -111,7 +111,6 @@ public class Collaboration {
     public static User getUser(Double id) {
 
         for (User user : users) {
-            System.out.println("USERNAME: " + user.getName() + " , UID: " + user.getUpdatedEntityId() + " , id: " + id);
             if (user.getUpdatedEntityId().equals(id)) {
                 return user;
             }

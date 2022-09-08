@@ -6,14 +6,15 @@ import org.w3c.dom.Element;
 
 import static org.bpmn.fillxml.ExecSteps.doc;
 
-public class StartEvent {
+public class StartEvent extends Event{
 
     String id;
     Double createdEntityId;
-    // SequenceFlow outgoing;
     Element elementStartEvent;
 
     SequenceFlow outgoing;
+
+    Element elementOutgoing;
 
     public StartEvent() {
         this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -31,6 +32,15 @@ public class StartEvent {
 
     public void setOutgoing(SequenceFlow outgoing) {
         this.outgoing = outgoing;
+        if (outgoing != null) {
+            this.elementOutgoing = doc.createElement("bpmn:outgoing");
+            this.elementOutgoing.setTextContent(outgoing.getId());
+            this.elementStartEvent.appendChild(this.elementOutgoing);
+        }
+    }
+
+    public Element getElementOutgoing() {
+        return elementOutgoing;
     }
 
     public SequenceFlow getOutgoing() {

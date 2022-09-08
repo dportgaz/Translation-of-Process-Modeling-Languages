@@ -32,7 +32,11 @@ public class Task {
 
     SequenceFlow incoming;
 
+    Element elementIncoming;
+
     SequenceFlow outgoing;
+
+    Element elementOutgoing;
 
     DataInputAssociation dataInputAssociation;
 
@@ -324,10 +328,28 @@ public class Task {
 
     public void setIncoming(SequenceFlow incoming) {
         this.incoming = incoming;
+        if (incoming != null) {
+            this.elementIncoming = doc.createElement("bpmn:incoming");
+            this.elementIncoming.setTextContent(incoming.getId());
+            this.elementTask.appendChild(this.elementIncoming);
+        }
     }
 
-    public void setOutgoing(SequenceFlow outcoming) {
-        this.outgoing = outcoming;
+    public void setOutgoing(SequenceFlow outgoing) {
+        this.outgoing = outgoing;
+        if (outgoing != null) {
+            this.elementOutgoing = doc.createElement("bpmn:outgoing");
+            this.elementOutgoing.setTextContent(outgoing.getId());
+            this.elementTask.appendChild(this.elementOutgoing);
+        }
+    }
+
+    public Element getElementIncoming() {
+        return elementIncoming;
+    }
+
+    public Element getElementOutgoing() {
+        return elementOutgoing;
     }
 
     public SequenceFlow getOutgoing() {

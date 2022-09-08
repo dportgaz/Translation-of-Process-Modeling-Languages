@@ -47,9 +47,7 @@ public class Predicate {
     public static Predicate parsePredicate(Double id, ArrayList<AbstractObjectType> objectTypeObjects) {
 
         for (AbstractObjectType obj : objectTypeObjects) {
-            //System.out.println("3");
             if (obj != null) {
-                //System.out.println("4");
                 if (obj.getMethodName().equals("UpdatePredicateStepTypeExpression")) {
                     Double stepId = (Double) obj.getParameters().get(0);
                     LinkedTreeMap link = (LinkedTreeMap) obj.getParameters().get(1);
@@ -96,7 +94,6 @@ public class Predicate {
     private static String findAttributeOfPredicate(Double id, ArrayList<AbstractObjectType> objectTypeObjects) {
 
         for (AbstractObjectType obj : objectTypeObjects) {
-            //System.out.println("3");
             if (obj != null) {
 
                 Pattern p = Pattern.compile("^Update.*AttributeType$");

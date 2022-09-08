@@ -6,7 +6,7 @@ import org.w3c.dom.Element;
 
 import static org.bpmn.fillxml.ExecSteps.doc;
 
-public class EndEvent {
+public class EndEvent extends Event{
 
     String id;
     Double createdEntityId;
@@ -14,6 +14,8 @@ public class EndEvent {
     Element elementEndEvent;
 
     SequenceFlow incoming;
+
+    Element elementIncoming;
 
     public EndEvent() {
         this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -27,6 +29,15 @@ public class EndEvent {
 
     public void setIncoming(SequenceFlow incoming) {
         this.incoming = incoming;
+        if (incoming != null) {
+            this.elementIncoming = doc.createElement("bpmn:outgoing");
+            this.elementIncoming.setTextContent(incoming.getId());
+            this.elementEndEvent.appendChild(this.elementIncoming);
+        }
+    }
+
+    public Element getElementIncoming() {
+        return elementIncoming;
     }
 
     public SequenceFlow getIncoming() {
