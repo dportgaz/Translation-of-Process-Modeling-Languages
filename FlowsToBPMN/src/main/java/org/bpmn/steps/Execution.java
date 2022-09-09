@@ -46,6 +46,7 @@ public class Execution {
 
         // ____________________________________________________________________________________________________________
 
+        /*
         doc.removeChild(doc.getFirstChild());
         Element definitionsElement2 = doc.createElement("bpmn:definitions");
         doc.appendChild(definitionsElement2);
@@ -54,6 +55,8 @@ public class Execution {
         String fileTempTwo = "PHOODLE_STEP_TWO_RENEW.xml";
         StepTwo s2 = new StepTwo(fileTempTwo, definitionsElement2, userTypeObjects, objectTypeObjects);
         s2.execute();
+
+         */
 
 
     }

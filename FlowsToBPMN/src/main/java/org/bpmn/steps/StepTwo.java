@@ -1,7 +1,7 @@
 
 package org.bpmn.steps;
 
-import org.bpmn.bpmndi.FillBPMNDI;
+//import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
@@ -46,8 +46,11 @@ public class StepTwo {
         setProcesses(definitionsElement);
 
 
+        /*
         FillBPMNDI di = new FillBPMNDI();
         di.fillBPMNDITwo(bpmnDiagramID, definitionsElement, collaboration);
+
+         */
 
         createXml(file);
 

@@ -1,6 +1,6 @@
+
 package org.bpmn.process;
 
-import org.bpmn.bpmn_elements.Loop;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
@@ -73,23 +73,12 @@ public class FlowsProcessUser {
         Parser parser = new Parser();
         parser.parsePermissions(userTypeObjects);
 
-        // setStartEvent();
-        // setEndEvent();
         setTasks();
-
         setDataObjects();
-        //setSequenceFlows();
-        resetInputAssociations();
+        //resetInputAssociations();
         resetFlows();
 
         //TODO: noch incomings und outgoings von tasks entfernen
-
-        /*
-        addFlowsToActivities();
-        addFlowsToEvents();
-        addGateways();
-
-         */
 
     }
 
@@ -97,11 +86,11 @@ public class FlowsProcessUser {
 
         for (Task task : tasks) {
             if (task.getIncoming() != null) {
-                task.getElementTask().removeChild(task.getElementIncoming());
+                task.getElement().removeChild(task.getElementIncoming());
                 task.setIncoming(null);
             }
             if (task.getOutgoing() != null) {
-                task.getElementTask().removeChild(task.getElementOutgoing());
+                task.getElement().removeChild(task.getElementOutgoing());
                 task.setOutgoing(null);
             }
         }
@@ -113,18 +102,21 @@ public class FlowsProcessUser {
 
     }
 
+    /*
     private void resetInputAssociations() {
 
         for (Task task : tasks) {
-            if (task.getDataInputAssociation() != null) {
-                task.getElementTask().removeChild(task.getDataInputAssociation().getElementDataInputAssociation());
-                task.getElementTask().removeChild(task.getProperty().getElementProperty());
+            if (task.getDataInputAssociations() != null) {
+                task.getElement().removeChild(task.getDataInputAssociations().getElementDataInputAssociation());
+                task.getElement().removeChild(task.getProperty().getElementProperty());
                 task.setDataInputAssociation(null);
                 task.setProperty(null);
             }
         }
 
     }
+
+     */
 
     private void setElementFlowsProcess() {
         this.elementFlowsProcess.setAttribute("id", this.id);
@@ -136,33 +128,13 @@ public class FlowsProcessUser {
         }
     }
 
-    private void setStartEvent() {
-
-        StartEvent startEvent = new StartEvent();
-        Element elementStartEvent = startEvent.getElementStartEvent();
-
-        this.startEvent = startEvent;
-        this.elementFlowsProcess.appendChild(elementStartEvent);
-
-    }
-
-    private void setEndEvent() {
-
-        EndEvent endEvent = new EndEvent();
-        Element elementEndEvent = endEvent.getElementEndEvent();
-
-        this.endEvent = endEvent;
-        this.elementFlowsProcess.appendChild(elementEndEvent);
-
-    }
-
     private void setTasks() {
 
         for (Task task : allTasks) {
             if (task.getParticipant().getId().equals(this.user.getId())) {
 
                 tasks.add(task);
-                this.elementFlowsProcess.appendChild(task.getElementTask());
+                this.elementFlowsProcess.appendChild(task.getElement());
             }
         }
         sortTasks();
@@ -180,59 +152,9 @@ public class FlowsProcessUser {
 
             this.elementFlowsProcess.appendChild(dObj.getElementDataObject());
             this.elementFlowsProcess.appendChild(tempObject);
-            this.elementFlowsProcess.appendChild(task.getElementTask());
+            this.elementFlowsProcess.appendChild(task.getElement());
 
         }
-    }
-
-    private void setSequenceFlows() {
-
-        boolean endIsSet = false;
-        for (int i = 0; i < tasks.size() - 1; i++) {
-            SequenceFlow sf;
-            Task task = tasks.get(i);
-            Loop loop = getLoopByTask(task);
-
-            if (loop != null) {
-                gateways.add(loop.getFirstGate());
-                gateways.add(loop.getSecondGate());
-                for (SequenceFlow loopFlow : loop.getFlows()) {
-                    flows.add(loopFlow);
-                    this.elementFlowsProcess.appendChild(loopFlow.getElementSequenceFlow());
-                }
-                if (i == 0) {
-                    sf = new SequenceFlow(startEvent.getId(), loop.getFirstGate().getId());
-                    flows.add(sf);
-                    this.elementFlowsProcess.appendChild(sf.getElementSequenceFlow());
-                }
-                i++;
-                if (i == tasks.size() - 1) {
-                    sf = new SequenceFlow(loop.getSecondGate().getId(), endEvent.getId());
-                    endIsSet = true;
-                } else {
-                    sf = new SequenceFlow(loop.getSecondGate().getId(), tasks.get(i + 1).getId());
-                }
-            } else {
-                sf = new SequenceFlow(tasks.get(i).getId(), task.getId());
-            }
-            flows.add(sf);
-            this.elementFlowsProcess.appendChild(sf.getElementSequenceFlow());
-        }
-
-        if (!endIsSet) {
-            SequenceFlow sf = new SequenceFlow(tasks.get(tasks.size() - 1).getId(), endEvent.getId());
-            flows.add(sf);
-            this.elementFlowsProcess.appendChild(sf.getElementSequenceFlow());
-        }
-    }
-
-    public Loop getLoopByTask(Task task) {
-        for (Loop loop : loops) {
-            if (loop.getFirst().getId().equals(task.getId())) {
-                return loop;
-            }
-        }
-        return null;
     }
 
     public String getId() {
@@ -243,11 +165,4 @@ public class FlowsProcessUser {
         return elementFlowsProcess;
     }
 
-    public StartEvent getStartEvent() {
-        return startEvent;
-    }
-
-    public ArrayList<Task> getTasks() {
-        return tasks;
-    }
 }

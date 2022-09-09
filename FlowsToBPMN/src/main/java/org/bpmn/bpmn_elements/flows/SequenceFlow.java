@@ -1,5 +1,6 @@
 package org.bpmn.bpmn_elements.flows;
 
+import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
@@ -14,9 +15,9 @@ public class SequenceFlow {
 
     String name;
 
-    String sourceRef;
+    BPMNElement sourceRef;
 
-    String targetRef;
+    BPMNElement targetRef;
 
     SequenceFlow toGateway;
 
@@ -30,7 +31,7 @@ public class SequenceFlow {
         setElementSequenceFlow();
     }
 
-    public SequenceFlow(String sourceRef, String targetRef) {
+    public SequenceFlow(BPMNElement sourceRef, BPMNElement targetRef) {
         this.id = "Flow_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementSequenceFlow = doc.createElement("bpmn:sequenceFlow");
         setElementSequenceFlow();
@@ -42,14 +43,14 @@ public class SequenceFlow {
         this.elementSequenceFlow.setAttribute("id", this.id);
     }
 
-    public void setSourceRef(String sourceRef) {
+    public void setSourceRef(BPMNElement sourceRef) {
         this.sourceRef = sourceRef;
-        this.elementSequenceFlow.setAttribute("sourceRef", sourceRef);
+        this.elementSequenceFlow.setAttribute("sourceRef", sourceRef.getId());
     }
 
-    public void setTargetRef(String targetRef) {
+    public void setTargetRef(BPMNElement targetRef) {
         this.targetRef = targetRef;
-        this.elementSequenceFlow.setAttribute("targetRef", targetRef);
+        this.elementSequenceFlow.setAttribute("targetRef", targetRef.getId());
     }
 
     public Element getElementSequenceFlow() {
@@ -85,11 +86,11 @@ public class SequenceFlow {
         return id;
     }
 
-    public String getSourceRef() {
+    public BPMNElement getSourceRef() {
         return sourceRef;
     }
 
-    public String getTargetRef() {
+    public BPMNElement getTargetRef() {
         return targetRef;
     }
 

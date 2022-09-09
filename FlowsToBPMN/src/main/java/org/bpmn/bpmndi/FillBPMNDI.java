@@ -3,7 +3,7 @@ package org.bpmn.bpmndi;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Task;
-import org.bpmn.process.FlowsProcessUser;
+//import org.bpmn.process.FlowsProcessUser;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import static org.bpmn.steps.Execution.doc;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.users;
-
+/*
 public class FillBPMNDI {
 
     ArrayList<String> elements = new ArrayList<>();
@@ -100,8 +100,8 @@ public class FillBPMNDI {
 
         for (SequenceFlow sf : flows) {
 
-            String source = sf.getSourceRef();
-            String target = sf.getTargetRef();
+            String source = sf.getSourceRef().getId();
+            String target = sf.getTargetRef().getId();
 
             if (e.equals(source)) {
                 if (!printMark.contains(e)) {
@@ -503,8 +503,8 @@ public class FillBPMNDI {
 
         for (SequenceFlow sf : flows) {
 
-            Shape bsSource = getBPMNShapeByFlow(sf.getSourceRef());
-            Shape bsTarget = getBPMNShapeByFlow(sf.getTargetRef());
+            Shape bsSource = getBPMNShapeByFlow(sf.getSourceRef().getId());
+            Shape bsTarget = getBPMNShapeByFlow(sf.getTargetRef().getId());
 
             Element flow = doc.createElement("bpmndi:BPMNEdge");
             flow.setAttribute("id", sf.getId() + "_di");
@@ -534,3 +534,5 @@ public class FillBPMNDI {
     }
 
 }
+
+ */

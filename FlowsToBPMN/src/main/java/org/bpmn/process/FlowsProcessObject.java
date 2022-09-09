@@ -1,6 +1,7 @@
 package org.bpmn.process;
 
-import org.bpmn.bpmn_elements.Loop;
+import org.bpmn.bpmn_elements.BPMNElement;
+import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
@@ -17,12 +18,8 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.bpmn.bpmn_elements.flows.SequenceFlow.*;
-import static org.bpmn.bpmn_elements.gateway.Predicate.getPredicate;
 import static org.bpmn.steps.Execution.doc;
 import static org.bpmn.steps.StepOne.*;
 
@@ -81,27 +78,59 @@ public class FlowsProcessObject {
         setEndEvent();
         setTasks();
         setDataObjects();
-        addSequenceFlows();
-
+        this.flows = parser.parseFlows(this, objects);
+        setFlows();
+        sortProcess();
+        setEndTasks();
+        setEndEventFlows();
         setAssociations();
+        parser.parseLoops(this, objects);
+
+        //addSequenceFlows();
+
+        /*
         addFlowsToActivities();
         addGateways();
+
+         */
+
+    }
+
+    private void setEndTasks() {
+
+        for(Task task : tasks){
+            if(task.getAfter().size() == 0){
+                task.setIsEndTask();
+                task.getAfter().add(endEvent);
+            }
+        }
 
     }
 
     private void setAssociations() {
 
+        for(Task task : tasks){
+            System.out.println(task.getBefore() + " --> " + task.getName() + " --> " + task.getAfter());
+        }
+
         for (int i = 0; i < tasks.size(); i++) {
             Task task = tasks.get(i);
             // add data input association
             if (i != 0) {
-                task.setDataInputAssociation();
-                task.setInputAssociationSource(task.getBefore().getDataObject());
+               for(BPMNElement element : task.getBefore()) {
+
+                   Task tempTask = (Task) element;
+                   DataInputAssociation tempInput = new DataInputAssociation();
+
+                   tempInput.setInputAssociationSource(tempTask.getDataObject());
+                   task.addDataInputAssociation(tempInput);
+                   // TODO: Rate hat sich selbst als Input Association Source --> BUG
+               }
             }
 
             // add data output association
-            task.setDataOutputAssociation();
-            task.setOutputAssociationTarget(task.getDataObject());
+            //task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
+            task.getDataOutputAssociation().setOutputAssociationTarget(task.getDataObject());
         }
 
     }
@@ -109,7 +138,15 @@ public class FlowsProcessObject {
     private void setTasks() {
 
         for (Task task : tasks) {
-            this.elementFlowsProcess.appendChild(task.getElementTask());
+            this.elementFlowsProcess.appendChild(task.getElement());
+        }
+
+    }
+
+    private void setFlows() {
+
+        for(SequenceFlow flow : flows){
+            elementFlowsProcess.appendChild(flow.getElementSequenceFlow());
         }
 
     }
@@ -126,7 +163,7 @@ public class FlowsProcessObject {
             Element tempObj = doc.createElement("bpmn:dataObject");
             tempObj.setAttribute("id", dObj.getId());
             this.elementFlowsProcess.appendChild(tempObj);
-            this.elementFlowsProcess.appendChild(task.getElementTask());
+            this.elementFlowsProcess.appendChild(task.getElement());
 
         }
     }
@@ -134,7 +171,7 @@ public class FlowsProcessObject {
     private void setStartEvent() {
 
         StartEvent startEvent = new StartEvent();
-        Element elementStartEvent = startEvent.getElementStartEvent();
+        Element elementStartEvent = startEvent.getElement();
 
         this.startEvent = startEvent;
         this.elementFlowsProcess.appendChild(elementStartEvent);
@@ -144,19 +181,33 @@ public class FlowsProcessObject {
     private void setEndEvent() {
 
         EndEvent endEvent = new EndEvent();
-        Element elementEndEvent = endEvent.getElementEndEvent();
+        Element elementEndEvent = endEvent.getElement();
 
         this.endEvent = endEvent;
         this.elementFlowsProcess.appendChild(elementEndEvent);
 
     }
 
-    private AbstractObjectType findObjectById(Double id, ArrayList<AbstractObjectType> objectTypeObjects) {
+    private void setEndEventFlows() {
+
+        for(Task task : tasks){
+
+            if(task.getIsEndTask()){
+                SequenceFlow endFlow = new SequenceFlow(task, endEvent);
+                flows.add(endFlow);
+                this.elementFlowsProcess.appendChild(endFlow.getElementSequenceFlow());
+            }
+
+        }
+
+    }
+
+    public AbstractObjectType findObjectById(Double id, ArrayList<AbstractObjectType> objectTypeObjects) {
 
         return objectTypeObjects.stream().filter(obj -> obj != null && obj.getCreatedEntityId() != null && obj.getCreatedEntityId().equals(id)).collect(Collectors.toList()).get(0);
     }
 
-    private Task findTaskById(Double id) {
+    public Task findTaskById(Double id) {
 
         for (Task task : this.tasks) {
 
@@ -168,8 +219,8 @@ public class FlowsProcessObject {
         return null;
     }
 
-    private void
-    addSequenceFlows() {
+    /*
+    private void addSequenceFlows() {
 
         SequenceFlow startFlow = new SequenceFlow();
         startFlow.setSourceRef(this.startEvent.getId());
@@ -307,7 +358,7 @@ public class FlowsProcessObject {
             allFlows.add(sf);
         }
     }
-
+*/
     private void removeSequenceFlow(SequenceFlow sequenceFlow) {
 
         for (int i = 0; i < flows.size(); i++) {
@@ -320,6 +371,7 @@ public class FlowsProcessObject {
 
     }
 
+    /*
     private void combine() {
 
         HashSet<SequenceFlow> temp = new HashSet<>();
@@ -362,6 +414,9 @@ public class FlowsProcessObject {
         }
     }
 
+     */
+
+    /*
     private void addDecision() {
 
         Pattern pattern = Pattern.compile("Activity_*");
@@ -396,6 +451,24 @@ public class FlowsProcessObject {
         }
     }
 
+     */
+
+
+    private void sortProcess(){
+
+        for(SequenceFlow flow : flows){
+
+            BPMNElement source = flow.getSourceRef();
+            BPMNElement target = flow.getTargetRef();
+
+            source.getAfter().add(target);
+            target.getBefore().add(source);
+
+        }
+
+    }
+
+    /*
     private void openDecisionFlows(ArrayList<SequenceFlow> flowsTemp) {
 
         ExclusiveGateway gate = new ExclusiveGateway();
@@ -406,7 +479,6 @@ public class FlowsProcessObject {
         toGateway.setSourceRef(flowsTemp.get(0).getSourceRef());
         toGateway.setTargetRef(gate.getId());
         flows.add(toGateway);
-
 
         for (int i = 0; i < flowsTemp.size(); i++) {
 
@@ -419,10 +491,14 @@ public class FlowsProcessObject {
             decisionFlows.put(fromGateway.getId(), fromGateway);
         }
 
+
         decisionTasks.put(toGateway.getSourceRef(), tempTasks);
 
     }
 
+     */
+
+    /*
     private void addLoop(ArrayList<AbstractObjectType> objects) {
 
         // gateways in case of loop
@@ -440,7 +516,7 @@ public class FlowsProcessObject {
                 Task sourceTask = findTaskById(sourceObjectId);
                 Task targetTask = findTaskById(targetObjectId);
 
-                loop.getFlows().add(new SequenceFlow(sourceTask.getId(), targetTask.getId()));
+                loop.getFlows().add(new SequenceFlow(sourceTask, targetTask));
 
                 loop.addTask(sourceTask);
                 loop.setFirst(sourceTask);
@@ -491,6 +567,8 @@ public class FlowsProcessObject {
 
     }
 
+     */
+
     private void addEndEvent() {
         for (Task task : tasks) {
             boolean temp = false;
@@ -505,6 +583,7 @@ public class FlowsProcessObject {
         }
     }
 
+    /*
     private void addEndEventSequenceFlows() {
 
         for (int i = 0; i < tasks.size(); i++) {
@@ -520,6 +599,8 @@ public class FlowsProcessObject {
         }
 
     }
+
+     */
 
     private boolean containsFlow(SequenceFlow flow) {
         for (SequenceFlow sf : this.flows) {
@@ -621,5 +702,9 @@ public class FlowsProcessObject {
 
     public ArrayList<SequenceFlow> getFlows() {
         return flows;
+    }
+
+    public HashSet<ExclusiveGateway> getGateways() {
+        return gateways;
     }
 }
