@@ -84,15 +84,39 @@ public class FlowsProcessObject {
         setEndTasks();
         setEndEventFlows();
         setAssociations();
+        setSubProcesses();
         parser.parseLoops(this, objects);
-
         //addSequenceFlows();
 
         /*
         addFlowsToActivities();
         addGateways();
-
          */
+
+    }
+
+    private void setSubProcesses() {
+
+        for (Task task : tasks) {
+            if (task.getIsSubprocess()) {
+                subprocesses.add(task);
+                ArrayList<Step> steps = task.getSteps();
+                SequenceFlow sfStart = new SequenceFlow(task.getStart(), steps.get(0));
+                task.getElement().appendChild(sfStart.getElementSequenceFlow());
+                task.getFlows().add(sfStart);
+                task.getStart().setOutgoing(sfStart);
+                for (int i = 0; i < task.getSteps().size() - 1; i++) {
+                    SequenceFlow sf = new SequenceFlow(steps.get(i), steps.get(i+1));
+                    task.getElement().appendChild(sf.getElementSequenceFlow());
+                    task.getFlows().add(sf);
+                }
+                SequenceFlow sfEnd = new SequenceFlow(steps.get(task.getSteps().size() - 1), task.getEnd());
+                task.getElement().appendChild(task.getEnd().getElement());
+                task.getElement().appendChild(sfEnd.getElementSequenceFlow());
+                task.getFlows().add(sfEnd);
+                task.getEnd().setIncoming(sfEnd);
+            }
+        }
 
     }
 
@@ -109,10 +133,6 @@ public class FlowsProcessObject {
 
     private void setAssociations() {
 
-        for(Task task : tasks){
-            System.out.println(task.getBefore() + " --> " + task.getName() + " --> " + task.getAfter());
-        }
-
         for (int i = 0; i < tasks.size(); i++) {
             Task task = tasks.get(i);
             // add data input association
@@ -124,7 +144,6 @@ public class FlowsProcessObject {
 
                    tempInput.setInputAssociationSource(tempTask.getDataObject());
                    task.addDataInputAssociation(tempInput);
-                   // TODO: Rate hat sich selbst als Input Association Source --> BUG
                }
             }
 
