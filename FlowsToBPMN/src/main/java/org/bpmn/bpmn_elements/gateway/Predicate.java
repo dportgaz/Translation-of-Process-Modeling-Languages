@@ -1,7 +1,7 @@
 package org.bpmn.bpmn_elements.gateway;
 
 import com.google.gson.internal.LinkedTreeMap;
-import org.bpmn.flowsObjects.AbstractObjectType;
+import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 
 import java.util.ArrayList;

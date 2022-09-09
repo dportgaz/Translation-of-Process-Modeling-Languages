@@ -1,7 +1,6 @@
 package org.bpmn.bpmn_elements.task;
 
-import org.bpmn.step_one.collaboration.participant.Object;
-import org.bpmn.step_one.collaboration.participant.Participant;
+import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 
 public class Step extends Task {
 

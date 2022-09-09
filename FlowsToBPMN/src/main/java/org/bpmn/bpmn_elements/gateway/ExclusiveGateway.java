@@ -6,7 +6,7 @@ import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 
-import static org.bpmn.fillxml.ExecSteps.doc;
+import static org.bpmn.steps.Execution.doc;
 
 public class ExclusiveGateway {
 

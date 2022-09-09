@@ -4,7 +4,7 @@ import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
-import static org.bpmn.fillxml.ExecSteps.doc;
+import static org.bpmn.steps.Execution.doc;
 
 public class EndEvent extends Event{
 
@@ -30,7 +30,7 @@ public class EndEvent extends Event{
     public void setIncoming(SequenceFlow incoming) {
         this.incoming = incoming;
         if (incoming != null) {
-            this.elementIncoming = doc.createElement("bpmn:outgoing");
+            this.elementIncoming = doc.createElement("bpmn:incoming");
             this.elementIncoming.setTextContent(incoming.getId());
             this.elementEndEvent.appendChild(this.elementIncoming);
         }

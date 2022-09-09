@@ -1,29 +1,25 @@
 package org.bpmn.process;
 
 import org.bpmn.bpmn_elements.Loop;
-import org.bpmn.bpmn_elements.association.DataOutputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
-import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
-import org.bpmn.flowsObjects.AbstractObjectType;
+import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.parse_json.Parser;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.step_one.collaboration.participant.User;
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import static org.bpmn.bpmn_elements.gateway.Predicate.parsePredicate;
-import static org.bpmn.fillxml.ExecSteps.doc;
-import static org.bpmn.step_one.StepOne.*;
-import static org.bpmn.step_one.collaboration.Collaboration.users;
+import static org.bpmn.steps.Execution.doc;
+import static org.bpmn.steps.StepOne.*;
 
 public class FlowsProcessUser {
 
@@ -122,7 +118,9 @@ public class FlowsProcessUser {
         for (Task task : tasks) {
             if (task.getDataInputAssociation() != null) {
                 task.getElementTask().removeChild(task.getDataInputAssociation().getElementDataInputAssociation());
+                task.getElementTask().removeChild(task.getProperty().getElementProperty());
                 task.setDataInputAssociation(null);
+                task.setProperty(null);
             }
         }
 
@@ -175,10 +173,13 @@ public class FlowsProcessUser {
         for (Task task : tasks) {
 
             DataObject dObj = task.getDataObject();
+            Element tempObject = doc.createElement("bpmn:dataObject");
+            tempObject.setAttribute("id", dObj.getId());
 
             dataObjects.add(dObj);
 
             this.elementFlowsProcess.appendChild(dObj.getElementDataObject());
+            this.elementFlowsProcess.appendChild(tempObject);
             this.elementFlowsProcess.appendChild(task.getElementTask());
 
         }

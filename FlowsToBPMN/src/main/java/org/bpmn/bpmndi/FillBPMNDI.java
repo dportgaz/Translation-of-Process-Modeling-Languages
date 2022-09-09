@@ -1,18 +1,15 @@
 package org.bpmn.bpmndi;
 
 import org.bpmn.bpmn_elements.dataobject.DataObject;
-import org.bpmn.bpmn_elements.event.EndEvent;
-import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.process.FlowsProcessUser;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.step_one.collaboration.Collaboration;
-import org.bpmn.step_one.collaboration.participant.Object;
+import org.bpmn.bpmn_elements.collaboration.Collaboration;
+import org.bpmn.bpmn_elements.collaboration.participant.Object;
 import org.bpmn.process.FlowsProcessObject;
-import org.bpmn.step_one.collaboration.participant.Participant;
-import org.bpmn.step_one.collaboration.participant.User;
-import org.w3c.dom.Document;
+import org.bpmn.bpmn_elements.collaboration.participant.Participant;
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -21,9 +18,9 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.fillxml.ExecSteps.doc;
-import static org.bpmn.step_one.collaboration.Collaboration.objects;
-import static org.bpmn.step_one.collaboration.Collaboration.users;
+import static org.bpmn.steps.Execution.doc;
+import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
+import static org.bpmn.bpmn_elements.collaboration.Collaboration.users;
 
 public class FillBPMNDI {
 

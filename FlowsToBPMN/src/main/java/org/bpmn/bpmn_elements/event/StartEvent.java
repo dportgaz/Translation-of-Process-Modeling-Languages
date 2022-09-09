@@ -4,7 +4,7 @@ import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
-import static org.bpmn.fillxml.ExecSteps.doc;
+import static org.bpmn.steps.Execution.doc;
 
 public class StartEvent extends Event{
 

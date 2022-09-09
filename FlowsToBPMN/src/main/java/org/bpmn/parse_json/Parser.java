@@ -2,25 +2,22 @@ package org.bpmn.parse_json;
 
 import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;
-import org.bpmn.flowsObjects.AbstractObjectType;
-import org.bpmn.step_one.collaboration.Collaboration;
-import org.bpmn.step_one.collaboration.participant.Object;
-import org.bpmn.step_one.collaboration.participant.Participant;
-import org.bpmn.step_one.collaboration.participant.User;
+import org.bpmn.flows_objects.AbstractObjectType;
+import org.bpmn.bpmn_elements.collaboration.Collaboration;
+import org.bpmn.bpmn_elements.collaboration.participant.Participant;
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.bpmn.bpmn_elements.gateway.Predicate.parsePredicate;
-import static org.bpmn.step_one.StepOne.allTasks;
+import static org.bpmn.steps.StepOne.allTasks;
 
 public class Parser {
 
-    public ArrayList<Task> parseTasks(Participant participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public ArrayList<Task> parseTasks(Participant participant, ArrayList<AbstractObjectType> objects) {
 
-        ArrayList<AbstractObjectType> objects = objectTypeObjects.get(participant.getKey());
         ArrayList<Task> tasks = new ArrayList<>();
-        boolean firstTask = true;
 
         for (AbstractObjectType obj : objects) {
 
@@ -29,40 +26,24 @@ public class Parser {
                 String taskName = obj.getParameters().get(1) + " " + participant.getName();
                 Double createdEntityId = (Double) obj.getParameters().get(0);
 
-                Task task = new Task(createdEntityId, taskName, participant, objectTypeObjects);
-
-                // fixes double entry json bug
-                if (tasks.contains(task)) {
-                    tasks.remove(task);
-                    if (tasks.size() == 0) {
-                        firstTask = true;
-                    }
-                }
-                if (!firstTask) {
-                    task.setDataInputAssociation();
-                }
-                task.setDataOutputAssociation();
+                Task task = new Task(createdEntityId, taskName, participant, objects);
                 tasks.add(task);
-                firstTask = false;
+                allTasks.add(task);
 
-                if (!allTasks.contains(task)) {
-                    allTasks.add(task);
-                }
             }
 
         }
         return tasks;
     }
 
-    public ArrayList<Predicate> parsePredicates(Object participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public ArrayList<Predicate> parsePredicates(ArrayList<AbstractObjectType> objects) {
 
-        ArrayList<AbstractObjectType> objects = objectTypeObjects.get(participant.getKey());
         ArrayList<Predicate> predicates = new ArrayList<>();
 
         for (AbstractObjectType obj : objects) {
             if (obj != null && obj.getMethodName().equals("AddPredicateStepType")) {
 
-                Predicate predicate = parsePredicate(obj.getCreatedEntityId(), objectTypeObjects.get(participant.getKey()));
+                Predicate predicate = parsePredicate(obj.getCreatedEntityId(), objects);
                 predicate.setCreatedEntityId(obj.getCreatedEntityId());
                 predicates.add(predicate);
 

@@ -7,10 +7,9 @@ import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
-import org.bpmn.flowsObjects.AbstractObjectType;
+import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.step_one.collaboration.participant.Object;
-import org.bpmn.step_one.collaboration.participant.Participant;
+import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.fillxml.ExecSteps.doc;
+import static org.bpmn.steps.Execution.doc;
 
 public class Task {
 
@@ -54,7 +53,7 @@ public class Task {
 
     EndEvent afterEvent;
 
-    String property;
+    Property property;
 
     private ArrayList<Step> steps = new ArrayList<>();
 
@@ -90,13 +89,13 @@ public class Task {
         this.elementTask.setAttribute("name", this.name);
     }
 
-    public Task(Double createdEntityId, String name, Participant participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public Task(Double createdEntityId, String name, Participant participant, ArrayList<AbstractObjectType> objects) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
         this.name = name;
         this.participant = participant;
         this.dataObject = new DataObject(this);
-        this.steps = setSteps(objectTypeObjects);
+        this.steps = setSteps(objects);
         setTaskElement();
     }
 
@@ -111,6 +110,13 @@ public class Task {
         }
         this.elementTask.setAttribute("id", this.id);
         this.elementTask.setAttribute("name", this.name);
+    }
+
+    public void setProperty(Property property) {
+        this.property = property;
+        if(this.property!=null) {
+            this.elementTask.appendChild(this.property.getElementProperty());
+        }
     }
 
     public void setStart(StartEvent start) {
@@ -200,7 +206,6 @@ public class Task {
             this.dataInputAssociation.getElementDataInputAssociation().appendChild(source);
         }
     }
-
     public void setOutputAssociationTarget(DataObject dataObject) {
         this.outputAssociationTarget = dataObject.getRefId();
         this.dataOutputAssociation.setTargetRef(dataObject);
@@ -243,12 +248,8 @@ public class Task {
         return stepNamesByTask;
     }
 
-    public String getProperty() {
+    public Property getProperty() {
         return property;
-    }
-
-    public void setProperty() {
-        this.property = "Property_" + RandomIdGenerator.generateRandomUniqueId(6);
     }
 
     public DataOutputAssociation getDataOutputAssociation() {
@@ -301,6 +302,10 @@ public class Task {
 
         this.dataInputAssociation = new DataInputAssociation();
         this.elementTask.appendChild(this.dataInputAssociation.getElementDataInputAssociation());
+        Element target = doc.createElement("bpmn:targetRef");
+        setProperty(new Property());
+        target.setTextContent(property.getId());
+        this.dataInputAssociation.getElementDataInputAssociation().appendChild(target);
 
     }
 
@@ -392,21 +397,21 @@ public class Task {
         return this.name;
     }
 
-    public ArrayList<Step> setSteps(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public ArrayList<Step> setSteps(ArrayList<AbstractObjectType> objects) {
 
         String participantKey = this.participant.getKey();
-        objectTypeObjects.get(participantKey).forEach(obj -> {
+        objects.forEach(obj -> {
 
             if (obj != null && obj.getMethodName().equals("AddStepType")) {
                 Double tempId = (Double) obj.getParameters().get(0);
                 if (this.getCreatedEntityId().equals(tempId)) {
                     // trim steps by removing default steps
-                    objectTypeObjects.get(participantKey).forEach(obj2 -> {
+                    objects.forEach(obj2 -> {
                         if (obj2 != null
                                 && obj2.getMethodName().equals("UpdateStepAttributeType")
                                 && obj2.getParameters().get(0).equals(obj.getCreatedEntityId())
-                                && !stepIsPredicate(objectTypeObjects, (Double) obj2.getParameters().get(1))) {
-                            this.steps.add(this.getStep(objectTypeObjects, obj));
+                                && !stepIsPredicate(objects, (Double) obj2.getParameters().get(1))) {
+                            this.steps.add(this.getStep(objects, obj));
                         }
                     });
                 }
@@ -415,8 +420,8 @@ public class Task {
         return steps;
     }
 
-    private boolean stepIsPredicate(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, Double id) {
-        for (AbstractObjectType obj : objectTypeObjects.get(this.participant.getKey())) {
+    private boolean stepIsPredicate(ArrayList<AbstractObjectType> objects, Double id) {
+        for (AbstractObjectType obj : objects) {
             if (obj != null && obj.getMethodName().equals("UpdatePredicateStepTypeExpression")) {
                 LinkedTreeMap link = (LinkedTreeMap) obj.getParameters().get(1);
                 LinkedTreeMap innerLink = (LinkedTreeMap) link.get("Left");
@@ -428,15 +433,14 @@ public class Task {
         return false;
     }
 
-    private Step getStep(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, AbstractObjectType absObj) {
+    private Step getStep(ArrayList<AbstractObjectType> objects, AbstractObjectType absObj) {
 
-        String participantKey = this.participant.getKey();
         Double id = absObj.getCreatedEntityId();
 
-        for (AbstractObjectType obj : objectTypeObjects.get(participantKey)) {
+        for (AbstractObjectType obj : objects) {
             if (obj != null && obj.getMethodName().equals("UpdateStepAttributeType") && obj.getParameters().get(0).equals(id)) {
                 Double tempId = (Double) obj.getParameters().get(1);
-                for (AbstractObjectType obj2 : objectTypeObjects.get(participantKey)) {
+                for (AbstractObjectType obj2 : objects) {
                     if (obj2 != null) {
 
                         Pattern p = Pattern.compile("^Update.*AttributeType$");
