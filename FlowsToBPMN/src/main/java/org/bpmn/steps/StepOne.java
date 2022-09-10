@@ -6,6 +6,7 @@ import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;
 //import org.bpmn.bpmndi.FillBPMNDI;
+import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
@@ -55,10 +56,9 @@ public class StepOne {
         definitionsElement.appendChild(collaborationElement);
         setProcesses(definitionsElement);
 
-        /*
         FillBPMNDI di = new FillBPMNDI();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);
-*/
+
         createXml(file);
 
     }

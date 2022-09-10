@@ -1,5 +1,6 @@
 package org.bpmn.bpmndi;
 
+import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Task;
@@ -21,7 +22,7 @@ import java.util.regex.Pattern;
 import static org.bpmn.steps.Execution.doc;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.users;
-/*
+
 public class FillBPMNDI {
 
     ArrayList<String> elements = new ArrayList<>();
@@ -210,6 +211,7 @@ public class FillBPMNDI {
 
     }
 
+    /*
     public void parseTasks(Element rootElement, FlowsProcessUser fp, double x, double y) {
 
         //bring elements of pool in order according to flows
@@ -223,6 +225,8 @@ public class FillBPMNDI {
         shapes.clear();
 
     }
+
+     */
 
     public void f(Element rootElement, double x, double y, ArrayList<Task> tasks) {
 
@@ -275,6 +279,7 @@ public class FillBPMNDI {
 
     }
 
+    /*
     public void fillBPMNDITwo(String bpmndiagramID, Element rootElement, Collaboration collaboration) {
 
         Element bpmndiagram = doc.createElement("bpmndi:BPMNDiagram");
@@ -304,6 +309,8 @@ public class FillBPMNDI {
         }
 
     }
+
+     */
 
     public void addParticipantsShape(Element rootElement, Participant p, double participantY) {
 
@@ -417,28 +424,30 @@ public class FillBPMNDI {
                 dataObjectFlowOutput.appendChild(waypointOutEnd);
                 rootElement.appendChild(dataObjectFlowOutput);
 
-                if (task.getDataInputAssociation() != null) {
+                if (!task.getDataInputAssociations().isEmpty()) {
 
-                    DataObject dataObjectIn = findDataObjectById(tasks, task.getInputAssociationSource());
-                    String dataObjectInX = dataObjectIn.getX();
-                    String dataObjectInY = dataObjectIn.getY();
+                    for (DataInputAssociation dataInputAssociation : task.getDataInputAssociations()) {
+                        DataObject dataObjectIn = findDataObjectById(tasks, dataInputAssociation.getSource().getRefId());
+                        String dataObjectInX = dataObjectIn.getX();
+                        String dataObjectInY = dataObjectIn.getY();
 
-                    Element dataObjectFlowInput = doc.createElement("bpmndi:BPMNEdge");
-                    //TODO: POTENZIELL BUGGY
-                    dataObjectFlowInput.setAttribute("id", task.getDataInputAssociation().getId() + "_di");
-                    dataObjectFlowInput.setAttribute("bpmnElement", task.getDataInputAssociation().getId());
+                        Element dataObjectFlowInput = doc.createElement("bpmndi:BPMNEdge");
+                        //TODO: POTENZIELL BUGGY
+                        dataObjectFlowInput.setAttribute("id", dataInputAssociation.getId() + "_di");
+                        dataObjectFlowInput.setAttribute("bpmnElement", dataInputAssociation.getId());
 
-                    Element waypointInStart = doc.createElement("di:waypoint");
-                    Element waypointInEnd = doc.createElement("di:waypoint");
-                    waypointInStart.setAttribute("x", dataObjectInX);
-                    waypointInStart.setAttribute("y", dataObjectInY);
-                    waypointInEnd.setAttribute("x", waypointOutStartX);
-                    waypointInEnd.setAttribute("y", waypointOutStartY);
+                        Element waypointInStart = doc.createElement("di:waypoint");
+                        Element waypointInEnd = doc.createElement("di:waypoint");
+                        waypointInStart.setAttribute("x", dataObjectInX);
+                        waypointInStart.setAttribute("y", dataObjectInY);
+                        waypointInEnd.setAttribute("x", waypointOutStartX);
+                        waypointInEnd.setAttribute("y", waypointOutStartY);
 
-                    dataObjectFlowInput.appendChild(waypointInStart);
-                    dataObjectFlowInput.appendChild(waypointInEnd);
+                        dataObjectFlowInput.appendChild(waypointInStart);
+                        dataObjectFlowInput.appendChild(waypointInEnd);
 
-                    rootElement.appendChild(dataObjectFlowInput);
+                        rootElement.appendChild(dataObjectFlowInput);
+                    }
                 }
 
                 rootElement.appendChild(dataObject);
@@ -450,6 +459,7 @@ public class FillBPMNDI {
         }
     }
 
+    /*
     public void addDataObjectsTwo(Element rootElement, ArrayList<Task> tasks) {
 
         Shape firstBsTask = getBPMNShapeByTaskTwo(tasks.get(0).getId());
@@ -499,6 +509,8 @@ public class FillBPMNDI {
 
     }
 
+     */
+
     public void addFlowsEdge(Element rootElement, ArrayList<SequenceFlow> flows) {
 
         for (SequenceFlow sf : flows) {
@@ -535,4 +547,4 @@ public class FillBPMNDI {
 
 }
 
- */
+
