@@ -1,5 +1,6 @@
 package org.bpmn.bpmn_elements.gateway;
 
+import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 
 import static org.bpmn.steps.Execution.doc;
 
-public class ExclusiveGateway {
+public class ExclusiveGateway implements BPMNElement {
 
     String id;
 
@@ -34,6 +35,26 @@ public class ExclusiveGateway {
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public ArrayList<BPMNElement> getBefore() {
+        return null;
+    }
+
+    @Override
+    public ArrayList<BPMNElement> getAfter() {
+        return null;
+    }
+
+    @Override
+    public Element getElement() {
+        return null;
+    }
+
+    @Override
+    public void setElement() {
+
     }
 
     public void addIncoming(SequenceFlow incoming) {

@@ -11,6 +11,9 @@ public class DataInputAssociation extends Association{
 
     String id;
     DataObject sourceRef;
+
+    String inputAssociationSource;
+
     Element elementDataInputAssociation;
 
     Element elementSource;
@@ -27,6 +30,16 @@ public class DataInputAssociation extends Association{
         this.elementDataInputAssociation = doc.createElement("bpmn:dataInputAssociation");
         this.elementDataInputAssociation.setAttribute("id", this.id);
 
+    }
+
+    public void setInputAssociationSource(DataObject dataObject) {
+        this.inputAssociationSource = dataObject.getRefId();
+        setSourceRef(dataObject);
+        if (this.inputAssociationSource != null) {
+            Element source = doc.createElement("bpmn:sourceRef");
+            source.setTextContent(inputAssociationSource);
+            getElementDataInputAssociation().appendChild(source);
+        }
     }
 
     public void setSourceRef(DataObject source) {

@@ -79,14 +79,14 @@ public class FlowsProcessObject {
         setTasks();
         setDataObjects();
         this.flows = parser.parseFlows(this, objects);
-        setFlows();
         sortProcess();
         setEndTasks();
-        setEndEventFlows();
+        addEndEventFlows();
         setAssociations();
         setSubProcesses();
-        parser.parseLoops(this, objects);
-        //addSequenceFlows();
+        //parser.parseLoops(this, objects);
+        setGateways();
+        setFlows();
 
         /*
         addFlowsToActivities();
@@ -95,6 +95,84 @@ public class FlowsProcessObject {
 
     }
 
+    private void setGateways() {
+
+        setSplitGateways();
+        setJoinGateways();
+
+    }
+
+    private void setSplitGateways() {
+
+        ArrayList<SequenceFlow> flowsToAdd = new ArrayList<>();
+        ArrayList<SequenceFlow> flowsToRemove = new ArrayList<>();
+        // add split gateways
+        for(int i = 0 ; i < flows.size()-1; i++){
+
+            boolean duplicate = false;
+            ExclusiveGateway splitGateway = new ExclusiveGateway();
+            BPMNElement outerElement = flows.get(i).getSourceRef();
+
+            for(int j = i+1 ; j < flows.size(); j++){
+
+                BPMNElement innerElement = flows.get(j).getSourceRef();
+
+                if(outerElement.getId().equals(innerElement.getId())){
+                    flowsToRemove.add(flows.get(j));
+                    flowsToAdd.add(new SequenceFlow(splitGateway, flows.get(j).getTargetRef()));
+                    duplicate = true;
+                }
+
+            }
+            if(duplicate){
+                flowsToRemove.add(flows.get(i));
+                flowsToAdd.add(new SequenceFlow(splitGateway, flows.get(i).getTargetRef()));
+                flowsToAdd.add(new SequenceFlow(flows.get(i).getSourceRef(), splitGateway));
+                gateways.add(splitGateway);
+            }
+
+        }
+
+        flows.addAll(flowsToAdd);
+        flows.removeAll(flowsToRemove);
+
+    }
+    private void setJoinGateways() {
+
+        ArrayList<SequenceFlow> flowsToAdd = new ArrayList<>();
+        ArrayList<SequenceFlow> flowsToRemove = new ArrayList<>();
+        // add split gateways
+        for(int i = 0 ; i < flows.size()-1; i++){
+
+            boolean duplicate = false;
+            ExclusiveGateway joinGateway = new ExclusiveGateway();
+            BPMNElement outerElement = flows.get(i).getTargetRef();
+
+            for(int j = i+1 ; j < flows.size(); j++){
+
+                BPMNElement innerElement = flows.get(j).getTargetRef();
+
+                if(outerElement.getId().equals(innerElement.getId())){
+                    flowsToRemove.add(flows.get(j));
+                    flowsToAdd.add(new SequenceFlow(flows.get(j).getSourceRef(), joinGateway));
+                    duplicate = true;
+                }
+
+            }
+            if(duplicate){
+                flowsToRemove.add(flows.get(i));
+                flowsToAdd.add(new SequenceFlow(joinGateway, flows.get(i).getTargetRef()));
+                flowsToAdd.add(new SequenceFlow(flows.get(i).getSourceRef(), joinGateway));
+                gateways.add(joinGateway);
+
+            }
+
+        }
+
+        flows.addAll(flowsToAdd);
+        flows.removeAll(flowsToRemove);
+
+    }
     private void setSubProcesses() {
 
         for (Task task : tasks) {
@@ -164,6 +242,8 @@ public class FlowsProcessObject {
 
     private void setFlows() {
 
+        System.out.println("THIS: \n"  + flows);
+
         for(SequenceFlow flow : flows){
             elementFlowsProcess.appendChild(flow.getElementSequenceFlow());
         }
@@ -207,14 +287,13 @@ public class FlowsProcessObject {
 
     }
 
-    private void setEndEventFlows() {
+    private void addEndEventFlows() {
 
         for(Task task : tasks){
 
             if(task.getIsEndTask()){
                 SequenceFlow endFlow = new SequenceFlow(task, endEvent);
                 flows.add(endFlow);
-                this.elementFlowsProcess.appendChild(endFlow.getElementSequenceFlow());
             }
 
         }
@@ -238,146 +317,7 @@ public class FlowsProcessObject {
         return null;
     }
 
-    /*
-    private void addSequenceFlows() {
 
-        SequenceFlow startFlow = new SequenceFlow();
-        startFlow.setSourceRef(this.startEvent.getId());
-        startFlow.setTargetRef(this.tasks.get(0).getId());
-        flows.add(startFlow);
-        startEvent.setOutgoing(startFlow);
-
-        for (AbstractObjectType obj : objects) {
-
-            if (obj != null && obj.getMethodName().equals("AddTransitionType")) {
-                Double source = (Double) obj.getParameters().get(0);
-                Double target = (Double) obj.getParameters().get(1);
-
-                // check whether source and/or target are predicates
-                // in this case, change parameter of transition to his respective step
-
-                AbstractObjectType sourceTemp = getPredicate(source, objects);
-                AbstractObjectType targetTemp = getPredicate(target, objects);
-
-                if (sourceTemp != null && sourceTemp.getMethodName().equals("AddPredicateStepType")) {
-                    source = (Double) getPredicate(source, objects).getParameters().get(0);
-                }
-
-                if (targetTemp != null && targetTemp.getMethodName().equals("AddPredicateStepType")) {
-                    target = (Double) getPredicate(target, objects).getParameters().get(0);
-                }
-
-                Double sourceObjectId = (Double) findObjectById(source, objects).getParameters().get(0);
-                Double targetObjectId = (Double) findObjectById(target, objects).getParameters().get(0);
-                if (!sourceObjectId.equals(targetObjectId)) {
-                    SequenceFlow sf = new SequenceFlow();
-                    Task task1 = findTaskById(sourceObjectId);
-                    Task task2 = findTaskById(targetObjectId);
-
-                    if (task1 != null && task2 != null) {
-                        sf.setSourceRef(task1.getId());
-                        sf.setTargetRef(task2.getId());
-                        if (containsFlow(sf)) {
-                            removeFlowFromList(sf);
-                        }
-                        flows.add(sf);
-                    }
-                }
-            }
-        }
-
-        addEndEvent();
-        addEndEventSequenceFlows();
-        addLoop(objects);
-
-        // addDecision();
-        // combine();
-
-        int decisionFlowsCnt = 0;
-        for (SequenceFlow sequenceFlow : flows) {
-
-            Element flow = doc.createElement("bpmn:sequenceFlow");
-            flow.setAttribute("id", sequenceFlow.getId());
-            flow.setAttribute("sourceRef", sequenceFlow.getSourceRef());
-            flow.setAttribute("targetRef", sequenceFlow.getTargetRef());
-
-            if (decisionFlows.containsKey(sequenceFlow.getId()) && predicates.size() > 0) {
-                // TODO: MAYBE BUGGY BECAUSE CHANGED TO LIST FROM SET
-                sequenceFlow.setName(predicates.get(decisionFlowsCnt).getCondition());
-                decisionFlowsCnt++;
-                flow.setAttribute("name", sequenceFlow.getName());
-            }
-            this.elementFlowsProcess.appendChild(flow);
-        }
-
-        for (int k = 0; k < tasks.size(); k++) {
-
-            Task task = tasks.get(k);
-
-            if (k == 0) {
-                task.setBeforeEvent(startEvent);
-                task.setAfter(tasks.get(k + 1));
-            } else if (k == tasks.size() - 1) {
-                task.setAfterEvent(endEvent);
-                task.setBefore(tasks.get(k - 1));
-            } else {
-                if (decisionTasks.containsKey(task.getId())) {
-                    task.setBefore(tasks.get(k - 1));
-                    int indexAfter = k + decisionTasks.get(task.getId()).size() + 1;
-
-                    for (String id : decisionTasks.get(task.getId())) {
-                        for (int m = 0; m < tasks.size(); m++) {
-                            Task tempTask = tasks.get(m);
-                            if (tempTask.getId().equals(id)) {
-                                tempTask.setBefore(task);
-                                if (indexAfter < tasks.size()) {
-                                    tempTask.setAfter(tasks.get(indexAfter));
-
-                                } else {
-                                    tempTask.setAfterEvent(endEvent);
-                                }
-                            }
-                        }
-                    }
-                    k += decisionTasks.size() + 1;
-                } else {
-                    task.setBefore(tasks.get(k - 1));
-                    task.setAfter(tasks.get(k + 1));
-                }
-            }
-        }
-
-        for (Task task : tasks) {
-            if (task.getIsSubprocess()) {
-                subprocesses.add(task);
-                ArrayList<Step> steps = task.getSteps();
-                SequenceFlow sfStart = new SequenceFlow();
-                sfStart.setSourceRef(task.getStart().getId());
-                sfStart.setTargetRef(steps.get(0).getId());
-                task.getElementTask().appendChild(sfStart.getElementSequenceFlow());
-                task.getFlows().add(sfStart);
-                task.getStart().setOutgoing(sfStart);
-                for (int i = 0; i < task.getSteps().size() - 1; i++) {
-                    SequenceFlow sf = new SequenceFlow();
-                    sf.setSourceRef(steps.get(i).getId());
-                    sf.setTargetRef(steps.get(i + 1).getId());
-                    task.getElementTask().appendChild(sf.getElementSequenceFlow());
-                    task.getFlows().add(sf);
-                }
-                SequenceFlow sfEnd = new SequenceFlow();
-                sfEnd.setSourceRef(steps.get(task.getSteps().size() - 1).getId());
-                sfEnd.setTargetRef(task.getEnd().getId());
-                task.getElementTask().appendChild(task.getEnd().getElementEndEvent());
-                task.getElementTask().appendChild(sfEnd.getElementSequenceFlow());
-                task.getFlows().add(sfEnd);
-                task.getEnd().setIncoming(sfEnd);
-            }
-        }
-        for (SequenceFlow sf : flows) {
-            allFlows.add(sf);
-        }
-    }
-*/
     private void removeSequenceFlow(SequenceFlow sequenceFlow) {
 
         for (int i = 0; i < flows.size(); i++) {
@@ -389,89 +329,6 @@ public class FlowsProcessObject {
         }
 
     }
-
-    /*
-    private void combine() {
-
-        HashSet<SequenceFlow> temp = new HashSet<>();
-        Pattern pattern = Pattern.compile("Gateway_*");
-
-        for (int i = 0; i < flows.size() - 1; i++) {
-            Matcher matcher = pattern.matcher(flows.get(i).getTargetRef());
-            boolean duplicate = false;
-            if (!matcher.find()) {
-
-                SequenceFlow outerFlow = flows.get(i);
-                ExclusiveGateway gate = new ExclusiveGateway();
-
-                for (int j = i + 1; j < flows.size(); j++) {
-                    Matcher datcher = pattern.matcher(flows.get(j).getTargetRef());
-                    if (!datcher.find()) {
-                        SequenceFlow innerFlow = flows.get(j);
-
-                        if (outerFlow.getTargetRef().equals(innerFlow.getTargetRef()) && !temp.contains(outerFlow)) {
-
-                            duplicate = true;
-                            temp.add(outerFlow);
-                            innerFlow.setTargetRef(gate.getId());
-                            gateways.add(gate);
-
-                        }
-
-                    }
-
-                    if (duplicate) {
-                        SequenceFlow sf = new SequenceFlow();
-                        sf.setSourceRef(gate.getId());
-                        sf.setTargetRef(outerFlow.getTargetRef());
-                        flows.add(sf);
-                        outerFlow.setTargetRef(gate.getId());
-                        duplicate = false;
-                    }
-                }
-            }
-        }
-    }
-
-     */
-
-    /*
-    private void addDecision() {
-
-        Pattern pattern = Pattern.compile("Activity_*");
-
-        for (int i = 0; i < flows.size() - 1; i++) {
-            Matcher matcher = pattern.matcher(flows.get(i).getSourceRef());
-            String outerSourceRef = flows.get(i).getSourceRef();
-            boolean duplicate = false;
-
-            ArrayList<SequenceFlow> flowsTemp = new ArrayList<>();
-            flowsTemp.add(flows.get(i));
-            if (matcher.find()) {
-                for (int j = i + 1; j < flows.size(); j++) {
-
-                    Matcher datcher = pattern.matcher(flows.get(j).getSourceRef());
-                    String innerSourceRef = flows.get(j).getSourceRef();
-                    if (datcher.find() && outerSourceRef.equals(innerSourceRef)) {
-                        duplicate = true;
-
-                        //TODO: MAYBE BUGGY
-                        flowsTemp.add(flows.get(j));
-                        removeSequenceFlow(flows.get(j));
-                    }
-                }
-
-                if (duplicate) {
-                    openDecisionFlows(flowsTemp);
-                    removeSequenceFlow(flows.get(i));
-                }
-
-            }
-        }
-    }
-
-     */
-
 
     private void sortProcess(){
 
@@ -487,37 +344,9 @@ public class FlowsProcessObject {
 
     }
 
-    /*
-    private void openDecisionFlows(ArrayList<SequenceFlow> flowsTemp) {
-
-        ExclusiveGateway gate = new ExclusiveGateway();
-        gateways.add(gate);
-        ArrayList<String> tempTasks = new ArrayList<>();
-
-        SequenceFlow toGateway = new SequenceFlow();
-        toGateway.setSourceRef(flowsTemp.get(0).getSourceRef());
-        toGateway.setTargetRef(gate.getId());
-        flows.add(toGateway);
-
-        for (int i = 0; i < flowsTemp.size(); i++) {
-
-            SequenceFlow fromGateway = new SequenceFlow();
-            fromGateway.setSourceRef(gate.getId());
-            fromGateway.setTargetRef(flowsTemp.get(i).getTargetRef());
-            flows.add(fromGateway);
-            gateways.add(gate);
-            tempTasks.add(fromGateway.getTargetRef());
-            decisionFlows.put(fromGateway.getId(), fromGateway);
-        }
 
 
-        decisionTasks.put(toGateway.getSourceRef(), tempTasks);
-
-    }
-
-     */
-
-    /*
+/*
     private void addLoop(ArrayList<AbstractObjectType> objects) {
 
         // gateways in case of loop
@@ -586,57 +415,9 @@ public class FlowsProcessObject {
 
     }
 
-     */
+ */
 
-    private void addEndEvent() {
-        for (Task task : tasks) {
-            boolean temp = false;
-            for (SequenceFlow sf : flows) {
-                if (task.getId().equals(sf.getSourceRef())) {
-                    temp = true;
-                }
-            }
-            if (!temp) {
-                task.setIsEndTask();
-            }
-        }
-    }
 
-    /*
-    private void addEndEventSequenceFlows() {
-
-        for (int i = 0; i < tasks.size(); i++) {
-
-            Task task = tasks.get(i);
-            if (task.getIsEndTask()) {
-                SequenceFlow sf = new SequenceFlow();
-                sf.setSourceRef(task.getId());
-                sf.setTargetRef(endEvent.getId());
-                flows.add(sf);
-                endEvent.setIncoming(sf);
-            }
-        }
-
-    }
-
-     */
-
-    private boolean containsFlow(SequenceFlow flow) {
-        for (SequenceFlow sf : this.flows) {
-            if (sf.getSourceRef().equals(flow.getSourceRef()) && sf.getTargetRef().equals(flow.getTargetRef())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void removeFlowFromList(SequenceFlow flow) {
-        for (int i = 0; i < flows.size(); i++) {
-            if (flows.get(i).getSourceRef().equals(flow.getSourceRef()) && flows.get(i).getTargetRef().equals(flow.getTargetRef())) {
-                flows.remove(i);
-            }
-        }
-    }
 
     private void setElementFlowsProcess() {
         this.elementFlowsProcess.setAttribute("id", this.id);

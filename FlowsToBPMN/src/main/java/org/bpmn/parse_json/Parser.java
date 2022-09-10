@@ -111,7 +111,7 @@ public class Parser {
                 Task sourceTask = object.findTaskById(sourceObjectId);
                 Task targetTask = object.findTaskById(targetObjectId);
 
-                System.out.println(sourceTask + " " + targetTask);
+                object.getFlows().add(new SequenceFlow(targetTask, sourceTask));
 
             }
         });
