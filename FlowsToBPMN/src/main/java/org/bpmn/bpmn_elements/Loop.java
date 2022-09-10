@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class Loop {
 
-    Task first;
+    Task source;
 
-    Task second;
+    Task target;
 
     ExclusiveGateway firstGate;
 
@@ -19,6 +19,11 @@ public class Loop {
     ArrayList<ExclusiveGateway> gateways = new ArrayList<>();
     ArrayList<Task> tasks = new ArrayList<>();
     ArrayList<SequenceFlow> flows = new ArrayList<>();
+
+    public Loop(Task source, Task target){
+        this.source = source;
+        this.target = target;
+    }
 
     public ArrayList<Task> getTasks() {
         return tasks;
@@ -40,28 +45,28 @@ public class Loop {
         return secondGate;
     }
 
-    public void setFirst(Task first) {
-        this.first = first;
+    public void setSource(Task source) {
+        this.source = source;
     }
 
     public void setFirstGate(ExclusiveGateway firstGate) {
         this.firstGate = firstGate;
     }
 
-    public void setSecond(Task second) {
-        this.second = second;
+    public void setTarget(Task target) {
+        this.target = target;
     }
 
     public void setSecondGate(ExclusiveGateway secondGate) {
         this.secondGate = secondGate;
     }
 
-    public Task getFirst() {
-        return first;
+    public Task getSource() {
+        return source;
     }
 
-    public Task getSecond() {
-        return second;
+    public Task getTarget() {
+        return target;
     }
 
     public void addGate(ExclusiveGateway gateway) {

@@ -37,6 +37,10 @@ public class Task implements BPMNElement {
 
     Element elementOutgoing;
 
+    BPMNElement beforeElement;
+
+    BPMNElement afterElement;
+
     ArrayList<DataInputAssociation> dataInputAssociations = new ArrayList<>();
 
     DataOutputAssociation dataOutputAssociation;
@@ -134,6 +138,16 @@ public class Task implements BPMNElement {
 
     public StartEvent getStart() {
         return start;
+    }
+
+    @Override
+    public void setBeforeElement(BPMNElement element) {
+        this.beforeElement = element;
+    }
+
+    @Override
+    public void setAfterElement(BPMNElement element) {
+        this.afterElement = element;
     }
 
     public void setEnd(EndEvent end) {
@@ -246,6 +260,16 @@ public class Task implements BPMNElement {
 
     public ArrayList<BPMNElement> getAfter() {
         return after;
+    }
+
+    @Override
+    public BPMNElement getBeforeElement() {
+        return beforeElement;
+    }
+
+    @Override
+    public BPMNElement getAfterElement() {
+        return afterElement;
     }
 
     public ArrayList<BPMNElement> getBefore() {

@@ -23,6 +23,10 @@ public class StartEvent extends Event{
 
     Element elementOutgoing;
 
+    BPMNElement beforeElement;
+
+    BPMNElement afterElement;
+
     public StartEvent() {
         this.id = "StartEvent_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementStartEvent = doc.createElement("bpmn:startEvent");
@@ -32,6 +36,26 @@ public class StartEvent extends Event{
     @Override
     public Element getElement() {
         return elementStartEvent;
+    }
+
+    @Override
+    public BPMNElement getBeforeElement() {
+        return beforeElement;
+    }
+
+    @Override
+    public BPMNElement getAfterElement() {
+        return afterElement;
+    }
+
+    @Override
+    public void setBeforeElement(BPMNElement element) {
+        this.beforeElement = element;
+    }
+
+    @Override
+    public void setAfterElement(BPMNElement element) {
+        this.afterElement = element;
     }
 
     @Override

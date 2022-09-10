@@ -24,6 +24,10 @@ public class EndEvent extends Event{
 
     Element elementIncoming;
 
+    BPMNElement beforeElement;
+
+    BPMNElement afterElement;
+
     public EndEvent() {
         this.id = "EndEvent_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementEndEvent = doc.createElement("bpmn:endEvent");
@@ -46,6 +50,26 @@ public class EndEvent extends Event{
 
     public Element getElementIncoming() {
         return elementIncoming;
+    }
+
+    @Override
+    public BPMNElement getBeforeElement() {
+        return beforeElement;
+    }
+
+    @Override
+    public BPMNElement getAfterElement() {
+        return afterElement;
+    }
+
+    @Override
+    public void setBeforeElement(BPMNElement element) {
+        this.beforeElement = element;
+    }
+
+    @Override
+    public void setAfterElement(BPMNElement element) {
+        this.afterElement = element;
     }
 
     public SequenceFlow getIncoming() {

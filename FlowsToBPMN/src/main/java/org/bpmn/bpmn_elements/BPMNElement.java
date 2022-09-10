@@ -13,6 +13,14 @@ public interface BPMNElement {
 
     ArrayList<BPMNElement> getAfter();
 
+    BPMNElement getBeforeElement();
+
+    BPMNElement getAfterElement();
+
+    void setBeforeElement(BPMNElement element);
+
+    void setAfterElement(BPMNElement element);
+
     Element getElement();
 
     void setElement();

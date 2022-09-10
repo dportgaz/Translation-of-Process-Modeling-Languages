@@ -94,13 +94,12 @@ public class Parser {
         return flows;
     }
 
-    public void parseLoops(FlowsProcessObject object, ArrayList<AbstractObjectType> objects) {
+    public ArrayList<Loop> parseLoops(FlowsProcessObject object, ArrayList<AbstractObjectType> objects) {
 
+        ArrayList<Loop> loops = new ArrayList<>();
         // gateways in case of loop
         objects.forEach(obj -> {
             if (obj != null && obj.getMethodName().equals("AddBackwardsTransitionType")) {
-
-                Loop loop = new Loop();
 
                 Double source = (Double) obj.getParameters().get(1);
                 Double target = (Double) obj.getParameters().get(0);
@@ -111,10 +110,11 @@ public class Parser {
                 Task sourceTask = object.findTaskById(sourceObjectId);
                 Task targetTask = object.findTaskById(targetObjectId);
 
-                object.getFlows().add(new SequenceFlow(targetTask, sourceTask));
+                loops.add(new Loop(sourceTask,targetTask));
 
             }
         });
+        return loops;
     }
 
 

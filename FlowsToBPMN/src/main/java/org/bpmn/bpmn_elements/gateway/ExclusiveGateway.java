@@ -17,7 +17,15 @@ public class ExclusiveGateway implements BPMNElement {
 
     ArrayList<SequenceFlow> outgoings = new ArrayList<>();
 
+    ArrayList<BPMNElement> beforeElements = new ArrayList<>();
+
+    ArrayList<BPMNElement> afterElements = new ArrayList<>();
+
     Element elementExclusiveGateway;
+
+    BPMNElement beforeElement;
+
+    BPMNElement afterElement;
 
     public ExclusiveGateway() {
         this.id = "Gateway_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -37,6 +45,22 @@ public class ExclusiveGateway implements BPMNElement {
         return id;
     }
 
+    public void addBeforeElement(BPMNElement element){
+        beforeElements.add(element);
+    }
+
+    public void addAfterElement(BPMNElement element){
+        afterElements.add(element);
+    }
+
+    public ArrayList<BPMNElement> getAfterElements() {
+        return afterElements;
+    }
+
+    public ArrayList<BPMNElement> getBeforeElements() {
+        return beforeElements;
+    }
+
     @Override
     public ArrayList<BPMNElement> getBefore() {
         return null;
@@ -45,6 +69,27 @@ public class ExclusiveGateway implements BPMNElement {
     @Override
     public ArrayList<BPMNElement> getAfter() {
         return null;
+    }
+
+    @Override
+    public BPMNElement getBeforeElement() {
+        return beforeElement;
+    }
+
+    @Override
+    public BPMNElement getAfterElement() {
+        return afterElement;
+
+    }
+
+    @Override
+    public void setBeforeElement(BPMNElement element) {
+        this.beforeElement = element;
+    }
+
+    @Override
+    public void setAfterElement(BPMNElement element) {
+        this.afterElement = element;
     }
 
     @Override

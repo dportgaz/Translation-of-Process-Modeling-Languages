@@ -13,12 +13,36 @@ public class Event implements BPMNElement {
 
     String id;
 
+    BPMNElement beforeElement;
+
+    BPMNElement afterElement;
+
     public String getId() {
         return id;
     }
 
     public ArrayList<BPMNElement> getAfter() {
         return after;
+    }
+
+    @Override
+    public BPMNElement getBeforeElement() {
+        return beforeElement;
+    }
+
+    @Override
+    public BPMNElement getAfterElement() {
+        return afterElement;
+    }
+
+    @Override
+    public void setBeforeElement(BPMNElement element) {
+        this.beforeElement = element;
+    }
+
+    @Override
+    public void setAfterElement(BPMNElement element) {
+        this.afterElement = element;
     }
 
     @Override

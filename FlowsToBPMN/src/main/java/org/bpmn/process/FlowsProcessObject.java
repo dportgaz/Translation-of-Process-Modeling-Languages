@@ -1,6 +1,7 @@
 package org.bpmn.process;
 
 import org.bpmn.bpmn_elements.BPMNElement;
+import org.bpmn.bpmn_elements.Loop;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
@@ -55,6 +56,8 @@ public class FlowsProcessObject {
 
     ArrayList<AbstractObjectType> objects;
 
+    ArrayList<Loop> loops = new ArrayList<Loop>();
+
     public FlowsProcessObject(Object participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
         this.id = "Process_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -72,6 +75,7 @@ public class FlowsProcessObject {
         Parser parser = new Parser();
 
         this.tasks = parser.parseTasks(this.participant, objects);
+        this.loops = parser.parseLoops(this, objects);
         predicates = parser.parsePredicates(objects);
 
         setStartEvent();
@@ -84,8 +88,10 @@ public class FlowsProcessObject {
         addEndEventFlows();
         setAssociations();
         setSubProcesses();
-        //parser.parseLoops(this, objects);
         setGateways();
+        setBeforeAndAfterElements();
+        setLoops();
+        //loops = parser.parseLoops(this, objects);
         setFlows();
 
         /*
@@ -93,6 +99,86 @@ public class FlowsProcessObject {
         addGateways();
          */
 
+    }
+
+    private void setBeforeAndAfterElements() {
+
+        for(SequenceFlow flow : flows){
+
+            BPMNElement source = flow.getSourceRef();
+            BPMNElement target = flow.getTargetRef();
+
+            source.setAfterElement(target);
+            target.setBeforeElement(source);
+
+        }
+
+    }
+
+    private void setLoops() {
+
+        for(Loop loop : loops){
+
+            Task source = loop.getSource();
+            Task target = loop.getTarget();
+            BPMNElement beforeSource = source.getBeforeElement();
+            BPMNElement afterTarget = target.getAfterElement();
+            ExclusiveGateway beforeGateway = new ExclusiveGateway();
+            ExclusiveGateway afterGateway = new ExclusiveGateway();
+
+            flows.remove(getFlowBySourceAndTarget(beforeSource, source));
+            flows.remove(getFlowBySourceAndTarget(target, afterTarget));
+
+            // sourceBefore --> gateBefore
+            beforeSource.setAfterElement(beforeGateway);
+            flows.add(new SequenceFlow(beforeSource, beforeGateway));
+
+            beforeGateway.addBeforeElement(beforeSource);
+            beforeGateway.addAfterElement(source);
+            flows.add(new SequenceFlow(beforeGateway, source));
+
+            // target --> afterGate
+            target.setAfterElement(afterGateway);
+            flows.add(new SequenceFlow(target, afterGateway));
+            afterGateway.addBeforeElement(target);
+
+            afterGateway.addAfterElement(afterTarget);
+            flows.add(new SequenceFlow(afterGateway, afterTarget));
+
+            // afterGate --> beforeGate
+            afterGateway.addAfterElement(beforeGateway);
+            flows.add(new SequenceFlow(afterGateway, beforeGateway));
+
+
+        }
+
+    }
+
+    private SequenceFlow getFlowBySourceAndTarget(BPMNElement source, BPMNElement target){
+        for(SequenceFlow flow : flows){
+            if(flow.getSourceRef().getId().equals(source.getId()) && flow.getTargetRef().getId().equals(target.getId())){
+                return flow;
+            }
+        }
+        return null;
+    }
+
+    private SequenceFlow getFlowBySource(SequenceFlow flowIn){
+        for(SequenceFlow flow : flows){
+            if(flowIn.getSourceRef().equals(flow.getSourceRef())){
+                return flow;
+            }
+        }
+        return null;
+    }
+
+    private SequenceFlow getFlowByTarget(SequenceFlow flowIn){
+        for(SequenceFlow flow : flows){
+            if(flowIn.getTargetRef().equals(flow.getTargetRef())){
+                return flow;
+            }
+        }
+        return null;
     }
 
     private void setGateways() {
@@ -137,6 +223,7 @@ public class FlowsProcessObject {
         flows.removeAll(flowsToRemove);
 
     }
+
     private void setJoinGateways() {
 
         ArrayList<SequenceFlow> flowsToAdd = new ArrayList<>();
@@ -173,6 +260,7 @@ public class FlowsProcessObject {
         flows.removeAll(flowsToRemove);
 
     }
+
     private void setSubProcesses() {
 
         for (Task task : tasks) {
@@ -241,8 +329,6 @@ public class FlowsProcessObject {
     }
 
     private void setFlows() {
-
-        System.out.println("THIS: \n"  + flows);
 
         for(SequenceFlow flow : flows){
             elementFlowsProcess.appendChild(flow.getElementSequenceFlow());
