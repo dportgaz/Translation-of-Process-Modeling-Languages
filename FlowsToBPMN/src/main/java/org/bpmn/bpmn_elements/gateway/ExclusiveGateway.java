@@ -7,7 +7,7 @@ import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 
-import static org.bpmn.steps.Execution.doc;
+import static org.bpmn.steps.BPMN.doc;
 
 public class ExclusiveGateway implements BPMNElement {
 

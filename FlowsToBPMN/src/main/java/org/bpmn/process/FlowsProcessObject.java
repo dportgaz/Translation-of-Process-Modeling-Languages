@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
-import static org.bpmn.steps.Execution.doc;
+import static org.bpmn.steps.BPMN.doc;
 import static org.bpmn.steps.StepOne.*;
 
 public class FlowsProcessObject {
@@ -36,8 +36,6 @@ public class FlowsProcessObject {
 
     Object participant;
     StartEvent startEvent;
-
-    // ArrayList, da Reihenfolge der Tasks gewahrt werden soll
     ArrayList<Task> tasks = new ArrayList<>();
 
     EndEvent endEvent;
@@ -49,10 +47,6 @@ public class FlowsProcessObject {
     HashSet<DataObject> dataObjects = new HashSet<>();
 
     ArrayList<Task> subprocesses = new ArrayList<>();
-
-    HashMap<String, SequenceFlow> decisionFlows = new HashMap<>();
-
-    HashMap<String, ArrayList<String>> decisionTasks = new HashMap<>();
 
     ArrayList<AbstractObjectType> objects;
 

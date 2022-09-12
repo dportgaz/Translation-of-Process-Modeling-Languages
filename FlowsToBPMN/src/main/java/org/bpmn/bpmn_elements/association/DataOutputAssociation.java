@@ -5,7 +5,7 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 
 import org.w3c.dom.Element;
 
-import static org.bpmn.steps.Execution.doc;
+import static org.bpmn.steps.BPMN.doc;
 
 public class DataOutputAssociation extends Association{
 

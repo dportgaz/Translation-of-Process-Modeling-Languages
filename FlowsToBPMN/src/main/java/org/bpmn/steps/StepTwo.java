@@ -2,6 +2,7 @@
 package org.bpmn.steps;
 
 //import org.bpmn.bpmndi.FillBPMNDI;
+import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
@@ -12,10 +13,10 @@ import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.bpmn.steps.Execution.*;
+import static org.bpmn.steps.BPMN.*;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.users;
 
-public class StepTwo {
+public class StepTwo implements Step{
 
     ExecStep step;
 
@@ -39,25 +40,20 @@ public class StepTwo {
     public void execute() throws TransformerException {
 
         Collaboration collaboration = new Collaboration();
-        collaboration.setParticipantsTwo(objectTypeObjects, userTypeObjects);
+        collaboration.setParticipants(objectTypeObjects, userTypeObjects);
         Element collaborationElement = collaboration.getElementCollaboration();
 
         definitionsElement.appendChild(collaborationElement);
         setProcesses(definitionsElement);
 
-
-        /*
         FillBPMNDI di = new FillBPMNDI();
         di.fillBPMNDITwo(bpmnDiagramID, definitionsElement, collaboration);
 
-         */
-
         createXml(file);
-
 
     }
 
-    private void setProcesses(Element definitionsElement) {
+    public void setProcesses(Element definitionsElement) {
 
         for (User user : users) {
 

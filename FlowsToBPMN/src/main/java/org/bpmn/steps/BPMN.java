@@ -21,11 +21,11 @@ import org.bpmn.flows_objects.ConcreteObjectType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class Execution {
+public class BPMN {
 
     public static Document doc;
     
-    public void createBPMN(String jsonFlowsPath, String file)
+    public void create(String jsonFlowsPath, String file)
             throws ParserConfigurationException, FileNotFoundException, TransformerException {
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -46,7 +46,6 @@ public class Execution {
 
         // ____________________________________________________________________________________________________________
 
-        /*
         doc.removeChild(doc.getFirstChild());
         Element definitionsElement2 = doc.createElement("bpmn:definitions");
         doc.appendChild(definitionsElement2);
@@ -55,9 +54,6 @@ public class Execution {
         String fileTempTwo = "PHOODLE_STEP_TWO_RENEW.xml";
         StepTwo s2 = new StepTwo(fileTempTwo, definitionsElement2, userTypeObjects, objectTypeObjects);
         s2.execute();
-
-         */
-
 
     }
 

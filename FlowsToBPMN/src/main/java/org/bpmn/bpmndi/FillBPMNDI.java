@@ -1,16 +1,17 @@
 package org.bpmn.bpmndi;
 
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Task;
 //import org.bpmn.process.FlowsProcessUser;
+import org.bpmn.process.FlowsProcessUser;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
 import org.bpmn.process.FlowsProcessObject;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
-import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -19,9 +20,9 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.steps.Execution.doc;
-import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.users;
+import static org.bpmn.steps.BPMN.doc;
+import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 
 public class FillBPMNDI {
 
@@ -211,7 +212,6 @@ public class FillBPMNDI {
 
     }
 
-    /*
     public void parseTasks(Element rootElement, FlowsProcessUser fp, double x, double y) {
 
         //bring elements of pool in order according to flows
@@ -225,8 +225,6 @@ public class FillBPMNDI {
         shapes.clear();
 
     }
-
-     */
 
     public void f(Element rootElement, double x, double y, ArrayList<Task> tasks) {
 
@@ -279,7 +277,6 @@ public class FillBPMNDI {
 
     }
 
-    /*
     public void fillBPMNDITwo(String bpmndiagramID, Element rootElement, Collaboration collaboration) {
 
         Element bpmndiagram = doc.createElement("bpmndi:BPMNDiagram");
@@ -309,8 +306,6 @@ public class FillBPMNDI {
         }
 
     }
-
-     */
 
     public void addParticipantsShape(Element rootElement, Participant p, double participantY) {
 
@@ -459,7 +454,6 @@ public class FillBPMNDI {
         }
     }
 
-    /*
     public void addDataObjectsTwo(Element rootElement, ArrayList<Task> tasks) {
 
         Shape firstBsTask = getBPMNShapeByTaskTwo(tasks.get(0).getId());
@@ -508,8 +502,6 @@ public class FillBPMNDI {
         }
 
     }
-
-     */
 
     public void addFlowsEdge(Element rootElement, ArrayList<SequenceFlow> flows) {
 

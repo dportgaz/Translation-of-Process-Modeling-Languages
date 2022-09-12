@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.steps.Execution.doc;
+import static org.bpmn.steps.BPMN.doc;
 
 public class Task implements BPMNElement {
 
