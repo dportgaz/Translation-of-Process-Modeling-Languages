@@ -1,6 +1,6 @@
 {
   "CoordinationProcessTypeActionLogs": {
-    "6268638775603059870": [
+    "-5443134169597026581": [
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
         "Id": 8854283039632283290,
@@ -14,7 +14,7 @@
         "MethodName": "UpdateCoordinationStepType",
         "Parameters": [
           795680105705816972,
-          512591757725416247,
+          -4897682367353493629,
           6089410293098932683
         ],
         "UpdatedEntityId": 795680105705816972
@@ -32,47 +32,10 @@
         "MethodName": "UpdateCoordinationStepType",
         "Parameters": [
           -8088646871756420317,
-          512591757725416247,
+          -4897682367353493629,
           -8289606511556559931
         ],
         "UpdatedEntityId": -8088646871756420317
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 4577199220079226426,
-        "MethodName": "AddPortType",
-        "Parameters": [
-          -8088646871756420317
-        ],
-        "CreatedEntityId": 2900553059057865682
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -6995482162430737314,
-        "MethodName": "AddCoordinationTransitionType",
-        "Parameters": [
-          795680105705816972,
-          2900553059057865682
-        ],
-        "CreatedEntityId": -4434195560315847530
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 2652566474473140648,
-        "MethodName": "DeleteCoordinationTransitionType",
-        "Parameters": [
-          -4434195560315847530
-        ],
-        "DeletedEntityId": -4434195560315847530
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 4664693568685695875,
-        "MethodName": "DeletePortType",
-        "Parameters": [
-          2900553059057865682
-        ],
-        "DeletedEntityId": 2900553059057865682
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
@@ -83,22 +46,11 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -7089826357937298544,
-        "MethodName": "UpdateCoordinationStepType",
-        "Parameters": [
-          -2997462909442552163,
-          512591757725416247,
-          null
-        ],
-        "UpdatedEntityId": -2997462909442552163
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": 879168210671063644,
         "MethodName": "UpdateCoordinationStepType",
         "Parameters": [
           -2997462909442552163,
-          512591757725416247,
+          -4897682367353493629,
           -5182764064065588155
         ],
         "UpdatedEntityId": -2997462909442552163
@@ -131,22 +83,11 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -9023183576215709512,
-        "MethodName": "UpdateCoordinationStepType",
-        "Parameters": [
-          -505479312785004062,
-          8043865171555161913,
-          null
-        ],
-        "UpdatedEntityId": -505479312785004062
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": 8085407470256003643,
         "MethodName": "UpdateCoordinationStepType",
         "Parameters": [
           -505479312785004062,
-          8043865171555161913,
+          7796040593225161962,
           -7053489410177189135
         ],
         "UpdatedEntityId": -505479312785004062
@@ -179,22 +120,11 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 3350214666915963801,
-        "MethodName": "UpdateCoordinationStepType",
-        "Parameters": [
-          480812136461418650,
-          512591757725416247,
-          null
-        ],
-        "UpdatedEntityId": 480812136461418650
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -65587307069025173,
         "MethodName": "UpdateCoordinationStepType",
         "Parameters": [
           480812136461418650,
-          512591757725416247,
+          -4897682367353493629,
           5590915041039994891
         ],
         "UpdatedEntityId": 480812136461418650
@@ -227,22 +157,11 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 3770581832610269126,
-        "MethodName": "UpdateCoordinationStepType",
-        "Parameters": [
-          4284430365454824515,
-          8043865171555161913,
-          null
-        ],
-        "UpdatedEntityId": 4284430365454824515
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -8850038093374955386,
         "MethodName": "UpdateCoordinationStepType",
         "Parameters": [
           4284430365454824515,
-          8043865171555161913,
+          7796040593225161962,
           -3792103476930298157
         ],
         "UpdatedEntityId": 4284430365454824515
@@ -350,269 +269,187 @@
       "Id": -8390059389133269288,
       "MethodName": "CreateObjectType",
       "Parameters": [],
-      "CreatedActorId": 8043865171555161913
+      "CreatedActorId": 7796040593225161962
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": -946324913488227857,
       "MethodName": "CreateObjectType",
       "Parameters": [],
-      "CreatedActorId": 5084598296624859983
+      "CreatedActorId": -578376916624348072
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": 3631517676863136263,
       "MethodName": "CreateRelationType",
       "Parameters": [
-        8043865171555161913,
-        5084598296624859983
+        7796040593225161962,
+        -578376916624348072
       ],
-      "CreatedActorId": 8131450746331223567
+      "CreatedActorId": -7787650775310956200
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": -2383152844931045625,
       "MethodName": "CreateObjectType",
       "Parameters": [],
-      "CreatedActorId": 1896833097190190189
+      "CreatedActorId": -5047243009037920784
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": 3472111646851690931,
       "MethodName": "CreateRelationType",
       "Parameters": [
-        5084598296624859983,
-        1896833097190190189
+        -578376916624348072,
+        -5047243009037920784
       ],
-      "CreatedActorId": -7481475288500316935
+      "CreatedActorId": -6565880327326129343
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": -5813117654062101244,
       "MethodName": "CreateObjectType",
       "Parameters": [],
-      "CreatedActorId": 2831904076233128747
+      "CreatedActorId": -4482341749230481184
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": -7208927306352844416,
       "MethodName": "CreateRelationType",
       "Parameters": [
-        1896833097190190189,
-        2831904076233128747
+        -5047243009037920784,
+        -4482341749230481184
       ],
-      "CreatedActorId": -552451078702294091
+      "CreatedActorId": -6784833704058187509
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": 742587481594325768,
       "MethodName": "CreateObjectType",
       "Parameters": [],
-      "CreatedActorId": 512591757725416247
+      "CreatedActorId": -4897682367353493629
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": 4996488391157998310,
       "MethodName": "CreateRelationType",
       "Parameters": [
-        8043865171555161913,
-        512591757725416247
+        7796040593225161962,
+        -4897682367353493629
       ],
-      "CreatedActorId": -2340344309538199778
+      "CreatedActorId": 8278638326329242108
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": 5518885605363819517,
       "MethodName": "CreateObjectType",
       "Parameters": [],
-      "CreatedActorId": -7119222736001402727
+      "CreatedActorId": 2002345524604132866
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": -1130404873981188938,
       "MethodName": "CreateRelationType",
       "Parameters": [
-        512591757725416247,
-        -7119222736001402727
+        -4897682367353493629,
+        2002345524604132866
       ],
-      "CreatedActorId": -3937295199665443245
+      "CreatedActorId": -2216907537666645850
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": -2186280246011281356,
       "MethodName": "CreateRelationType",
       "Parameters": [
-        5084598296624859983,
-        -7119222736001402727
+        -578376916624348072,
+        2002345524604132866
       ],
-      "CreatedActorId": -5952000090448671085
+      "CreatedActorId": 4143766986604425859
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": -9963269723195875,
       "MethodName": "CreateRelationType",
       "Parameters": [
-        1896833097190190189,
-        -7119222736001402727
+        -5047243009037920784,
+        2002345524604132866
       ],
-      "CreatedActorId": -5880030952871425717
+      "CreatedActorId": 873036226787265013
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": -1074603434718238008,
       "MethodName": "CreateRelationType",
       "Parameters": [
-        2831904076233128747,
-        -7119222736001402727
+        -4482341749230481184,
+        2002345524604132866
       ],
-      "CreatedActorId": 1430366008445225427
+      "CreatedActorId": 636972080884038408
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": -7406197184576878743,
       "MethodName": "CreateObjectType",
       "Parameters": [],
-      "CreatedActorId": -6561526735936022148
+      "CreatedActorId": -2435284143453809644
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": -2319135299122120656,
       "MethodName": "CreateRelationType",
       "Parameters": [
-        -6561526735936022148,
-        -7119222736001402727
+        -2435284143453809644,
+        2002345524604132866
       ],
-      "CreatedActorId": -7164594126899835804
+      "CreatedActorId": -363075781303029566
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": -2221016914283493416,
       "MethodName": "CreateUserType",
       "Parameters": [],
-      "CreatedActorId": 994208424298506208
+      "CreatedActorId": -1737118156971788485
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": -6708012665391238777,
       "MethodName": "CreateUserType",
       "Parameters": [],
-      "CreatedActorId": 4348273766413605426
+      "CreatedActorId": -246751928251953464
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": -3190154647502242752,
       "MethodName": "CreateRelationType",
       "Parameters": [
-        2831904076233128747,
-        994208424298506208
+        -4482341749230481184,
+        -1737118156971788485
       ],
-      "CreatedActorId": 4633882836755803191
+      "CreatedActorId": 4422557696644197851
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": 9009259308320605967,
       "MethodName": "CreateRelationType",
       "Parameters": [
-        5084598296624859983,
-        994208424298506208
+        -578376916624348072,
+        -1737118156971788485
       ],
-      "CreatedActorId": -5409950658136383606
+      "CreatedActorId": -2349211534199850122
     },
     {
       "__type": "ActorCreatedLog:#Shared.Data.History",
       "Id": 4322125347954948939,
       "MethodName": "CreateCoordinationProcessType",
       "Parameters": [
-        512591757725416247
+        -4897682367353493629
       ],
-      "CreatedActorId": 6268638775603059870
+      "CreatedActorId": -5443134169597026581
     }
   ],
-  "DataModelName": "PHoodle_DBIS_selfmade",
+  "DataModelName": "2",
   "ObjectTypeActionLogs": {
-    "8043865171555161913": [
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -425361413807812707,
-        "MethodName": "AddStateType",
-        "Parameters": [
-          "StartState"
-        ],
-        "CreatedEntityId": 8357478837644317628
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -335491505450508966,
-        "MethodName": "AddStateType",
-        "Parameters": [
-          "EndState"
-        ],
-        "CreatedEntityId": -8241803186579717965
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -7407587133206135708,
-        "MethodName": "AddStepType",
-        "Parameters": [
-          8357478837644317628
-        ],
-        "CreatedEntityId": -2206394129972947880
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -8848972639763622477,
-        "MethodName": "AddStepType",
-        "Parameters": [
-          -8241803186579717965
-        ],
-        "CreatedEntityId": -9099295333578481532
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 7263959565825170014,
-        "MethodName": "AddTransitionType",
-        "Parameters": [
-          -2206394129972947880,
-          -9099295333578481532
-        ],
-        "CreatedEntityId": 7187613456758200439
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -8511618123041547030,
-        "MethodName": "UpdateName",
-        "Parameters": [
-          "Submission"
-        ],
-        "UpdatedEntityId": null
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 4728153519106618331,
-        "MethodName": "UpdateLabelAttributeTypeIds",
-        "Parameters": [
-          []
-        ],
-        "UpdatedEntityId": null
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -342631931296090039,
-        "MethodName": "UpdateName",
-        "Parameters": [
-          "Submission"
-        ],
-        "UpdatedEntityId": null
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -1169939746649977952,
-        "MethodName": "UpdateLabelAttributeTypeIds",
-        "Parameters": [
-          []
-        ],
-        "UpdatedEntityId": null
-      },
+    "7796040593225161962": [
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -3594907360387114938,
@@ -702,22 +539,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 7883199392932985909,
-        "MethodName": "UpdateNumberAttributeType",
-        "Parameters": [
-          -2601954218387145121,
-          "Points",
-          [],
-          null,
-          null,
-          false,
-          null,
-          1
-        ],
-        "UpdatedEntityId": -2601954218387145121
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -5207048072061189777,
         "MethodName": "UpdateNumberAttributeType",
         "Parameters": [
@@ -733,24 +554,6 @@
         "UpdatedEntityId": -2601954218387145121
       },
       {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 1809021396968212379,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          8357478837644317628
-        ],
-        "DeletedEntityId": 8357478837644317628
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 8802634776615783945,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          -8241803186579717965
-        ],
-        "DeletedEntityId": -8241803186579717965
-      },
-      {
         "__type": "EntityCreatedLog:#Shared.Data.History",
         "Id": 4863055913283798807,
         "MethodName": "AddStateType",
@@ -761,7 +564,7 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 5081761532840784216,
+        "Id": -107047577632522006,
         "MethodName": "UpdateStateType",
         "Parameters": [
           -7053489410177189135,
@@ -981,53 +784,7 @@
         "CreatedEntityId": -6723938144455811941
       }
     ],
-    "5084598296624859983": [
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -4692338818559517008,
-        "MethodName": "AddStateType",
-        "Parameters": [
-          "StartState"
-        ],
-        "CreatedEntityId": 3580544622267004615
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -3220327248574180967,
-        "MethodName": "AddStateType",
-        "Parameters": [
-          "EndState"
-        ],
-        "CreatedEntityId": 1875102320960224077
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 2864892721068718695,
-        "MethodName": "AddStepType",
-        "Parameters": [
-          3580544622267004615
-        ],
-        "CreatedEntityId": -1926232093194893567
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -7510948180005057039,
-        "MethodName": "AddStepType",
-        "Parameters": [
-          1875102320960224077
-        ],
-        "CreatedEntityId": 1448696113135955589
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 8456289827248632822,
-        "MethodName": "AddTransitionType",
-        "Parameters": [
-          -1926232093194893567,
-          1448696113135955589
-        ],
-        "CreatedEntityId": -6367817961194903409
-      },
+    "-578376916624348072": [
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": 3774813789349352142,
@@ -1097,17 +854,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 8076027004589311197,
-        "MethodName": "UpdateRelationAttributeType",
-        "Parameters": [
-          -985973333036249397,
-          "Tutorial",
-          null
-        ],
-        "UpdatedEntityId": -985973333036249397
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": 6946692278519956743,
         "MethodName": "UpdateRelationAttributeType",
         "Parameters": [
@@ -1128,22 +874,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -309717709678365620,
-        "MethodName": "UpdateNumberAttributeType",
-        "Parameters": [
-          -2592891740265527523,
-          "Achieved Points",
-          [],
-          null,
-          null,
-          false,
-          null,
-          1
-        ],
-        "UpdatedEntityId": -2592891740265527523
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": 4765045887203732666,
         "MethodName": "UpdateNumberAttributeType",
         "Parameters": [
@@ -1157,24 +887,6 @@
           1
         ],
         "UpdatedEntityId": -2592891740265527523
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": -6068214344620281458,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          3580544622267004615
-        ],
-        "DeletedEntityId": 3580544622267004615
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 3278605357973644800,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          1875102320960224077
-        ],
-        "DeletedEntityId": 1875102320960224077
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
@@ -1398,53 +1110,7 @@
         "CreatedEntityId": -346325471692724880
       }
     ],
-    "1896833097190190189": [
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 4605367261097067145,
-        "MethodName": "AddStateType",
-        "Parameters": [
-          "StartState"
-        ],
-        "CreatedEntityId": -2658506725593111486
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -3194338268084234122,
-        "MethodName": "AddStateType",
-        "Parameters": [
-          "EndState"
-        ],
-        "CreatedEntityId": 4511205624336708816
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 3190223049583111150,
-        "MethodName": "AddStepType",
-        "Parameters": [
-          -2658506725593111486
-        ],
-        "CreatedEntityId": 8053638525624626249
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 1987808919203203976,
-        "MethodName": "AddStepType",
-        "Parameters": [
-          4511205624336708816
-        ],
-        "CreatedEntityId": 4380718509081729953
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -8987052510443411792,
-        "MethodName": "AddTransitionType",
-        "Parameters": [
-          8053638525624626249,
-          4380718509081729953
-        ],
-        "CreatedEntityId": -8381695561734024234
-      },
+    "-5047243009037920784": [
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -2842464453786846253,
@@ -1507,24 +1173,6 @@
         "UpdatedEntityId": 773748422666717062
       },
       {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 310072445394347287,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          -2658506725593111486
-        ],
-        "DeletedEntityId": -2658506725593111486
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 2347242361286387587,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          4511205624336708816
-        ],
-        "DeletedEntityId": 4511205624336708816
-      },
-      {
         "__type": "EntityCreatedLog:#Shared.Data.History",
         "Id": -2832800832152270109,
         "MethodName": "AddStateType",
@@ -1535,7 +1183,7 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -4484769363371216295,
+        "Id": -6530953421461781329,
         "MethodName": "UpdateStateType",
         "Parameters": [
           6356008644573022208,
@@ -1602,7 +1250,7 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 4656951331496057610,
+        "Id": -1063976322284135529,
         "MethodName": "UpdateStateType",
         "Parameters": [
           1991673059483131040,
@@ -1640,53 +1288,7 @@
         "CreatedEntityId": 2640155793073036913
       }
     ],
-    "2831904076233128747": [
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -5675215920707218737,
-        "MethodName": "AddStateType",
-        "Parameters": [
-          "StartState"
-        ],
-        "CreatedEntityId": 3686436978010002186
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -3379512210420753695,
-        "MethodName": "AddStateType",
-        "Parameters": [
-          "EndState"
-        ],
-        "CreatedEntityId": -1670020232625998865
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -777779161671127186,
-        "MethodName": "AddStepType",
-        "Parameters": [
-          3686436978010002186
-        ],
-        "CreatedEntityId": -3153290977299676908
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 4586731589706137281,
-        "MethodName": "AddStepType",
-        "Parameters": [
-          -1670020232625998865
-        ],
-        "CreatedEntityId": 2637269916747375949
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 2084788400906618742,
-        "MethodName": "AddTransitionType",
-        "Parameters": [
-          -3153290977299676908,
-          2637269916747375949
-        ],
-        "CreatedEntityId": -5971741243959752263
-      },
+    "-4482341749230481184": [
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -7148087809582968730,
@@ -1736,39 +1338,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -3384016251043884843,
-        "MethodName": "UpdateRelationAttributeType",
-        "Parameters": [
-          -8796991613063225860,
-          "Person",
-          null
-        ],
-        "UpdatedEntityId": -8796991613063225860
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 5133958484227868243,
-        "MethodName": "UpdateRelationAttributeType",
-        "Parameters": [
-          -8796991613063225860,
-          "Person",
-          null
-        ],
-        "UpdatedEntityId": -8796991613063225860
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 3923892562375711335,
-        "MethodName": "UpdateRelationAttributeType",
-        "Parameters": [
-          -8796991613063225860,
-          "Person",
-          null
-        ],
-        "UpdatedEntityId": -8796991613063225860
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -7863066577074767627,
         "MethodName": "UpdateRelationAttributeType",
         "Parameters": [
@@ -1777,24 +1346,6 @@
           null
         ],
         "UpdatedEntityId": -8796991613063225860
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 7831226349379273936,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          3686436978010002186
-        ],
-        "DeletedEntityId": 3686436978010002186
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": -8468304638084418157,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          -1670020232625998865
-        ],
-        "DeletedEntityId": -1670020232625998865
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
@@ -1902,89 +1453,7 @@
         "CreatedEntityId": 5663897464504163716
       }
     ],
-    "512591757725416247": [
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 1557550023306170717,
-        "MethodName": "AddStateType",
-        "Parameters": [
-          "StartState"
-        ],
-        "CreatedEntityId": 5997545548538332126
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -1878137713893716433,
-        "MethodName": "AddStateType",
-        "Parameters": [
-          "EndState"
-        ],
-        "CreatedEntityId": 8258174201412108778
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 1023026082538089565,
-        "MethodName": "AddStepType",
-        "Parameters": [
-          5997545548538332126
-        ],
-        "CreatedEntityId": 4280726805685629927
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -2765201971723343960,
-        "MethodName": "AddStepType",
-        "Parameters": [
-          8258174201412108778
-        ],
-        "CreatedEntityId": -1090155705310000862
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -6078359448443995560,
-        "MethodName": "AddTransitionType",
-        "Parameters": [
-          4280726805685629927,
-          -1090155705310000862
-        ],
-        "CreatedEntityId": -5135189733599925534
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -1532213013248865636,
-        "MethodName": "UpdateName",
-        "Parameters": [
-          "Exercise"
-        ],
-        "UpdatedEntityId": null
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 6180436201876582804,
-        "MethodName": "UpdateLabelAttributeTypeIds",
-        "Parameters": [
-          []
-        ],
-        "UpdatedEntityId": null
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -150545159415412020,
-        "MethodName": "UpdateName",
-        "Parameters": [
-          "Exercise"
-        ],
-        "UpdatedEntityId": null
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 6027958845557074189,
-        "MethodName": "UpdateLabelAttributeTypeIds",
-        "Parameters": [
-          []
-        ],
-        "UpdatedEntityId": null
-      },
+    "-4897682367353493629": [
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": 7383571274988752322,
@@ -2034,20 +1503,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -6915981074714982693,
-        "MethodName": "UpdateStringAttributeType",
-        "Parameters": [
-          4803710992627596370,
-          "Name",
-          [],
-          1,
-          null,
-          1
-        ],
-        "UpdatedEntityId": 4803710992627596370
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": 1887379452890545497,
         "MethodName": "UpdateStringAttributeType",
         "Parameters": [
@@ -2091,17 +1546,6 @@
           "Unnamed Attribute - File List"
         ],
         "CreatedEntityId": 6459802660009579767
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -5959468259715228092,
-        "MethodName": "UpdateFileAttributeType",
-        "Parameters": [
-          6459802660009579767,
-          "Exercise Files",
-          []
-        ],
-        "UpdatedEntityId": 6459802660009579767
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
@@ -2149,21 +1593,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -6847628352265789250,
-        "MethodName": "UpdateDateAttributeType",
-        "Parameters": [
-          9194512171672293704,
-          "Due Date",
-          [],
-          null,
-          null,
-          null,
-          1
-        ],
-        "UpdatedEntityId": 9194512171672293704
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": 3249726289513220769,
         "MethodName": "UpdateDateAttributeType",
         "Parameters": [
@@ -2188,22 +1617,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -940016831107509013,
-        "MethodName": "UpdateNumberAttributeType",
-        "Parameters": [
-          8897595559296154808,
-          "Maximum Points",
-          [],
-          null,
-          null,
-          false,
-          null,
-          1
-        ],
-        "UpdatedEntityId": 8897595559296154808
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -312742024818071464,
         "MethodName": "UpdateNumberAttributeType",
         "Parameters": [
@@ -2217,24 +1630,6 @@
           1
         ],
         "UpdatedEntityId": 8897595559296154808
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 2499527238209794489,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          5997545548538332126
-        ],
-        "DeletedEntityId": 5997545548538332126
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": -7191378112198487707,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          8258174201412108778
-        ],
-        "DeletedEntityId": 8258174201412108778
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
@@ -2593,89 +1988,7 @@
         "CreatedEntityId": -9018818941494759568
       }
     ],
-    "-7119222736001402727": [
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -5028439555693682908,
-        "MethodName": "AddStateType",
-        "Parameters": [
-          "StartState"
-        ],
-        "CreatedEntityId": 771970009821082030
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -2127260095745096530,
-        "MethodName": "AddStateType",
-        "Parameters": [
-          "EndState"
-        ],
-        "CreatedEntityId": 2443052527532378045
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -6660008022198000049,
-        "MethodName": "AddStepType",
-        "Parameters": [
-          771970009821082030
-        ],
-        "CreatedEntityId": -2026741796449774348
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -5705209338145635830,
-        "MethodName": "AddStepType",
-        "Parameters": [
-          2443052527532378045
-        ],
-        "CreatedEntityId": 4015666460664089920
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -4024964810743984857,
-        "MethodName": "AddTransitionType",
-        "Parameters": [
-          -2026741796449774348,
-          4015666460664089920
-        ],
-        "CreatedEntityId": 3145539181589592164
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 8179590388209654897,
-        "MethodName": "UpdateName",
-        "Parameters": [
-          "Lecture"
-        ],
-        "UpdatedEntityId": null
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 5299963785714922714,
-        "MethodName": "UpdateLabelAttributeTypeIds",
-        "Parameters": [
-          []
-        ],
-        "UpdatedEntityId": null
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 894888306994573842,
-        "MethodName": "UpdateName",
-        "Parameters": [
-          "Lecture"
-        ],
-        "UpdatedEntityId": null
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -7538379971772536155,
-        "MethodName": "UpdateLabelAttributeTypeIds",
-        "Parameters": [
-          []
-        ],
-        "UpdatedEntityId": null
-      },
+    "2002345524604132866": [
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -6444111654439563939,
@@ -2728,22 +2041,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -9115957828773280975,
-        "MethodName": "UpdateNumberAttributeType",
-        "Parameters": [
-          -8083636039340496544,
-          "Semester",
-          [],
-          null,
-          null,
-          false,
-          null,
-          1
-        ],
-        "UpdatedEntityId": -8083636039340496544
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -1382038958016175823,
         "MethodName": "UpdateNumberAttributeType",
         "Parameters": [
@@ -2769,20 +2066,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -4359629248110299602,
-        "MethodName": "UpdateStringAttributeType",
-        "Parameters": [
-          671236524221740333,
-          "Description",
-          [],
-          1,
-          null,
-          1
-        ],
-        "UpdatedEntityId": 671236524221740333
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -600112935478227221,
         "MethodName": "UpdateStringAttributeType",
         "Parameters": [
@@ -2796,24 +2079,6 @@
         "UpdatedEntityId": 671236524221740333
       },
       {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 8911841904317916379,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          771970009821082030
-        ],
-        "DeletedEntityId": 771970009821082030
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": -7539023976834237006,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          2443052527532378045
-        ],
-        "DeletedEntityId": 2443052527532378045
-      },
-      {
         "__type": "EntityCreatedLog:#Shared.Data.History",
         "Id": -7524573786775044427,
         "MethodName": "AddStateType",
@@ -2824,7 +2089,7 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -787314875664760056,
+        "Id": 6519149758081441733,
         "MethodName": "UpdateStateType",
         "Parameters": [
           -5719640768383377343,
@@ -3004,73 +2269,239 @@
           -5719640768383377343
         ],
         "CreatedEntityId": 5908608288871151915
-      }
-    ],
-    "-6561526735936022148": [
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -6008658406596565134,
+        "MethodName": "DeleteStateType",
+        "Parameters": [
+          -5719640768383377343
+        ],
+        "DeletedEntityId": -5719640768383377343
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 2122792596123614506,
+        "MethodName": "DeleteStateType",
+        "Parameters": [
+          3269803495574321228
+        ],
+        "DeletedEntityId": 3269803495574321228
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -1203415100648692349,
+        "MethodName": "DeleteStateType",
+        "Parameters": [
+          7525434296636405248
+        ],
+        "DeletedEntityId": 7525434296636405248
+      },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 5710525091045243284,
+        "Id": 50727896695334703,
         "MethodName": "AddStateType",
         "Parameters": [
-          "StartState"
+          "New State"
         ],
-        "CreatedEntityId": -4651060600846629026
+        "CreatedEntityId": -1316717531571652635
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -1866722758378247520,
-        "MethodName": "AddStateType",
-        "Parameters": [
-          "EndState"
-        ],
-        "CreatedEntityId": -3063493723944676422
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 8887578117628455202,
+        "Id": -3040155140360776771,
         "MethodName": "AddStepType",
         "Parameters": [
-          -4651060600846629026
+          -1316717531571652635
         ],
-        "CreatedEntityId": 5209360602713060811
+        "CreatedEntityId": -7408646877321043579
+      },
+      {
+        "__type": "EntityUpdatedLog:#Shared.Data.History",
+        "Id": 1606658963268253018,
+        "MethodName": "UpdateStateType",
+        "Parameters": [
+          -1316717531571652635,
+          "Edit"
+        ],
+        "UpdatedEntityId": -1316717531571652635
+      },
+      {
+        "__type": "EntityUpdatedLog:#Shared.Data.History",
+        "Id": 5430672588320856386,
+        "MethodName": "UpdateStepAttributeType",
+        "Parameters": [
+          -7408646877321043579,
+          2998165228293512896
+        ],
+        "UpdatedEntityId": -7408646877321043579
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -9064109552013548725,
+        "Id": -293897961075668409,
         "MethodName": "AddStepType",
         "Parameters": [
-          -3063493723944676422
+          -1316717531571652635
         ],
-        "CreatedEntityId": 1653033967425017284
+        "CreatedEntityId": -5618985297673749072
+      },
+      {
+        "__type": "EntityUpdatedLog:#Shared.Data.History",
+        "Id": -8777752706371754856,
+        "MethodName": "UpdateStepAttributeType",
+        "Parameters": [
+          -5618985297673749072,
+          -8083636039340496544
+        ],
+        "UpdatedEntityId": -5618985297673749072
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -7304885323643069881,
+        "Id": 13889239241157494,
+        "MethodName": "AddStepType",
+        "Parameters": [
+          -1316717531571652635
+        ],
+        "CreatedEntityId": 2208726317098066326
+      },
+      {
+        "__type": "EntityUpdatedLog:#Shared.Data.History",
+        "Id": 7330097810542762544,
+        "MethodName": "UpdateStepAttributeType",
+        "Parameters": [
+          2208726317098066326,
+          671236524221740333
+        ],
+        "UpdatedEntityId": 2208726317098066326
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 5679308144382082126,
         "MethodName": "AddTransitionType",
         "Parameters": [
-          5209360602713060811,
-          1653033967425017284
+          -7408646877321043579,
+          -5618985297673749072
         ],
-        "CreatedEntityId": 6732906988776247009
+        "CreatedEntityId": -8583629846052186898
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -2781278561634714701,
+        "MethodName": "AddTransitionType",
+        "Parameters": [
+          -5618985297673749072,
+          2208726317098066326
+        ],
+        "CreatedEntityId": 4596881858596684260
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 4275725261405004683,
+        "MethodName": "AddStateType",
+        "Parameters": [
+          "New State"
+        ],
+        "CreatedEntityId": -6558480917652682201
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 7324418113059643273,
+        "MethodName": "AddStepType",
+        "Parameters": [
+          -6558480917652682201
+        ],
+        "CreatedEntityId": -8740420739722447286
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 667510265262063571,
-        "MethodName": "UpdateName",
+        "Id": 5473072914181588758,
+        "MethodName": "UpdateStateType",
         "Parameters": [
-          "Download"
+          -6558480917652682201,
+          "Publish"
         ],
-        "UpdatedEntityId": null
+        "UpdatedEntityId": -6558480917652682201
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 6787778443234123557,
+        "MethodName": "AddTransitionType",
+        "Parameters": [
+          2208726317098066326,
+          -8740420739722447286
+        ],
+        "CreatedEntityId": 5027732637274698694
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 534229414529847293,
+        "MethodName": "AddStateType",
+        "Parameters": [
+          "New State"
+        ],
+        "CreatedEntityId": -275752852012098410
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 999159791387481497,
+        "MethodName": "AddStepType",
+        "Parameters": [
+          -275752852012098410
+        ],
+        "CreatedEntityId": 8166052394805171714
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 5973585500418378373,
-        "MethodName": "UpdateLabelAttributeTypeIds",
+        "Id": 8146723921057037523,
+        "MethodName": "UpdateStateType",
         "Parameters": [
-          []
+          -275752852012098410,
+          "End"
         ],
-        "UpdatedEntityId": null
+        "UpdatedEntityId": -275752852012098410
       },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -1010493583948906571,
+        "MethodName": "AddTransitionType",
+        "Parameters": [
+          -8740420739722447286,
+          8166052394805171714
+        ],
+        "CreatedEntityId": 3346830357714463046
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 632813118033924081,
+        "MethodName": "AddBackwardsTransitionType",
+        "Parameters": [
+          -6558480917652682201,
+          -1316717531571652635
+        ],
+        "CreatedEntityId": 4860180946955047753
+      },
+      {
+        "__type": "MultipleEntitiesCreatedLog:#Shared.Data.History",
+        "Id": -8447322244213065630,
+        "MethodName": "AddBatchStateType",
+        "Parameters": [
+          "New Batch State"
+        ],
+        "EntityIds": [
+          5595221337911843900,
+          -5474817955910097589
+        ]
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -3309301038734098056,
+        "MethodName": "DeleteStateType",
+        "Parameters": [
+          5595221337911843900
+        ],
+        "DeletedEntityId": 5595221337911843900
+      }
+    ],
+    "-2435284143453809644": [
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -6034687962652523468,
@@ -3143,17 +2574,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -5661293296618800859,
-        "MethodName": "UpdateFileAttributeType",
-        "Parameters": [
-          821161009989517222,
-          "Files",
-          []
-        ],
-        "UpdatedEntityId": 821161009989517222
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": 8084463102251064982,
         "MethodName": "UpdateFileAttributeType",
         "Parameters": [
@@ -3162,24 +2582,6 @@
           []
         ],
         "UpdatedEntityId": 821161009989517222
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": -7258093783722597695,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          -4651060600846629026
-        ],
-        "DeletedEntityId": -4651060600846629026
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": -4790523102018294784,
-        "MethodName": "DeleteStateType",
-        "Parameters": [
-          -3063493723944676422
-        ],
-        "DeletedEntityId": -3063493723944676422
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
@@ -3326,7 +2728,7 @@
         "CreatedEntityId": 1981863328245595778
       }
     ],
-    "994208424298506208": [
+    "-1737118156971788485": [
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
         "Id": -2268469389213827279,
@@ -3402,7 +2804,7 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -8232607732989799229,
+        "Id": -4251501202495927235,
         "MethodName": "UpdateLabelAttributeTypeIds",
         "Parameters": [
           [
@@ -3426,17 +2828,6 @@
         "MethodName": "UpdateName",
         "Parameters": [
           "Student"
-        ],
-        "UpdatedEntityId": null
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -4251501202495927235,
-        "MethodName": "UpdateLabelAttributeTypeIds",
-        "Parameters": [
-          [
-            -7889809166787690758
-          ]
         ],
         "UpdatedEntityId": null
       },
@@ -3548,27 +2939,6 @@
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 5889709690441552321,
-        "MethodName": "AddStateExecutionPermissionToGlobalRole",
-        "Parameters": [
-          -4482786020305083774,
-          8429922263719840547,
-          null,
-          null
-        ],
-        "CreatedEntityId": 3755589243003425987
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 4603180702356827008,
-        "MethodName": "DeletePermission",
-        "Parameters": [
-          3755589243003425987
-        ],
-        "DeletedEntityId": 3755589243003425987
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
         "Id": -8559320458895976700,
         "MethodName": "AddStateExecutionPermissionToGlobalRole",
         "Parameters": [
@@ -3578,27 +2948,6 @@
           null
         ],
         "CreatedEntityId": -5830328346759619071
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -424348074445840692,
-        "MethodName": "AddStateExecutionPermissionToGlobalRole",
-        "Parameters": [
-          -4482786020305083774,
-          -5500783756337233734,
-          null,
-          null
-        ],
-        "CreatedEntityId": -4099823684526215156
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 4535915407558459250,
-        "MethodName": "DeletePermission",
-        "Parameters": [
-          -4099823684526215156
-        ],
-        "DeletedEntityId": -4099823684526215156
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
@@ -3623,27 +2972,6 @@
           null
         ],
         "CreatedEntityId": -7276860446814783100
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 4270986592199129073,
-        "MethodName": "AddStateExecutionPermissionToGlobalRole",
-        "Parameters": [
-          -4482786020305083774,
-          2435669454193865653,
-          null,
-          null
-        ],
-        "CreatedEntityId": 6852490010721048061
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 6071853176714312724,
-        "MethodName": "DeletePermission",
-        "Parameters": [
-          6852490010721048061
-        ],
-        "DeletedEntityId": 6852490010721048061
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
@@ -3683,27 +3011,6 @@
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -7374849114331160165,
-        "MethodName": "AddStateExecutionPermissionToGlobalRole",
-        "Parameters": [
-          -4482786020305083774,
-          -5719640768383377343,
-          null,
-          null
-        ],
-        "CreatedEntityId": -3522365078471025712
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 1783623829830721709,
-        "MethodName": "DeletePermission",
-        "Parameters": [
-          -3522365078471025712
-        ],
-        "DeletedEntityId": -3522365078471025712
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
         "Id": -3687044698131438273,
         "MethodName": "AddStateExecutionPermissionToGlobalRole",
         "Parameters": [
@@ -3716,27 +3023,6 @@
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 2065366083440021169,
-        "MethodName": "AddStateExecutionPermissionToGlobalRole",
-        "Parameters": [
-          -4482786020305083774,
-          3269803495574321228,
-          null,
-          null
-        ],
-        "CreatedEntityId": 1339022296814050976
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": -5069951470835702374,
-        "MethodName": "DeletePermission",
-        "Parameters": [
-          1339022296814050976
-        ],
-        "DeletedEntityId": 1339022296814050976
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
         "Id": 1182623469283847819,
         "MethodName": "AddStateExecutionPermissionToGlobalRole",
         "Parameters": [
@@ -3746,9 +3032,1131 @@
           null
         ],
         "CreatedEntityId": -5676532924747553514
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -2661930913321191245,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          5317309885737393721
+        ],
+        "DeletedEntityId": 5317309885737393721
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -3477453049344915865,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": -6542160471261892746
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 224773093351689275,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -6542160471261892746
+        ],
+        "DeletedEntityId": -6542160471261892746
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 4393385979347623140,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": -4807162975962440528
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 933361349369249674,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -4807162975962440528
+        ],
+        "DeletedEntityId": -4807162975962440528
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -4576153979563847330,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": 9108143619028794533
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -3831854110078697033,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -5676532924747553514
+        ],
+        "DeletedEntityId": -5676532924747553514
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 4855154254035438953,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": -5057716855180488940
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 5622882492647584757,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -5057716855180488940
+        ],
+        "DeletedEntityId": -5057716855180488940
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -275785921847383575,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": 2382062614231677761
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 7250608783775737013,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          9108143619028794533
+        ],
+        "DeletedEntityId": 9108143619028794533
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -2006071697479601082,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": 1152715227404857724
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 8865742183639558803,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          1152715227404857724
+        ],
+        "DeletedEntityId": 1152715227404857724
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -8619824283118006680,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": 3492566568296123583
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -5359516652487736761,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          2382062614231677761
+        ],
+        "DeletedEntityId": 2382062614231677761
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 3478157228934507368,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": 781806974607975290
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 6370393935638729724,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          781806974607975290
+        ],
+        "DeletedEntityId": 781806974607975290
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -2314185384447181460,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": -7891739468354388023
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 7130897652728884276,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -7891739468354388023
+        ],
+        "DeletedEntityId": -7891739468354388023
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 9171247196225541882,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": 5416777154562391358
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -6951062729630546256,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          5416777154562391358
+        ],
+        "DeletedEntityId": 5416777154562391358
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 3058803704272153480,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": -4560711984598209103
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 7215633059304788944,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -4560711984598209103
+        ],
+        "DeletedEntityId": -4560711984598209103
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -2185071441077304076,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": 6997575804643119654
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -6648440026612526496,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          6997575804643119654
+        ],
+        "DeletedEntityId": 6997575804643119654
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 2783815529498264586,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": -7163266097099784045
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -4679097831178278577,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          3492566568296123583
+        ],
+        "DeletedEntityId": 3492566568296123583
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -148290457367413930,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": 2764880104968457126
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 5145400075071463406,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          2764880104968457126
+        ],
+        "DeletedEntityId": 2764880104968457126
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 3949127762833049007,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": 1248197131840200431
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 659651183601563794,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          1248197131840200431
+        ],
+        "DeletedEntityId": 1248197131840200431
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 4037309951883511603,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -7163266097099784045
+        ],
+        "DeletedEntityId": -7163266097099784045
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -1061438963641256505,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": -7556193123364524984
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -1931905500805255790,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -7556193123364524984
+        ],
+        "DeletedEntityId": -7556193123364524984
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 3505670721749809305,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": 6911680178890849090
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -6172708853487791260,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          6911680178890849090
+        ],
+        "DeletedEntityId": 6911680178890849090
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -8208271988406307461,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": -3849352475219154680
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -1225066370613704566,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -3849352475219154680
+        ],
+        "DeletedEntityId": -3849352475219154680
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 4543393078496410213,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": 2370480594588053639
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 582088479024453603,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          2370480594588053639
+        ],
+        "DeletedEntityId": 2370480594588053639
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -2864295987457532758,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": 6343863061945934973
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -8607572313127973894,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": 3071524888910110928
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 8595662635903375517,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          3071524888910110928
+        ],
+        "DeletedEntityId": 3071524888910110928
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 4425684643948020055,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": -1565725055396321488
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -1675057136306169661,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -1565725055396321488
+        ],
+        "DeletedEntityId": -1565725055396321488
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -8228623993491305769,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": -2146218270623826991
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 7839720586987281093,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -2146218270623826991
+        ],
+        "DeletedEntityId": -2146218270623826991
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 4472255204628120742,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": 3391067517540819181
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 6553422139929958318,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          3391067517540819181
+        ],
+        "DeletedEntityId": 3391067517540819181
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -5193253045314751862,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": 2388295720375386811
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 4242462830516743606,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          2388295720375386811
+        ],
+        "DeletedEntityId": 2388295720375386811
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 1902308661069746326,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": -7311568771461597006
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -3194525344547478197,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -7311568771461597006
+        ],
+        "DeletedEntityId": -7311568771461597006
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 8300225081005331873,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": 8782707219897777322
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 6562290722663739882,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          6343863061945934973
+        ],
+        "DeletedEntityId": 6343863061945934973
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 2732418147224608397,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": -1289431376890256314
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -549912776414610130,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -1289431376890256314
+        ],
+        "DeletedEntityId": -1289431376890256314
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -7099273652377360405,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": -5030841233716424780
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 7755265810499055161,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          8782707219897777322
+        ],
+        "DeletedEntityId": 8782707219897777322
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -5737396731157529275,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": -784540489295654715
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -2455622065503834833,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -784540489295654715
+        ],
+        "DeletedEntityId": -784540489295654715
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 3036911853158041135,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": 8560780805236309314
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -8319754408652583733,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          8560780805236309314
+        ],
+        "DeletedEntityId": 8560780805236309314
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 4984372811199267109,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": -1968718219695958322
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 6661450339111382613,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": 4019950392496637283
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -412371242206329562,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          4019950392496637283
+        ],
+        "DeletedEntityId": 4019950392496637283
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 2082045790629287425,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": 3867291763988324701
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 7418660773526118395,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          3867291763988324701
+        ],
+        "DeletedEntityId": 3867291763988324701
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -875618718385079553,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": 7809321239845220877
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 4377469883082763778,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          7809321239845220877
+        ],
+        "DeletedEntityId": 7809321239845220877
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -5122029300399281555,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -1161870880509512825,
+          -5719640768383377343,
+          null,
+          null
+        ],
+        "CreatedEntityId": -265902797885237344
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -3624639109444853003,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -5030841233716424780
+        ],
+        "DeletedEntityId": -5030841233716424780
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 2863021910574314310,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -1968718219695958322
+        ],
+        "DeletedEntityId": -1968718219695958322
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -3342677180497636701,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": 5041481355543389447
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 8259293413844440897,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          5041481355543389447
+        ],
+        "DeletedEntityId": 5041481355543389447
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 6439583513429270582,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": -9223128263445852682
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -8902797110244271203,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -9223128263445852682
+        ],
+        "DeletedEntityId": -9223128263445852682
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -4139077992925857657,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": 2336837453175049459
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -1837670773382947956,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          2336837453175049459
+        ],
+        "DeletedEntityId": 2336837453175049459
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 754660794716584138,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": -931182975907362943
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 7555287341584585089,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -931182975907362943
+        ],
+        "DeletedEntityId": -931182975907362943
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -6569597333034234884,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": 8050259896126340143
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 7350175806290038592,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          8050259896126340143
+        ],
+        "DeletedEntityId": 8050259896126340143
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 4057214134462232953,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": -5195740994842623044
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 6992909261172467699,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -5195740994842623044
+        ],
+        "DeletedEntityId": -5195740994842623044
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -6294855481146205608,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": -3422294941696317527
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 2432748168300885464,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -3422294941696317527
+        ],
+        "DeletedEntityId": -3422294941696317527
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -1596822446680369289,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": -1190437564847334080
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -1857817386113634912,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -1190437564847334080
+        ],
+        "DeletedEntityId": -1190437564847334080
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 5381805150782830959,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": -8079709704036047713
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 7497259778494457098,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -8079709704036047713
+        ],
+        "DeletedEntityId": -8079709704036047713
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -4065468289247214472,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": 6401020613281444345
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 8170037475010604154,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          6401020613281444345
+        ],
+        "DeletedEntityId": 6401020613281444345
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -3120018452439433681,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": -5602703819938131065
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 8921459160859180278,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -5602703819938131065
+        ],
+        "DeletedEntityId": -5602703819938131065
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 5100729137797408143,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": 3214461809568462032
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 146388836963195845,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          3214461809568462032
+        ],
+        "DeletedEntityId": 3214461809568462032
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 2285048832080634180,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": 2565819932176862520
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 1446931160535783877,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          2565819932176862520
+        ],
+        "DeletedEntityId": 2565819932176862520
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -4712383773112182932,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": 4877949753424347385
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -6246832769157816338,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          4877949753424347385
+        ],
+        "DeletedEntityId": 4877949753424347385
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 3414718576655888191,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": -8815217333492295478
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 7062405056524412850,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -8815217333492295478
+        ],
+        "DeletedEntityId": -8815217333492295478
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -5900275754490073138,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": 5287641424398154219
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -8257540639860820804,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          5287641424398154219
+        ],
+        "DeletedEntityId": 5287641424398154219
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -4203713147789381546,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4482786020305083774,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": 1668938344474489928
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 4453745602597288394,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          1668938344474489928
+        ],
+        "DeletedEntityId": 1668938344474489928
       }
     ],
-    "4348273766413605426": [
+    "-246751928251953464": [
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
         "Id": 8981805181838297266,
@@ -3824,7 +4232,7 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 5620060548466802550,
+        "Id": -1854712222298440005,
         "MethodName": "UpdateLabelAttributeTypeIds",
         "Parameters": [
           [
@@ -3848,17 +4256,6 @@
         "MethodName": "UpdateName",
         "Parameters": [
           "Employee"
-        ],
-        "UpdatedEntityId": null
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -1854712222298440005,
-        "MethodName": "UpdateLabelAttributeTypeIds",
-        "Parameters": [
-          [
-            -7884369827026880574
-          ]
         ],
         "UpdatedEntityId": null
       },
@@ -3998,20 +4395,538 @@
           null
         ],
         "CreatedEntityId": -2130899275956662533
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 6242456774064311612,
+        "MethodName": "AddNewGlobalRole",
+        "Parameters": [
+          "New UserContext Role"
+        ],
+        "CreatedEntityId": 8682504389383679946
+      },
+      {
+        "__type": "EntityUpdatedLog:#Shared.Data.History",
+        "Id": 4351759095768054795,
+        "MethodName": "UpdateGlobalRoleName",
+        "Parameters": [
+          8682504389383679946,
+          "Professor"
+        ],
+        "UpdatedEntityId": 8682504389383679946
+      },
+      {
+        "__type": "EntityUpdatedLog:#Shared.Data.History",
+        "Id": 1794737801564979526,
+        "MethodName": "UpdateGlobalRoleExpression",
+        "Parameters": [
+          8682504389383679946,
+          null
+        ],
+        "UpdatedEntityId": 8682504389383679946
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -4779026491699502719,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -7438200237350192568
+        ],
+        "DeletedEntityId": -7438200237350192568
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -6961126463962667002,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          7525434296636405248,
+          null,
+          null
+        ],
+        "CreatedEntityId": -7569180439710769375
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -4676686129048035009,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -7569180439710769375
+        ],
+        "DeletedEntityId": -7569180439710769375
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 838448628976666317,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          7525434296636405248,
+          null,
+          null
+        ],
+        "CreatedEntityId": -4281759494386349946
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 2704767893118439270,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -4281759494386349946
+        ],
+        "DeletedEntityId": -4281759494386349946
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -2776256051034986205,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          7525434296636405248,
+          null,
+          null
+        ],
+        "CreatedEntityId": -8961112562610449288
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -3515325738738846040,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -8961112562610449288
+        ],
+        "DeletedEntityId": -8961112562610449288
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -831159131868767595,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          7525434296636405248,
+          null,
+          null
+        ],
+        "CreatedEntityId": -6109437539579416495
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -6601681569969026975,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -6109437539579416495
+        ],
+        "DeletedEntityId": -6109437539579416495
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 4077261575262535965,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          7525434296636405248,
+          null,
+          null
+        ],
+        "CreatedEntityId": 7730411812890696535
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -8670240043763573582,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          7730411812890696535
+        ],
+        "DeletedEntityId": 7730411812890696535
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -6623357897504700082,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          7525434296636405248,
+          null,
+          null
+        ],
+        "CreatedEntityId": 3690798077921704319
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -4387013213160780371,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          3690798077921704319
+        ],
+        "DeletedEntityId": 3690798077921704319
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -8605979422441967863,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          8682504389383679946,
+          7525434296636405248,
+          null,
+          null
+        ],
+        "CreatedEntityId": -5464496374233265911
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -690197413605876408,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": -1696764125415250066
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 8809341943818586675,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -1696764125415250066
+        ],
+        "DeletedEntityId": -1696764125415250066
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -1474649279710724192,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          3269803495574321228,
+          null,
+          null
+        ],
+        "CreatedEntityId": -4719685949706484520
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 882457464653386362,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          -6558480917652682201,
+          null,
+          null
+        ],
+        "CreatedEntityId": 4808526104506868049
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 1817108483979930715,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          4808526104506868049
+        ],
+        "DeletedEntityId": 4808526104506868049
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -6809017580579275124,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          -6558480917652682201,
+          null,
+          null
+        ],
+        "CreatedEntityId": -7864807796116338318
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -6396055871588403399,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          8682504389383679946,
+          -275752852012098410,
+          null,
+          null
+        ],
+        "CreatedEntityId": 7547171021554192657
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -2069653009197090327,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -7864807796116338318
+        ],
+        "DeletedEntityId": -7864807796116338318
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -9148356973570861461,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          -6558480917652682201,
+          null,
+          null
+        ],
+        "CreatedEntityId": -2776979413899510601
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 8395404059169645634,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -2776979413899510601
+        ],
+        "DeletedEntityId": -2776979413899510601
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -8846510474944201043,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          -6558480917652682201,
+          null,
+          null
+        ],
+        "CreatedEntityId": -4892946450356282654
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -4184494678423994569,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -4892946450356282654
+        ],
+        "DeletedEntityId": -4892946450356282654
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -6811141856580898204,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          -6558480917652682201,
+          null,
+          null
+        ],
+        "CreatedEntityId": -3544565730635607613
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 4708603845239599431,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -3544565730635607613
+        ],
+        "DeletedEntityId": -3544565730635607613
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 5402276134556961753,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          -6558480917652682201,
+          null,
+          null
+        ],
+        "CreatedEntityId": 1141304658863023109
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -6852691034483693047,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          1141304658863023109
+        ],
+        "DeletedEntityId": 1141304658863023109
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 2841949238625394462,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          -6558480917652682201,
+          null,
+          null
+        ],
+        "CreatedEntityId": 519753097045576164
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 5336919266304483606,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          519753097045576164
+        ],
+        "DeletedEntityId": 519753097045576164
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -1091659162089829422,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          -6558480917652682201,
+          null,
+          null
+        ],
+        "CreatedEntityId": 641013572421761617
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -8596401298319768991,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          641013572421761617
+        ],
+        "DeletedEntityId": 641013572421761617
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -1114274722370658260,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          -6558480917652682201,
+          null,
+          null
+        ],
+        "CreatedEntityId": -4855815955009444942
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -6523622562809920631,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -4855815955009444942
+        ],
+        "DeletedEntityId": -4855815955009444942
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -7636450603532780775,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          -6558480917652682201,
+          null,
+          null
+        ],
+        "CreatedEntityId": -4147132316797360540
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -2563945383818860867,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          -4147132316797360540
+        ],
+        "DeletedEntityId": -4147132316797360540
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 2617053578361285394,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          7547171021554192657
+        ],
+        "DeletedEntityId": 7547171021554192657
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -7360799384376549048,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          8682504389383679946,
+          -6558480917652682201,
+          null,
+          null
+        ],
+        "CreatedEntityId": -5712804309644921331
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 6017949993757945285,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          8682504389383679946,
+          -275752852012098410,
+          null,
+          null
+        ],
+        "CreatedEntityId": -8379956408334395887
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -6721339384769034729,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": 2747656400215588220
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": 4183053543936016258,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          2747656400215588220
+        ],
+        "DeletedEntityId": 2747656400215588220
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": 2565785963249449608,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          -4439115117710680649,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": 3427668589748748253
+      },
+      {
+        "__type": "EntityDeletedLog:#Shared.Data.History",
+        "Id": -3899360749491856757,
+        "MethodName": "DeletePermission",
+        "Parameters": [
+          3427668589748748253
+        ],
+        "DeletedEntityId": 3427668589748748253
+      },
+      {
+        "__type": "EntityCreatedLog:#Shared.Data.History",
+        "Id": -8017771938286570832,
+        "MethodName": "AddStateExecutionPermissionToGlobalRole",
+        "Parameters": [
+          8682504389383679946,
+          -1316717531571652635,
+          null,
+          null
+        ],
+        "CreatedEntityId": 5347104417798627648
       }
     ]
   },
   "RelationTypeActionLogs": {
-    "8131450746331223567": [],
-    "-7481475288500316935": [],
-    "-552451078702294091": [],
-    "-2340344309538199778": [],
-    "-3937295199665443245": [],
-    "-5952000090448671085": [],
-    "-5880030952871425717": [],
-    "1430366008445225427": [],
-    "-7164594126899835804": [],
-    "4633882836755803191": [],
-    "-5409950658136383606": []
+    "-7787650775310956200": [],
+    "-6565880327326129343": [],
+    "-6784833704058187509": [],
+    "8278638326329242108": [],
+    "-2216907537666645850": [],
+    "4143766986604425859": [],
+    "873036226787265013": [],
+    "636972080884038408": [],
+    "-363075781303029566": [],
+    "4422557696644197851": [],
+    "-2349211534199850122": []
   }
 }

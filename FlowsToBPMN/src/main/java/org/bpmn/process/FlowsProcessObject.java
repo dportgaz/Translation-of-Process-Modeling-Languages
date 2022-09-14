@@ -19,6 +19,8 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.bpmn.steps.BPMN.doc;
@@ -81,9 +83,9 @@ public class FlowsProcessObject {
         addEndEventFlows();
         setAssociations();
         setSubProcesses();
-        setGateways();
         setBeforeAndAfterElements();
         setLoops();
+        setGateways();
         setFlows();
         addFlowsToTasks();
         setTasks();
@@ -193,9 +195,11 @@ public class FlowsProcessObject {
 
             for (int j = i + 1; j < flows.size(); j++) {
 
+                Pattern p = Pattern.compile("(Activity*|EndEvent*)");
                 BPMNElement innerElement = flows.get(j).getSourceRef();
+                Matcher m = p.matcher(innerElement.getId());
 
-                if (outerElement.getId().equals(innerElement.getId())) {
+                if (m.find() && outerElement.getId().equals(innerElement.getId())) {
                     flowsToRemove.add(flows.get(j));
                     flowsToAdd.add(new SequenceFlow(splitGateway, flows.get(j).getTargetRef()));
                     duplicate = true;
@@ -229,9 +233,11 @@ public class FlowsProcessObject {
 
             for (int j = i + 1; j < flows.size(); j++) {
 
+                Pattern p = Pattern.compile("(Activity*|EndEvent*)");
                 BPMNElement innerElement = flows.get(j).getTargetRef();
+                Matcher m = p.matcher(innerElement.getId());
 
-                if (outerElement.getId().equals(innerElement.getId())) {
+                if (m.find() && outerElement.getId().equals(innerElement.getId())) {
                     flowsToRemove.add(flows.get(j));
                     flowsToAdd.add(new SequenceFlow(flows.get(j).getSourceRef(), joinGateway));
                     duplicate = true;

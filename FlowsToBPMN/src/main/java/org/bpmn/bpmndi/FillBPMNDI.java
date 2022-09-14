@@ -25,14 +25,8 @@ import static org.bpmn.steps.BPMN.doc;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 
 public class FillBPMNDI {
-
-    ArrayList<String> elements = new ArrayList<>();
-
-    HashMap<String, ArrayList<String>> loopElement = new HashMap<>();
-
-    HashMap<String, ArrayList<String>> decisionElement = new HashMap<>();
     final double participantX = 70.0;
-    final double participantWidth = 1530.0;
+    final double participantWidth = 2000.0;
     final double participantHeight = 500.0;
     final double participantYInc = 550.0;
 
@@ -456,49 +450,52 @@ public class FillBPMNDI {
 
     public void addDataObjectsTwo(Element rootElement, ArrayList<Task> tasks) {
 
-        Shape firstBsTask = getBPMNShapeByTaskTwo(tasks.get(0).getId());
-        double xTask = firstBsTask.getBounds().getX();
+        if(tasks.size() > 0) {
+            System.out.println(tasks);
+            Shape firstBsTask = getBPMNShapeByTaskTwo(tasks.get(0).getId());
+            double xTask = firstBsTask.getBounds().getX();
 
-        Bounds bounds;
-        Shape shape;
-        for (Task task : tasks) {
+            Bounds bounds;
+            Shape shape;
+            for (Task task : tasks) {
 
-            Double xBound = xTask;
-            Double yBound = poolHeight + poolHeightOffset;
+                Double xBound = xTask;
+                Double yBound = poolHeight + poolHeightOffset;
 
-            Shape bs = getBPMNShapeByTaskTwo(task.getId());
-            DataObject dataObject = task.getDataObject();
-            bounds = new Bounds(xBound, yBound, dataObjectWidth, dataObjectHeight);
-            shape = new Shape(dataObject.getRefId(), bounds);
-            shape.setShape();
-            shape.setBounds();
+                Shape bs = getBPMNShapeByTaskTwo(task.getId());
+                DataObject dataObject = task.getDataObject();
+                bounds = new Bounds(xBound, yBound, dataObjectWidth, dataObjectHeight);
+                shape = new Shape(dataObject.getRefId(), bounds);
+                shape.setShape();
+                shape.setBounds();
 
-            rootElement.appendChild(shape.getBpmnElement());
+                rootElement.appendChild(shape.getBpmnElement());
 
-            Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
-            dataObjectFlowOutput.setAttribute("id", task.getDataOutputAssociation().getId() + "_di");
-            dataObjectFlowOutput.setAttribute("bpmnElement", task.getDataOutputAssociation().getId());
+                Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
+                dataObjectFlowOutput.setAttribute("id", task.getDataOutputAssociation().getId() + "_di");
+                dataObjectFlowOutput.setAttribute("bpmnElement", task.getDataOutputAssociation().getId());
 
-            Element waypointOutStart = doc.createElement("di:waypoint");
-            Element waypointOutEnd = doc.createElement("di:waypoint");
+                Element waypointOutStart = doc.createElement("di:waypoint");
+                Element waypointOutEnd = doc.createElement("di:waypoint");
 
-            String waypointOutStartX = String.valueOf(bs.getBounds().getX() + bs.getBounds().getWidth() / 2);
-            String waypointOutStartY = String.valueOf(bs.getBounds().getY());
-            String waypointOutEndX = String.valueOf(xTask + dataObjectWidth / 2);
-            String waypointOutEndY = String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight);
+                String waypointOutStartX = String.valueOf(bs.getBounds().getX() + bs.getBounds().getWidth() / 2);
+                String waypointOutStartY = String.valueOf(bs.getBounds().getY());
+                String waypointOutEndX = String.valueOf(xTask + dataObjectWidth / 2);
+                String waypointOutEndY = String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight);
 
-            waypointOutStart.setAttribute("x", waypointOutStartX);
-            waypointOutStart.setAttribute("y", waypointOutStartY);
-            waypointOutEnd.setAttribute("x", waypointOutEndX);
-            waypointOutEnd.setAttribute("y", waypointOutEndY);
+                waypointOutStart.setAttribute("x", waypointOutStartX);
+                waypointOutStart.setAttribute("y", waypointOutStartY);
+                waypointOutEnd.setAttribute("x", waypointOutEndX);
+                waypointOutEnd.setAttribute("y", waypointOutEndY);
 
 
-            dataObjectFlowOutput.appendChild(waypointOutStart);
-            dataObjectFlowOutput.appendChild(waypointOutEnd);
+                dataObjectFlowOutput.appendChild(waypointOutStart);
+                dataObjectFlowOutput.appendChild(waypointOutEnd);
 
-            rootElement.appendChild(dataObjectFlowOutput);
-            xTask += xTaskOffset;
+                rootElement.appendChild(dataObjectFlowOutput);
+                xTask += xTaskOffset;
 
+            }
         }
 
     }
