@@ -1,10 +1,13 @@
 package org.bpmn.bpmn_elements.event;
 
+import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
-import static org.bpmn.steps.Execution.doc;
+import java.util.ArrayList;
+
+import static org.bpmn.steps.BPMN.doc;
 
 public class EndEvent extends Event{
 
@@ -13,17 +16,26 @@ public class EndEvent extends Event{
     // SequenceFlow outgoing;
     Element elementEndEvent;
 
+    ArrayList<BPMNElement> before = new ArrayList<>();
+
+    ArrayList<BPMNElement> after = new ArrayList<>();
+
     SequenceFlow incoming;
 
     Element elementIncoming;
 
+    BPMNElement beforeElement;
+
+    BPMNElement afterElement;
+
     public EndEvent() {
-        this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.id = "EndEvent_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementEndEvent = doc.createElement("bpmn:endEvent");
-        setElementEndEvent();
+        setElement();
     }
 
-    public Element getElementEndEvent() {
+    @Override
+    public Element getElement() {
         return elementEndEvent;
     }
 
@@ -40,21 +52,43 @@ public class EndEvent extends Event{
         return elementIncoming;
     }
 
+    @Override
+    public BPMNElement getBeforeElement() {
+        return beforeElement;
+    }
+
+    @Override
+    public BPMNElement getAfterElement() {
+        return afterElement;
+    }
+
+    @Override
+    public void setBeforeElement(BPMNElement element) {
+        this.beforeElement = element;
+    }
+
+    @Override
+    public void setAfterElement(BPMNElement element) {
+        this.afterElement = element;
+    }
+
     public SequenceFlow getIncoming() {
         return incoming;
     }
 
-    public void setElementEndEvent() {
+    @Override
+    public void setElement() {
         this.elementEndEvent.setAttribute("id", this.id);
     }
 
+    @Override
     public String getId() {
         return this.id;
     }
 
     @Override
     public String toString() {
-        return "EndEvent=" + this.id;
+        return this.id;
     }
 
 }

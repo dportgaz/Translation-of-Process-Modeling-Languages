@@ -5,6 +5,7 @@ import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;
+//import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
@@ -17,10 +18,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import static org.bpmn.steps.Execution.*;
+import static org.bpmn.steps.BPMN.*;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 
-public class StepOne {
+public class StepOne implements Step{
     ExecStep step;
     String file;
     Element definitionsElement;
@@ -29,15 +30,10 @@ public class StepOne {
     public static ArrayList<Task> allTasks = new ArrayList();
 
     public static ArrayList<SequenceFlow> allFlows = new ArrayList();
-
     public static ArrayList<ExclusiveGateway> allGateways = new ArrayList();
-
     public static HashSet<Loop> loops = new HashSet<>();
-
     public static ArrayList<Predicate> predicates = new ArrayList<>();
-
     static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
-
 
     public StepOne(String file, Element definitionsElement, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
         this.file = file;
@@ -49,7 +45,7 @@ public class StepOne {
     public void execute() throws TransformerException {
 
         Collaboration collaboration = new Collaboration();
-        collaboration.setParticipantsOne(objectTypeObjects);
+        collaboration.setParticipants(objectTypeObjects);
         Element collaborationElement = collaboration.getElementCollaboration();
 
         definitionsElement.appendChild(collaborationElement);
@@ -62,7 +58,7 @@ public class StepOne {
 
     }
 
-    private void setProcesses(Element definitionsElement) {
+     public void setProcesses(Element definitionsElement) {
 
         for (Object participant : objects) {
 

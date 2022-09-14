@@ -5,12 +5,14 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 
 import org.w3c.dom.Element;
 
-import static org.bpmn.steps.Execution.doc;
+import static org.bpmn.steps.BPMN.doc;
 
 public class DataOutputAssociation extends Association{
 
     String id;
     DataObject targetRef;
+
+    String outputAssociationTarget;
     Element elementDataOutputAssociation;
 
     Element elementTarget;
@@ -27,6 +29,14 @@ public class DataOutputAssociation extends Association{
         this.elementDataOutputAssociation = doc.createElement("bpmn:dataOutputAssociation");
         this.elementDataOutputAssociation.setAttribute("id", this.id);
 
+    }
+
+    public void setOutputAssociationTarget(DataObject dataObject) {
+        this.outputAssociationTarget = dataObject.getRefId();
+        setTargetRef(dataObject);
+        Element target = doc.createElement("bpmn:targetRef");
+        target.setTextContent(outputAssociationTarget);
+        getElementDataOutputAssociation().appendChild(target);
     }
 
     public void setTargetRef(DataObject targetRef) {

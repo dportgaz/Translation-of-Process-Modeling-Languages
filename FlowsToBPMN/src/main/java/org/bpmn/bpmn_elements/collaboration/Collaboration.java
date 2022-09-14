@@ -10,7 +10,7 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.bpmn.steps.Execution.doc;
+import static org.bpmn.steps.BPMN.doc;
 
 public class Collaboration {
 
@@ -42,7 +42,7 @@ public class Collaboration {
         return this.id;
     }
 
-    public void setParticipantsOne(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public void setParticipants(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
         for (String key : objectTypeObjects.keySet()) {
             objectTypeObjects.get(key).forEach(obj -> {
@@ -52,6 +52,7 @@ public class Collaboration {
                     String participantName = (String) obj.getParameters().get(0);
 
                     // work around for json double entry bug in flows json
+                    // TODO: JSON BUG
                     if (!containsParticipant(participantName)) {
 
                         Object participant = new Object(this, key, participantName, objectTypeObjects);
@@ -70,7 +71,7 @@ public class Collaboration {
         }
     }
 
-    public void setParticipantsTwo(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
+    public void setParticipants(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
 
         for (String key : userTypeObjects.keySet()) {
             userTypeObjects.get(key).forEach(obj -> {
@@ -80,6 +81,7 @@ public class Collaboration {
                     Double updatedEntityId = obj.getUpdatedEntityId();
                     User participant = new User(this, key, name, updatedEntityId, objectTypeObjects, userTypeObjects);
 
+                    // TODO: JSON BUG
                     if (!users.contains(participant)) {
                         users.add(participant);
                     }

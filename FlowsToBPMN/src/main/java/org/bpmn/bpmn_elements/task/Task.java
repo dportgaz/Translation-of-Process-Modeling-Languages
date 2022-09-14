@@ -1,6 +1,7 @@
 package org.bpmn.bpmn_elements.task;
 
 import com.google.gson.internal.LinkedTreeMap;
+import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.association.DataOutputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
@@ -13,13 +14,12 @@ import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.steps.Execution.doc;
+import static org.bpmn.steps.BPMN.doc;
 
-public class Task {
+public class Task implements BPMNElement {
 
     String id;
 
@@ -37,15 +37,23 @@ public class Task {
 
     Element elementOutgoing;
 
-    DataInputAssociation dataInputAssociation;
+    BPMNElement beforeElement;
+
+    BPMNElement afterElement;
+
+    ArrayList<DataInputAssociation> dataInputAssociations = new ArrayList<>();
 
     DataOutputAssociation dataOutputAssociation;
 
     private DataObject dataObject;
 
-    Task before;
+    ArrayList<BPMNElement> before = new ArrayList<>();
 
-    Task after;
+    ArrayList<BPMNElement> after = new ArrayList<>();
+
+    ArrayList<Task> beforeTask = new ArrayList<>();
+
+    ArrayList<Task> afterTask = new ArrayList<>();
 
     Task step;
 
@@ -62,10 +70,6 @@ public class Task {
     boolean isSubprocess;
 
     boolean isEndTask = false;
-
-    String inputAssociationSource;
-
-    String outputAssociationTarget;
 
     Element elementTask;
 
@@ -96,10 +100,11 @@ public class Task {
         this.participant = participant;
         this.dataObject = new DataObject(this);
         this.steps = setSteps(objects);
-        setTaskElement();
+        setElement();
+        setDataOutputAssociation();
     }
 
-    private void setTaskElement() {
+    public void setElement() {
         if (this.steps.size() > 0) {
             this.isSubprocess = true;
             this.elementTask = doc.createElement("bpmn:subProcess");
@@ -119,12 +124,30 @@ public class Task {
         }
     }
 
+    public ArrayList<Task> getBeforeTask() {
+        return beforeTask;
+    }
+
+    public ArrayList<Task> getAfterTask() {
+        return afterTask;
+    }
+
     public void setStart(StartEvent start) {
         this.start = start;
     }
 
     public StartEvent getStart() {
         return start;
+    }
+
+    @Override
+    public void setBeforeElement(BPMNElement element) {
+        this.beforeElement = element;
+    }
+
+    @Override
+    public void setAfterElement(BPMNElement element) {
+        this.afterElement = element;
     }
 
     public void setEnd(EndEvent end) {
@@ -145,11 +168,11 @@ public class Task {
         EndEvent endEvent = new EndEvent();
         start = startEvent;
         end = endEvent;
-        this.elementTask.appendChild(startEvent.getElementStartEvent());
-        this.elementTask.appendChild(endEvent.getElementEndEvent());
+        this.elementTask.appendChild(startEvent.getElement());
+        this.elementTask.appendChild(endEvent.getElement());
 
         for (Step step : steps) {
-            this.elementTask.appendChild(step.getElementTask());
+            this.elementTask.appendChild(step.getElement());
         }
 
     }
@@ -197,27 +220,6 @@ public class Task {
         return true;
     }
 
-    public void setInputAssociationSource(DataObject dataObject) {
-        this.inputAssociationSource = dataObject.getRefId();
-        this.dataInputAssociation.setSourceRef(dataObject);
-        if (this.inputAssociationSource != null) {
-            Element source = doc.createElement("bpmn:sourceRef");
-            source.setTextContent(inputAssociationSource);
-            this.dataInputAssociation.getElementDataInputAssociation().appendChild(source);
-        }
-    }
-    public void setOutputAssociationTarget(DataObject dataObject) {
-        this.outputAssociationTarget = dataObject.getRefId();
-        this.dataOutputAssociation.setTargetRef(dataObject);
-        Element target = doc.createElement("bpmn:targetRef");
-        target.setTextContent(outputAssociationTarget);
-        this.dataOutputAssociation.getElementDataOutputAssociation().appendChild(target);
-    }
-
-    public String getInputAssociationSource() {
-        return inputAssociationSource;
-    }
-
     public void setParticipant(Participant participant) {
         this.participant = participant;
     }
@@ -226,7 +228,7 @@ public class Task {
         return participant;
     }
 
-    public Element getElementTask() {
+    public Element getElement() {
         return elementTask;
     }
 
@@ -256,22 +258,23 @@ public class Task {
         return this.dataOutputAssociation;
     }
 
-    public Task getAfter() {
+    public ArrayList<BPMNElement> getAfter() {
         return after;
     }
 
-    public void setAfter(Task after) {
-        this.after = after;
+    @Override
+    public BPMNElement getBeforeElement() {
+        return beforeElement;
     }
 
-    public Task getBefore() {
+    @Override
+    public BPMNElement getAfterElement() {
+        return afterElement;
+    }
+
+    public ArrayList<BPMNElement> getBefore() {
         return before;
     }
-
-    public void setBefore(Task before) {
-        this.before = before;
-    }
-
 
     public EndEvent getAfterEvent() {
         return afterEvent;
@@ -298,25 +301,19 @@ public class Task {
 
     }
 
-    public void setDataInputAssociation() {
+    public void addDataInputAssociation(DataInputAssociation dataInputAssociation) {
 
-        this.dataInputAssociation = new DataInputAssociation();
-        this.elementTask.appendChild(this.dataInputAssociation.getElementDataInputAssociation());
+        this.dataInputAssociations.add(dataInputAssociation);
+        this.elementTask.appendChild(dataInputAssociation.getElementDataInputAssociation());
         Element target = doc.createElement("bpmn:targetRef");
         setProperty(new Property());
         target.setTextContent(property.getId());
-        this.dataInputAssociation.getElementDataInputAssociation().appendChild(target);
+        dataInputAssociation.getElementDataInputAssociation().appendChild(target);
 
     }
 
-    public void setDataInputAssociation(DataInputAssociation dataInputAssociation) {
-
-        this.dataInputAssociation = dataInputAssociation;
-
-    }
-
-    public DataInputAssociation getDataInputAssociation() {
-        return this.dataInputAssociation;
+    public ArrayList<DataInputAssociation> getDataInputAssociations() {
+        return this.dataInputAssociations;
     }
 
     public void setDataObject(DataObject dataObject) {

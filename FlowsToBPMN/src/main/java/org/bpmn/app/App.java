@@ -4,9 +4,8 @@ import java.io.FileNotFoundException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPathExpressionException;
 
-import org.bpmn.steps.Execution;
+import org.bpmn.steps.BPMN;
 
 
 public class App {
@@ -15,9 +14,9 @@ public class App {
             throws ParserConfigurationException, TransformerException, FileNotFoundException {
 
 
-        Execution execution = new Execution();
-        String filePHoodle = "FlowsToBPMN/src/resources/flows/PhoodleDoodle.json";
-        execution.createBPMN(filePHoodle, "PHoodle_RENEW.xml");
+        BPMN bpmn = new BPMN();
+        String filePHoodle = "FlowsToBPMN/src/resources/flows/3.json";
+        bpmn.create(filePHoodle, "PHoodle_RENEW.xml");
 
 /*
         String fileRecruitment = "FlowsToBPMN/src/resources/flows/recruitment.json";
