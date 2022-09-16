@@ -73,9 +73,6 @@ public class FlowsProcessObject {
 
         this.tasks = parser.parseTasks(this.participant, objects);
         this.loops = parser.parseLoops(this, objects);
-        for(Loop loop : loops){
-            System.out.println(loop.getSource() + " --> " + loop.getTarget());
-        }
         predicates = parser.parsePredicates(objects);
 
         setStartEvent();
@@ -119,8 +116,6 @@ public class FlowsProcessObject {
             Task target = loop.getTarget();
             BPMNElement beforeSource = source.getBeforeElement();
             BPMNElement afterTarget = target.getAfterElement();
-            System.out.println("source: " + source + " , beforeSource: " + beforeSource);
-            System.out.println("target: "  + target + " , afterTarget: " + afterTarget);
             ExclusiveGateway beforeGateway = new ExclusiveGateway();
             ExclusiveGateway afterGateway = new ExclusiveGateway();
 
@@ -464,8 +459,6 @@ public class FlowsProcessObject {
 
     private void addGateways() {
 
-        //trimGateways();
-
         for (ExclusiveGateway gate : gateways) {
             allGateways.add(gate);
             this.elementFlowsProcess.appendChild(gate.getElementExclusiveGateway());
@@ -482,58 +475,6 @@ public class FlowsProcessObject {
                 }
             }
         }
-    }
-
-    private void trimGateways(){
-
-        Pattern p = Pattern.compile("Gateway*");
-        ArrayList<SequenceFlow> flowsToRemove = new ArrayList<>();
-        ArrayList<BPMNElement> gatewaysToRemove = new ArrayList<>();
-
-        for(SequenceFlow flow : flows){
-
-            BPMNElement source = flow.getSourceRef();
-            BPMNElement target = flow.getTargetRef();
-            Matcher matcherSource = p.matcher(source.getId());
-            Matcher targetSource = p.matcher(target.getId());
-
-            if(matcherSource.find() && targetSource.find() && !isLoop((ExclusiveGateway) source, (ExclusiveGateway) target)){
-
-                System.out.println(flow);
-
-                flowsToRemove.add(flow);
-                gatewaysToRemove.add(source);
-
-                for(SequenceFlow prev : flows){
-
-                    if(prev.getTargetRef().getId().equals(source.getId())){
-                        prev.setTargetRef(target);
-                    }
-                    if(prev.getSourceRef().getId().equals(source.getId())){
-                        prev.setSourceRef(target);
-                    }
-
-                }
-
-            }
-
-        }
-
-        flows.removeAll(flowsToRemove);
-        gateways.removeAll(gatewaysToRemove);
-
-    }
-
-    public boolean isLoop(ExclusiveGateway source, ExclusiveGateway target){
-
-        for(Loop loop : loops){
-            if(loop.getFirstGate().getId().equals(target.getId())
-                    && loop.getSecondGate().getId().equals(source.getId())){
-
-                    return true;
-            }
-        }
-        return false;
     }
 
     public Element getElementFlowsProcess() {
