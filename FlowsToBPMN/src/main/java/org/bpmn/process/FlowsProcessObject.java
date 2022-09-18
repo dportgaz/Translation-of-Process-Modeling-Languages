@@ -53,7 +53,8 @@ public class FlowsProcessObject {
 
     ArrayList<AbstractObjectType> objects;
 
-    ArrayList<Loop> loops = new ArrayList<Loop>();
+    ArrayList<Loop> loops = new ArrayList<>();
+
 
     public FlowsProcessObject(Object participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
@@ -350,6 +351,7 @@ public class FlowsProcessObject {
 
             Element tempObj = doc.createElement("bpmn:dataObject");
             tempObj.setAttribute("id", dObj.getId());
+            tempObj.setAttribute("isCollection", "true");
             this.elementFlowsProcess.appendChild(tempObj);
             this.elementFlowsProcess.appendChild(task.getElement());
 

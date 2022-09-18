@@ -55,19 +55,19 @@ public class Collaboration {
                     // TODO: JSON BUG
                     if (!containsParticipant(participantName)) {
 
-                        Object participant = new Object(this, key, participantName, objectTypeObjects);
-                        objects.add(participant);
+                        Object object = new Object(this, key, participantName, objectTypeObjects);
+                        objects.add(object);
 
                         // add participant to collaboration element
-                        elementCollaboration.appendChild(participant.getParticipantElement());
+                        elementCollaboration.appendChild(object.getParticipantElement());
                     }
 
                 }
 
             });
         }
-        for (Object participant : objects) {
-            participant.setProcessRef(objectTypeObjects);
+        for (Object object : objects) {
+            object.setProcessRef(objectTypeObjects);
         }
     }
 
@@ -79,15 +79,15 @@ public class Collaboration {
 
                     String name = (String) obj.getParameters().get(1);
                     Double updatedEntityId = obj.getUpdatedEntityId();
-                    User participant = new User(this, key, name, updatedEntityId, objectTypeObjects, userTypeObjects);
+                    User user = new User(this, key, name, updatedEntityId, objectTypeObjects, userTypeObjects);
 
                     // TODO: JSON BUG
-                    if (!users.contains(participant)) {
-                        users.add(participant);
+                    if (!users.contains(user)) {
+                        users.add(user);
                     }
 
                     // add participant to collaboration element
-                    elementCollaboration.appendChild(participant.getParticipantElement());
+                    elementCollaboration.appendChild(user.getParticipantElement());
 
                 }
             });

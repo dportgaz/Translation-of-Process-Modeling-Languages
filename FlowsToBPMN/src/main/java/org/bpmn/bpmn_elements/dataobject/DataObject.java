@@ -1,9 +1,13 @@
 package org.bpmn.bpmn_elements.dataobject;
 
+import org.bpmn.bpmn_elements.collaboration.participant.Object;
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
+
+import java.util.ArrayList;
 
 import static org.bpmn.steps.BPMN.doc;
 
@@ -21,7 +25,11 @@ public class DataObject {
 
     String y;
 
+    ArrayList<String> states = new ArrayList<>();
+
     Element elementDataObject;
+
+    Object object;
 
     public void setX(String x) {
         this.x = x;
@@ -47,6 +55,10 @@ public class DataObject {
         setElementDataObject();
     }
 
+    public ArrayList<String> getStates() {
+        return states;
+    }
+
     private void setElementDataObject() {
 
         this.elementDataObject.setAttribute("dataObjectRef", this.id);
@@ -63,7 +75,7 @@ public class DataObject {
                 break;
             }
         }
-        obj = new StringBuilder(obj).reverse().toString().substring(1, obj.length());
+        obj = new StringBuilder(obj).reverse().substring(1, obj.length());
 
         String state = "[";
         for(int j = 0; j < i; j++){

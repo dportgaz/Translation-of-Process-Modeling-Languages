@@ -1,5 +1,6 @@
 package org.bpmn.bpmn_elements.collaboration.participant;
 
+import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.flows_objects.AbstractObjectType;
 
 import org.bpmn.process.FlowsProcessObject;
@@ -14,6 +15,7 @@ public class Object extends Participant {
     String id;
     String key;
     String name;
+    DataObject dataObject;
     FlowsProcessObject processRef;
     Element participantElement;
 
@@ -41,6 +43,10 @@ public class Object extends Participant {
     public void setProcessRef(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
         this.processRef = new FlowsProcessObject(this, objectTypeObjects);
         this.participantElement.setAttribute("processRef", this.processRef.getId());
+    }
+
+    public DataObject getDataObject() {
+        return dataObject;
     }
 
     public String getId() {
