@@ -57,6 +57,12 @@ public class ConcreteObjectType extends AbstractObjectType {
 
         FlowsObjectList objectTypeObjectsIdList = gsonFlowsObjectJsonDeserializer.fromJson(new JsonReader(new FileReader(filename)), FlowsObjectList.class);
 
+        Gson gsonFlowsObjectJsonDeserializerRelation = new GsonBuilder().registerTypeAdapter(AbstractRelation.class, new FlowsObjectJsonDeserializerRelation()).create();
+
+        RelationList relations = gsonFlowsObjectJsonDeserializerRelation.fromJson(new JsonReader(new FileReader(filename)), RelationList.class);
+
+        relations.getList().removeAll(Collections.singleton(null));
+
         objectTypeObjectsIdList.getList().removeAll(Collections.singleton(null));
 
         ArrayList<Double> nameIdList = new ArrayList<>();

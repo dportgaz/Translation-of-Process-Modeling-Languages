@@ -42,7 +42,7 @@ public class BPMN {
         ConcreteObjectType objects = new ConcreteObjectType(jsonFlowsPath);
         HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects = objects.getObjectTypeObjects();
         HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects = objects.getUserTypeObjects();
-        HashMap<Double, ArrayList<AbstractObjectType>> coordniationProcessObjects = objects.getCoordinationProcessTypeActionLogs();
+        HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects = objects.getCoordinationProcessTypeActionLogs();
         Parser parse = new Parser();
 
         String fileTempOne = "PHOODLE_STEP_ONE_RENEW.xml";
@@ -60,7 +60,7 @@ public class BPMN {
         StepTwo s2 = new StepTwo(fileTempTwo, definitionsElement2, userTypeObjects, objectTypeObjects);
         s2.execute();
 
-        ArrayList<Task> coordinationProcess = parse.getCoordinationTasks(coordniationProcessObjects);
+        ArrayList<Task> coordinationProcess = parse.getCoordinationTasks(coordinationProcessObjects);
 
     }
 
