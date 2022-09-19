@@ -49,9 +49,9 @@ public class FillBPMNDI {
 
     final double flowsHeight = 150.0;
 
-    final double dataObjectWidth = 50.0;
+    final double dataObjectWidth = 88.0;
 
-    final double dataObjectHeight = 64.0;
+    final double dataObjectHeight = 97.0;
 
     double poolHeight;
 

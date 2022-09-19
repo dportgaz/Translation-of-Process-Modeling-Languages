@@ -16,17 +16,8 @@ public class User extends Participant {
     Double updatedEntityId;
     FlowsProcessUser processRef;
     Element participantElement;
-
     Collaboration collaboration;
 
-    // ArrayList<Task> tasks = new ArrayList<Task>();
-
-    /*
-    public ArrayList<Task> getTasks() {
-        return tasks;
-    }
-
-     */
     public User(Collaboration collaboration, String key, String name, Double updatedEntityId, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
 
         super(collaboration, key, name);

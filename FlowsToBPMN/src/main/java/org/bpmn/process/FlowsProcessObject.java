@@ -53,7 +53,8 @@ public class FlowsProcessObject {
 
     ArrayList<AbstractObjectType> objects;
 
-    ArrayList<Loop> loops = new ArrayList<Loop>();
+    ArrayList<Loop> loops = new ArrayList<>();
+
 
     public FlowsProcessObject(Object participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
@@ -317,7 +318,7 @@ public class FlowsProcessObject {
             }
 
             // add data output association
-            //task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
+            // task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
             task.getDataOutputAssociation().setOutputAssociationTarget(task.getDataObject());
         }
 

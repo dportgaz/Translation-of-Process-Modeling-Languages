@@ -115,6 +115,7 @@ public class Task implements BPMNElement {
         }
         this.elementTask.setAttribute("id", this.id);
         this.elementTask.setAttribute("name", this.name);
+
     }
 
     public void setProperty(Property property) {
