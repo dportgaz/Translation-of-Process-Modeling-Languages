@@ -318,7 +318,7 @@ public class FlowsProcessObject {
             }
 
             // add data output association
-            //task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
+            // task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
             task.getDataOutputAssociation().setOutputAssociationTarget(task.getDataObject());
         }
 
@@ -351,7 +351,6 @@ public class FlowsProcessObject {
 
             Element tempObj = doc.createElement("bpmn:dataObject");
             tempObj.setAttribute("id", dObj.getId());
-            tempObj.setAttribute("isCollection", "true");
             this.elementFlowsProcess.appendChild(tempObj);
             this.elementFlowsProcess.appendChild(task.getElement());
 

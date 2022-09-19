@@ -31,6 +31,13 @@ public abstract class Participant {
         this.participantElement.setAttribute("id", this.id);
         this.participantElement.setAttribute("name", this.name);
 
+        //<participantMultiplicity id="sid-5e17d400-2dc5-44fa-802c-cc4742eddbb9" maximum="2" minimum="2"/>
+        Element multiInstance = doc.createElement("bpmn:participantMultiplicity");
+        multiInstance.setAttribute("id", "MultiInstanceParticipant_" + RandomIdGenerator.generateRandomUniqueId(6));
+        multiInstance.setAttribute("maximum", "2");
+        multiInstance.setAttribute("minimum","2");
+        this.participantElement.appendChild(multiInstance);
+
     }
 
     public Element getParticipantElement() {

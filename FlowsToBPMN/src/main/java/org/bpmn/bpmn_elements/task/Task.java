@@ -116,9 +116,6 @@ public class Task implements BPMNElement {
         this.elementTask.setAttribute("id", this.id);
         this.elementTask.setAttribute("name", this.name);
 
-        Element multiInstance = doc.createElement("bpmn:multiInstanceLoopCharacteristics");
-        multiInstance.setAttribute("id", "MultiInstance_" + RandomIdGenerator.generateRandomUniqueId(6));
-        this.elementTask.appendChild(multiInstance);
     }
 
     public void setProperty(Property property) {
