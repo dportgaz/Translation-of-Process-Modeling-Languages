@@ -3,6 +3,7 @@ package org.bpmn.bpmn_elements.task;
 import com.google.gson.internal.LinkedTreeMap;
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.Port;
+import org.bpmn.bpmn_elements.RelationType;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.association.DataOutputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;

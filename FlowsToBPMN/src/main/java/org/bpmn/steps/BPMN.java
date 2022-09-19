@@ -15,13 +15,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.bpmn.bpmn_elements.Port;
+import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.flows_objects.ConcreteObjectType;
 
+import org.bpmn.parse_json.Parser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import static org.bpmn.parse_json.Parser.parseCoordinationPorts;
 
 public class BPMN {
 
@@ -42,6 +43,7 @@ public class BPMN {
         HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects = objects.getObjectTypeObjects();
         HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects = objects.getUserTypeObjects();
         HashMap<Double, ArrayList<AbstractObjectType>> coordniationProcessObjects = objects.getCoordinationProcessTypeActionLogs();
+        Parser parse = new Parser();
 
         String fileTempOne = "PHOODLE_STEP_ONE_RENEW.xml";
         StepOne s1 = new StepOne(fileTempOne, definitionsElement1, objectTypeObjects);
@@ -58,7 +60,7 @@ public class BPMN {
         StepTwo s2 = new StepTwo(fileTempTwo, definitionsElement2, userTypeObjects, objectTypeObjects);
         s2.execute();
 
-        parseCoordinationPorts(coordniationProcessObjects);
+        ArrayList<Task> coordinationProcess = parse.getCoordinationTasks(coordniationProcessObjects);
 
     }
 

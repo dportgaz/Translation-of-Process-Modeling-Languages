@@ -2,9 +2,10 @@ package org.bpmn.parse_json;
 
 import org.bpmn.bpmn_elements.Loop;
 import org.bpmn.bpmn_elements.Port;
+import org.bpmn.bpmn_elements.Relation;
+import org.bpmn.bpmn_elements.RelationType;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
-import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flows_objects.AbstractObjectType;
@@ -13,7 +14,6 @@ import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.process.FlowsProcessObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -22,9 +22,13 @@ import static org.bpmn.bpmn_elements.flows.SequenceFlow.getFlowByTarget;
 import static org.bpmn.bpmn_elements.gateway.Predicate.getPredicate;
 import static org.bpmn.bpmn_elements.gateway.Predicate.parsePredicate;
 import static org.bpmn.steps.StepOne.allTasks;
-import static org.bpmn.steps.StepOne.loops;
 
 public class Parser {
+
+    public ArrayList<Task> coordinationTasks = new ArrayList<>();
+
+    public ArrayList<Port> coordinationPorts = new ArrayList<>();
+
 
     public ArrayList<Task> parseTasks(Participant participant, ArrayList<AbstractObjectType> objects) {
 
@@ -155,9 +159,8 @@ public class Parser {
         }
     }
 
-    public static ArrayList<Task> parseCoordinationSteps(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects){
+    public void parseCoordinationSteps(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects){
 
-        ArrayList<Task> coordinationTasks = new ArrayList<>();
         for (Double key : coordinationProcessObjects.keySet()) {
             coordinationProcessObjects.get(key).forEach(obj -> {
                 if (obj != null && obj.getMethodName().equals("UpdateCoordinationStepType")) {
@@ -174,37 +177,68 @@ public class Parser {
                 }
             });
         }
-        return coordinationTasks;
     }
 
-    public static void parseCoordinationPorts(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects){
+    public void parseCoordinationPorts(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects){
 
-        ArrayList<Task> coordinationTasks = parseCoordinationSteps(coordinationProcessObjects);
         for (Double key : coordinationProcessObjects.keySet()) {
             coordinationProcessObjects.get(key).forEach(obj -> {
                 if (obj != null && obj.getMethodName().equals("AddPortType")) {
-
                     Port port = new Port(obj.getCreatedEntityId(), (Double) obj.getParameters().get(0));
-
-                    for (Task task : coordinationTasks) {
-                        if (task.getCoordinationStepTypeId().equals(port.getTaskId())) {
-                            task.getPorts().add(port);
-                        }
-                    }
+                    coordinationPorts.add(port);
                 }
             });
         }
-        System.out.println("PARSER + parseCoordinationPorts()");
-        for(Task task : coordinationTasks){
-            System.out.print(task);
-            if(task.getPorts().size() > 0){
-                System.out.print(" , Ports: ");
-                for(Port port : task.getPorts()){
-                    System.out.print(port + " , ");
+    }
+
+    public void parseCoordinationTransitions(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects){
+
+        for (Double key : coordinationProcessObjects.keySet()) {
+            coordinationProcessObjects.get(key).forEach(obj -> {
+                if (obj != null && obj.getMethodName().equals("AddCoordinationTransitionType")) {
+
+                    Double taskId = (Double) obj.getParameters().get(0);
+                    Double portId = (Double) obj.getParameters().get(1);
+
+                    for(Port port : coordinationPorts){
+                        if(port.getId().equals(portId)){
+                            for(Task task : coordinationTasks){
+                                if(task.getCoordinationStepTypeId().equals(taskId)){
+                                    port.getIncoming().add(new Relation(task));
+                                }
+                            }
+                        }
+                    }
+
                 }
-            }
-            System.out.println();
+            });
         }
     }
 
+    public ArrayList<Task> appendPortsToTasks(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects){
+
+        parseCoordinationSteps(coordinationProcessObjects);
+        parseCoordinationPorts(coordinationProcessObjects);
+        parseCoordinationTransitions(coordinationProcessObjects);
+
+        for(Task task : coordinationTasks){
+            for(Port port : coordinationPorts){
+                if(task.getCoordinationStepTypeId().equals(port.getTaskId())){
+                    for(Relation relation : port.getIncoming()){
+                        if(relation.getTask().getParticipant().equals(task.getParticipant())){
+                            relation.setRelationType(RelationType.SELF);
+                        }else{
+                            relation.setRelationType(RelationType.OTHER);
+                        }
+                    }
+                    task.getPorts().add(port);
+                }
+            }
+        }
+        return coordinationTasks;
+    }
+
+    public ArrayList<Task> getCoordinationTasks(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects) {
+        return appendPortsToTasks(coordinationProcessObjects);
+    }
 }

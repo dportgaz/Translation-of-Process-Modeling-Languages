@@ -2,11 +2,13 @@ package org.bpmn.bpmn_elements;
 
 import org.bpmn.bpmn_elements.task.Task;
 
+import java.util.ArrayList;
+
 public class Port {
 
     Double id;
-
     Double taskId;
+    ArrayList<Relation> incoming = new ArrayList<>();
 
     public Port(Double id, Double taskId){
         this.id = id;
@@ -23,6 +25,10 @@ public class Port {
 
     public Double getTaskId() {
         return taskId;
+    }
+
+    public ArrayList<Relation> getIncoming() {
+        return incoming;
     }
 
     @Override
