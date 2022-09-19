@@ -2,7 +2,7 @@ package org.bpmn.flows_objects.flowsobject;
 
 public class FlowsObject extends AbstractFlowsObject {
 
-	public FlowsObject(String CreatedActorId_) {
+	public FlowsObject(Double CreatedActorId_) {
 		CreatedActorId = CreatedActorId_;
 	}
 
@@ -12,7 +12,7 @@ public class FlowsObject extends AbstractFlowsObject {
 	}
 	
 	@Override
-	public String getCreatedActorId() {
+	public Double getCreatedActorId() {
 		return this.CreatedActorId;
 	}
 	

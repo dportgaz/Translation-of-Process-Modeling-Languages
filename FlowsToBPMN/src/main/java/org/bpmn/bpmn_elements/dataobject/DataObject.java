@@ -1,6 +1,7 @@
 package org.bpmn.bpmn_elements.dataobject;
 
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
+import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
@@ -55,8 +56,23 @@ public class DataObject {
         setElementDataObject();
     }
 
+    public DataObject(Participant participant) {
+        this.id = "DataObject_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.refId = "DataObjectReference_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.elementDataObject = doc.createElement("bpmn:dataObjectReference");
+        setElementDataObject(participant);
+    }
+
     public ArrayList<String> getStates() {
         return states;
+    }
+
+    private void setElementDataObject(Participant participant) {
+
+        this.elementDataObject.setAttribute("dataObjectRef", this.id);
+        this.elementDataObject.setAttribute("id", this.refId);
+        this.elementDataObject.setAttribute("name", participant.getName() + " [Finished]");
+
     }
 
     private void setElementDataObject() {

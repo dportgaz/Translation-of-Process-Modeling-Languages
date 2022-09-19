@@ -11,14 +11,14 @@ import java.util.HashMap;
 public class User extends Participant {
 
     String id;
-    String key;
+    Double key;
     String name;
     Double updatedEntityId;
     FlowsProcessUser processRef;
     Element participantElement;
     Collaboration collaboration;
 
-    public User(Collaboration collaboration, String key, String name, Double updatedEntityId, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
+    public User(Collaboration collaboration, Double key, String name, Double updatedEntityId) {
 
         super(collaboration, key, name);
         this.collaboration = collaboration;
@@ -30,7 +30,7 @@ public class User extends Participant {
 
     }
 
-    public void setProcessRef(HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
+    public void setProcessRef(HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects) {
         this.processRef = new FlowsProcessUser(this, userTypeObjects);
         this.participantElement.setAttribute("processRef", this.processRef.getId());
     }
@@ -43,7 +43,7 @@ public class User extends Participant {
         return this.id;
     }
 
-    public String getKey() {
+    public Double getKey() {
         return key;
     }
 

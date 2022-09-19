@@ -55,8 +55,10 @@ public class FlowsProcessObject {
 
     ArrayList<Loop> loops = new ArrayList<>();
 
+    DataObject finishedDataObject;
 
-    public FlowsProcessObject(Object participant, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+
+    public FlowsProcessObject(Object participant, HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
         this.id = "Process_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementFlowsProcess = doc.createElement("bpmn:process");
@@ -303,26 +305,18 @@ public class FlowsProcessObject {
 
     private void setAssociations() {
 
-        for (int i = 0; i < tasks.size(); i++) {
-            Task task = tasks.get(i);
-            // add data input association
-            if (i != 0) {
-                for (BPMNElement element : task.getBefore()) {
+            startEvent.setDataOutputAssociation();
+            startEvent.getDataOutputAssociation().setOutputAssociationTarget(tasks.get(0).getDataObject());
 
-                    Task tempTask = (Task) element;
-                    DataInputAssociation tempInput = new DataInputAssociation();
-
-                    tempInput.setInputAssociationSource(tempTask.getDataObject());
-                    task.addDataInputAssociation(tempInput);
-                }
+            for(int i = 0; i < tasks.size()-1; i++) {
+                // add data output association
+                // task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
+                tasks.get(i).getDataOutputAssociation().setOutputAssociationTarget(tasks.get(i+1).getDataObject());
             }
-
-            // add data output association
-            // task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
-            task.getDataOutputAssociation().setOutputAssociationTarget(task.getDataObject());
-        }
+            tasks.get(tasks.size()-1).getDataOutputAssociation().setOutputAssociationTarget(finishedDataObject);
 
     }
+
 
     private void setTasks() {
 
@@ -340,6 +334,10 @@ public class FlowsProcessObject {
 
     }
 
+    public DataObject getFinishedDataObject() {
+        return finishedDataObject;
+    }
+
     private void setDataObjects() {
 
         for (Task task : tasks) {
@@ -355,6 +353,14 @@ public class FlowsProcessObject {
             this.elementFlowsProcess.appendChild(task.getElement());
 
         }
+
+        finishedDataObject = new DataObject(participant);
+        dataObjects.add(finishedDataObject);
+        this.elementFlowsProcess.appendChild(finishedDataObject.getElementDataObject());
+        Element tempObj = doc.createElement("bpmn:dataObject");
+        tempObj.setAttribute("id", finishedDataObject.getId());
+        this.elementFlowsProcess.appendChild(tempObj);
+
     }
 
     private void setStartEvent() {

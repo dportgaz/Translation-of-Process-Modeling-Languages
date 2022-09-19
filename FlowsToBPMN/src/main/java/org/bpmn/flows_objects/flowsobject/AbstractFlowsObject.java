@@ -2,8 +2,8 @@ package org.bpmn.flows_objects.flowsobject;
 
 public abstract class AbstractFlowsObject {
 
-	protected String CreatedActorId;
-	public String getCreatedActorId() {
+	protected Double CreatedActorId;
+	public Double getCreatedActorId() {
 		return this.CreatedActorId;
 	}
 

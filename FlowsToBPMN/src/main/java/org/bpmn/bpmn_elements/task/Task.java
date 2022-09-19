@@ -102,6 +102,7 @@ public class Task implements BPMNElement {
         this.steps = setSteps(objects);
         setElement();
         setDataOutputAssociation();
+
     }
 
     public void setElement() {

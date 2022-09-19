@@ -135,8 +135,8 @@ public class Parser {
         return predicates;
     }
 
-    public void parsePermissions(HashMap<String, ArrayList<AbstractObjectType>> users) {
-        for (String key : users.keySet()) {
+    public void parsePermissions(HashMap<Double, ArrayList<AbstractObjectType>> users) {
+        for (Double key : users.keySet()) {
             users.get(key).forEach(obj -> {
                 if (obj != null && obj.getMethodName().equals("AddStateExecutionPermissionToGlobalRole")) {
 

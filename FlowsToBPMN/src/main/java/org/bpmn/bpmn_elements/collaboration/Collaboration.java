@@ -42,9 +42,9 @@ public class Collaboration {
         return this.id;
     }
 
-    public void setParticipants(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public void setParticipants(HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
-        for (String key : objectTypeObjects.keySet()) {
+        for (Double key : objectTypeObjects.keySet()) {
             objectTypeObjects.get(key).forEach(obj -> {
 
                 if (obj != null && obj.getMethodName().equals("UpdateName")) {
@@ -71,15 +71,15 @@ public class Collaboration {
         }
     }
 
-    public void setParticipants(HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
+    public void setParticipants(HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects) {
 
-        for (String key : userTypeObjects.keySet()) {
+        for (Double key : userTypeObjects.keySet()) {
             userTypeObjects.get(key).forEach(obj -> {
                 if (obj != null && obj.getMethodName().equals("UpdateGlobalRoleName")) {
 
                     String name = (String) obj.getParameters().get(1);
                     Double updatedEntityId = obj.getUpdatedEntityId();
-                    User user = new User(this, key, name, updatedEntityId, objectTypeObjects, userTypeObjects);
+                    User user = new User(this, key, name, updatedEntityId);
 
                     // TODO: JSON BUG
                     if (!users.contains(user)) {

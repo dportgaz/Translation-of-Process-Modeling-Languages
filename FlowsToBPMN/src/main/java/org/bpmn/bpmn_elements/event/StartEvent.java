@@ -1,6 +1,8 @@
 package org.bpmn.bpmn_elements.event;
 
 import org.bpmn.bpmn_elements.BPMNElement;
+import org.bpmn.bpmn_elements.association.DataInputAssociation;
+import org.bpmn.bpmn_elements.association.DataOutputAssociation;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
@@ -12,7 +14,6 @@ import static org.bpmn.steps.BPMN.doc;
 public class StartEvent extends Event{
 
     String id;
-    Double createdEntityId;
 
     ArrayList<BPMNElement> before = new ArrayList<>();
 
@@ -27,6 +28,10 @@ public class StartEvent extends Event{
 
     BPMNElement afterElement;
 
+    ArrayList<DataInputAssociation> dataInputAssociations = new ArrayList<>();
+
+    DataOutputAssociation dataOutputAssociation;
+
     public StartEvent() {
         this.id = "StartEvent_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementStartEvent = doc.createElement("bpmn:startEvent");
@@ -36,6 +41,19 @@ public class StartEvent extends Event{
     @Override
     public Element getElement() {
         return elementStartEvent;
+    }
+
+    public ArrayList<DataInputAssociation> getDataInputAssociations() {
+        return dataInputAssociations;
+    }
+
+    public DataOutputAssociation getDataOutputAssociation() {
+        return dataOutputAssociation;
+    }
+
+    public void setDataOutputAssociation() {
+        this.dataOutputAssociation = new DataOutputAssociation();
+        this.elementStartEvent.appendChild(this.dataOutputAssociation.getElementDataOutputAssociation());
     }
 
     @Override

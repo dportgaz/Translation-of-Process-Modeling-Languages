@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public abstract class AbstractFlowsObjectName {
 
-    protected ArrayList<String> Parameters;
+    protected ArrayList<Double> Parameters;
 
-    public ArrayList<String> getParameters() {
+    public ArrayList<Double> getParameters() {
         return this.Parameters;
     }
 

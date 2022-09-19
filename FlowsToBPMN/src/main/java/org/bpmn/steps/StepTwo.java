@@ -23,13 +23,13 @@ public class StepTwo implements Step{
     String file;
 
     Element definitionsElement;
-    HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects;
-    HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects;
+    HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects;
+    HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects;
 
     static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
 
-    public StepTwo(String file, Element definitionsElement, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects,
-                   HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public StepTwo(String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects,
+                   HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects) {
         this.file = file;
         this.definitionsElement = definitionsElement;
         this.userTypeObjects = userTypeObjects;

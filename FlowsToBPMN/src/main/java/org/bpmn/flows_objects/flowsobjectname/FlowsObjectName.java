@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class FlowsObjectName extends AbstractFlowsObjectName {
 
-    public FlowsObjectName(ArrayList<String> Parameters_) {
+    public FlowsObjectName(ArrayList<Double> Parameters_) {
         Parameters = Parameters_;
     }
 

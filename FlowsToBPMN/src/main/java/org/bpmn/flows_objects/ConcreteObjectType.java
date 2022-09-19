@@ -15,18 +15,18 @@ import java.util.HashMap;
 
 public class ConcreteObjectType extends AbstractObjectType {
 
-    HashMap<String, ArrayList<AbstractObjectType>> ObjectTypeActionLogs;
-    HashMap<String, ArrayList<AbstractObjectType>> CoordinationProcessTypeActionLogs;
+    HashMap<Double, ArrayList<AbstractObjectType>> ObjectTypeActionLogs;
+    HashMap<Double, ArrayList<AbstractObjectType>> CoordinationProcessTypeActionLogs;
     ConcreteObjectType allObjectTypes;
-    HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects = new HashMap<>();
-    HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects = new HashMap<>();
+    HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects = new HashMap<>();
+    HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects = new HashMap<>();
 
     @Override
     public String toString() {
 
         String retString = "";
 
-        for (String name : ObjectTypeActionLogs.keySet()) {
+        for (Double name : ObjectTypeActionLogs.keySet()) {
             String value = ObjectTypeActionLogs.get(name).toString();
             retString += name + "= {" + value + "}" + "\n";
         }
@@ -59,13 +59,13 @@ public class ConcreteObjectType extends AbstractObjectType {
 
         objectTypeObjectsIdList.getList().removeAll(Collections.singleton(null));
 
-        ArrayList<String> nameIdList = new ArrayList<>();
+        ArrayList<Double> nameIdList = new ArrayList<>();
 
         for (int i = 0; i < objectTypeObjectsIdList.getList().size(); i++) {
             nameIdList.add(objectTypeObjectsIdList.getList().get(i).getCreatedActorId());
         }
 
-        for (String key : this.getAllObjects(filename).keySet()) {
+        for (Double key : this.getAllObjects(filename).keySet()) {
             if (nameIdList.contains(key)) {
                 objectTypeObjects.put(key, this.getAllObjects(filename).get(key));
             } else {
@@ -74,29 +74,20 @@ public class ConcreteObjectType extends AbstractObjectType {
         }
     }
 
-    public HashMap<String, ArrayList<AbstractObjectType>> getAllObjects(String filename) throws FileNotFoundException {
+    public HashMap<Double, ArrayList<AbstractObjectType>> getAllObjects(String filename) throws FileNotFoundException {
         return allObjectTypes.ObjectTypeActionLogs;
     }
 
-    public HashMap<String, ArrayList<AbstractObjectType>> getObjectTypeObjects() throws FileNotFoundException {
+    public HashMap<Double, ArrayList<AbstractObjectType>> getObjectTypeObjects() throws FileNotFoundException {
         return objectTypeObjects;
     }
 
-    public HashMap<String, ArrayList<AbstractObjectType>> getCoordinationProcessTypeActionLogs() {
+    public HashMap<Double, ArrayList<AbstractObjectType>> getCoordinationProcessTypeActionLogs() {
         return CoordinationProcessTypeActionLogs;
     }
 
-    public HashMap<String, ArrayList<AbstractObjectType>> getUserTypeObjects() throws FileNotFoundException {
+    public HashMap<Double, ArrayList<AbstractObjectType>> getUserTypeObjects() throws FileNotFoundException {
         return userTypeObjects;
     }
 
-    public ArrayList<String> getObjectIdsList() {
-        ArrayList<String> temp = new ArrayList<>();
-
-        for (String key : objectTypeObjects.keySet()) {
-            temp.add(key);
-        }
-
-        return temp;
-    }
 }

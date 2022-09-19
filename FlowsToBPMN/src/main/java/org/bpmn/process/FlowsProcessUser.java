@@ -27,7 +27,7 @@ public class FlowsProcessUser {
     ArrayList<Task> tasks = new ArrayList<>();
     HashSet<DataObject> dataObjects = new HashSet<>();
 
-    public FlowsProcessUser(User participant, HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
+    public FlowsProcessUser(User participant, HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects) {
 
         this.id = "Process_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementFlowsProcess = doc.createElement("bpmn:process");
@@ -38,7 +38,7 @@ public class FlowsProcessUser {
 
     }
 
-    private void setFlowsProcess(HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects) {
+    private void setFlowsProcess(HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects) {
 
         Parser parser = new Parser();
         parser.parsePermissions(userTypeObjects);

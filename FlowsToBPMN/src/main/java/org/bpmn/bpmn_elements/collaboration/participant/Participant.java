@@ -9,13 +9,12 @@ import static org.bpmn.steps.BPMN.doc;
 public abstract class Participant {
 
     String id;
-    String key;
+    Double key;
     String name;
     Element participantElement;
-
     Collaboration collaboration;
 
-    public Participant(Collaboration collaboration, String key, String name) {
+    public Participant(Collaboration collaboration, Double key, String name) {
 
         this.collaboration = collaboration;
         this.key = key;
@@ -48,7 +47,7 @@ public abstract class Participant {
         return id;
     }
 
-    public String getKey() {
+    public Double getKey() {
         return key;
     }
 

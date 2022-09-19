@@ -25,7 +25,7 @@ public class StepOne implements Step{
     ExecStep step;
     String file;
     Element definitionsElement;
-    HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects;
+    HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects;
 
     public static ArrayList<Task> allTasks = new ArrayList();
 
@@ -35,7 +35,7 @@ public class StepOne implements Step{
     public static ArrayList<Predicate> predicates = new ArrayList<>();
     static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
 
-    public StepOne(String file, Element definitionsElement, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public StepOne(String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects) {
         this.file = file;
         this.definitionsElement = definitionsElement;
         this.objectTypeObjects = objectTypeObjects;
