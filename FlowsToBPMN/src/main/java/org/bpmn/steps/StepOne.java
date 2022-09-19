@@ -1,6 +1,7 @@
 package org.bpmn.steps;
 
 import org.bpmn.bpmn_elements.Loop;
+import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
@@ -27,6 +28,7 @@ public class StepOne implements Step{
     Element definitionsElement;
     HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects;
 
+    public static ArrayList<Participant> allParticipants = new ArrayList();
     public static ArrayList<Task> allTasks = new ArrayList();
 
     public static ArrayList<SequenceFlow> allFlows = new ArrayList();

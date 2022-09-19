@@ -4,19 +4,18 @@ import java.util.ArrayList;
 
 public class RelationTypeData extends AbstractRelation{
 
-    public RelationTypeData(ArrayList<Double> Parameters_, Double CreatedActorId_) {
-        Parameters = Parameters_;
-        CreatedActorId = CreatedActorId_;
+    public RelationTypeData(String type, String id_, String methodname_, ArrayList<Object> parameters_, Double createdActorId_) {
+
+        // __type = type;
+        // Id = id_;
+        MethodName = methodname_;
+        Parameters = parameters_;
+        CreatedActorId = createdActorId_;
     }
 
     @Override
     public String toString() {
-        return "Object { " + CreatedActorId + " }";
-    }
-
-    @Override
-    public Double getCreatedActorId() {
-        return this.CreatedActorId;
+        return "Object { " + MethodName + " " + Parameters + " " + CreatedActorId + " }";
     }
 
 }

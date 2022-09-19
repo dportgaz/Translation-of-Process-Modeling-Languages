@@ -1,11 +1,21 @@
 package org.bpmn.bpmn_elements;
 
+import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.task.Task;
 
 public class Relation {
 
     Task task;
+
+    Participant source;
+
+    Participant target;
     RelationType relationType;
+
+    public Relation(Participant source, Participant target){
+        this.source = source;
+        this.target = target;
+    }
 
     public Relation(Task task, RelationType relationType){
         this.task = task;

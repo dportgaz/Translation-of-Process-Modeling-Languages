@@ -4,10 +4,22 @@ import java.util.ArrayList;
 
 public abstract class AbstractRelation {
 
-    protected ArrayList<Double> Parameters;
+    protected String MethodName;
+    protected ArrayList<Object> Parameters;
     protected Double CreatedActorId;
+    public String getMethodName() {
+        return this.MethodName;
+    }
 
-    public Double getCreatedActorId() {
+    public ArrayList<Object> getParameters() {
+        return this.Parameters;
+    }
+
+    public Object getObjectName() {
+        return this.Parameters.get(0);
+    }
+
+    public Double getCreatedEntityId() {
         return this.CreatedActorId;
     }
 

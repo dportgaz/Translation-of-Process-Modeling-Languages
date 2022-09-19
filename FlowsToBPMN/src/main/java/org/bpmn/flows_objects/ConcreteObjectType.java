@@ -9,6 +9,7 @@ import org.bpmn.flows_objects.flowsobject.FlowsObjectList;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,6 +19,8 @@ public class ConcreteObjectType extends AbstractObjectType {
     HashMap<Double, ArrayList<AbstractObjectType>> ObjectTypeActionLogs;
     HashMap<Double, ArrayList<AbstractObjectType>> CoordinationProcessTypeActionLogs;
     ConcreteObjectType allObjectTypes;
+
+    RelationList relations;
     HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects = new HashMap<>();
     HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects = new HashMap<>();
 
@@ -59,7 +62,7 @@ public class ConcreteObjectType extends AbstractObjectType {
 
         Gson gsonFlowsObjectJsonDeserializerRelation = new GsonBuilder().registerTypeAdapter(AbstractRelation.class, new FlowsObjectJsonDeserializerRelation()).create();
 
-        RelationList relations = gsonFlowsObjectJsonDeserializerRelation.fromJson(new JsonReader(new FileReader(filename)), RelationList.class);
+        relations = gsonFlowsObjectJsonDeserializerRelation.fromJson(new JsonReader(new FileReader(filename)), RelationList.class);
 
         relations.getList().removeAll(Collections.singleton(null));
 
@@ -78,6 +81,10 @@ public class ConcreteObjectType extends AbstractObjectType {
                 userTypeObjects.put(key, this.getAllObjects(filename).get(key));
             }
         }
+    }
+
+    public RelationList getRelations() {
+        return relations;
     }
 
     public HashMap<Double, ArrayList<AbstractObjectType>> getAllObjects(String filename) throws FileNotFoundException {

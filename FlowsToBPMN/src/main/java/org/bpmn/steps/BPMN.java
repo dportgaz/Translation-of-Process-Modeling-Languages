@@ -2,6 +2,7 @@ package org.bpmn.steps;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,13 +17,20 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.bpmn.bpmn_elements.Port;
+import org.bpmn.bpmn_elements.Relation;
+import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flows_objects.AbstractObjectType;
+import org.bpmn.flows_objects.AbstractRelation;
 import org.bpmn.flows_objects.ConcreteObjectType;
 
+import org.bpmn.flows_objects.RelationList;
 import org.bpmn.parse_json.Parser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import static org.bpmn.steps.StepOne.allParticipants;
+import static org.bpmn.steps.StepOne.allTasks;
 
 public class BPMN {
 
@@ -44,6 +52,7 @@ public class BPMN {
         HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects = objects.getUserTypeObjects();
         HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects = objects.getCoordinationProcessTypeActionLogs();
         Parser parse = new Parser();
+        ArrayList<AbstractRelation> relationsDataModel = objects.getRelations().getList();
 
         String fileTempOne = "PHOODLE_STEP_ONE_RENEW.xml";
         StepOne s1 = new StepOne(fileTempOne, definitionsElement1, objectTypeObjects);
@@ -61,6 +70,13 @@ public class BPMN {
         s2.execute();
 
         ArrayList<Task> coordinationProcess = parse.getCoordinationTasks(coordinationProcessObjects);
+        ArrayList<Relation> relations = new ArrayList<>();
+
+        for(Participant p : allParticipants){
+            System.out.println(p.getName());
+        }
+        System.out.println(relations);
+        System.out.println(coordinationProcess + "\n" + relationsDataModel);
 
     }
 

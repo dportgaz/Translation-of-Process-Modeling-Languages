@@ -8,6 +8,8 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static org.bpmn.steps.StepOne.allParticipants;
+
 public class User extends Participant {
 
     String id;
@@ -27,6 +29,7 @@ public class User extends Participant {
         this.name = name;
         this.participantElement = super.getParticipantElement();
         this.updatedEntityId = updatedEntityId;
+        allParticipants.add(this);
 
     }
 
