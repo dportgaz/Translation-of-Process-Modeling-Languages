@@ -39,6 +39,7 @@ public class BPMN {
         ConcreteObjectType objects = new ConcreteObjectType(jsonFlowsPath);
         HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects = objects.getObjectTypeObjects();
         HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects = objects.getUserTypeObjects();
+        HashMap<String, ArrayList<AbstractObjectType>> coordniationProcessObjects = objects.getCoordinationProcessTypeActionLogs();
 
         String fileTempOne = "PHOODLE_STEP_ONE_RENEW.xml";
         StepOne s1 = new StepOne(fileTempOne, definitionsElement1, objectTypeObjects);

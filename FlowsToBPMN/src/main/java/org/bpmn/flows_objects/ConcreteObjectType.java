@@ -16,6 +16,7 @@ import java.util.HashMap;
 public class ConcreteObjectType extends AbstractObjectType {
 
     HashMap<String, ArrayList<AbstractObjectType>> ObjectTypeActionLogs;
+    HashMap<String, ArrayList<AbstractObjectType>> CoordinationProcessTypeActionLogs;
     ConcreteObjectType allObjectTypes;
     HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects = new HashMap<>();
     HashMap<String, ArrayList<AbstractObjectType>> userTypeObjects = new HashMap<>();
@@ -36,12 +37,16 @@ public class ConcreteObjectType extends AbstractObjectType {
     public ConcreteObjectType(String filename) throws FileNotFoundException {
         setAllObjects(filename);
         setObjectAndUserTypeObjectsSeparately(filename);
+        setCoorinationProcess();
+    }
+
+    private void setCoorinationProcess() {
+        this.CoordinationProcessTypeActionLogs = allObjectTypes.CoordinationProcessTypeActionLogs;
     }
 
     public void setAllObjects(String filename) throws FileNotFoundException {
 
         Gson gsonFlowsObjectTypeJsonDeserializer = new GsonBuilder().registerTypeAdapter(AbstractObjectType.class, new FlowsObjectTypeJsonDeserializer()).create();
-
         allObjectTypes = gsonFlowsObjectTypeJsonDeserializer.fromJson(new JsonReader(new FileReader(filename)), ConcreteObjectType.class);
 
     }
@@ -75,6 +80,10 @@ public class ConcreteObjectType extends AbstractObjectType {
 
     public HashMap<String, ArrayList<AbstractObjectType>> getObjectTypeObjects() throws FileNotFoundException {
         return objectTypeObjects;
+    }
+
+    public HashMap<String, ArrayList<AbstractObjectType>> getCoordinationProcessTypeActionLogs() {
+        return CoordinationProcessTypeActionLogs;
     }
 
     public HashMap<String, ArrayList<AbstractObjectType>> getUserTypeObjects() throws FileNotFoundException {

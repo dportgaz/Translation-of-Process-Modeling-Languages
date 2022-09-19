@@ -397,7 +397,6 @@ public class Task implements BPMNElement {
 
     public ArrayList<Step> setSteps(ArrayList<AbstractObjectType> objects) {
 
-        String participantKey = this.participant.getKey();
         objects.forEach(obj -> {
 
             if (obj != null && obj.getMethodName().equals("AddStepType")) {

@@ -29,7 +29,7 @@ public class Object extends Participant {
      */
 
 
-    public Object(Collaboration collaboration, String key, String name, HashMap<String, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public Object(Collaboration collaboration, String key, String name) {
 
         super(collaboration, key, name);
         this.collaboration = collaboration;

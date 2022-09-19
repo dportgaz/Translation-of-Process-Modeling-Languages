@@ -55,7 +55,7 @@ public class Collaboration {
                     // TODO: JSON BUG
                     if (!containsParticipant(participantName)) {
 
-                        Object object = new Object(this, key, participantName, objectTypeObjects);
+                        Object object = new Object(this, key, participantName);
                         objects.add(object);
 
                         // add participant to collaboration element
