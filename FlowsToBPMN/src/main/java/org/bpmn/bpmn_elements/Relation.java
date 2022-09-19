@@ -12,17 +12,17 @@ public class Relation {
     Participant target;
     RelationType relationType;
 
-    public Relation(Participant source, Participant target){
+    public Relation(Participant source, Participant target) {
         this.source = source;
         this.target = target;
     }
 
-    public Relation(Task task, RelationType relationType){
+    public Relation(Task task, RelationType relationType) {
         this.task = task;
         this.relationType = relationType;
     }
 
-    public Relation(Task task){
+    public Relation(Task task) {
         this.task = task;
     }
 
@@ -44,6 +44,11 @@ public class Relation {
 
     @Override
     public String toString() {
-        return task + " " + relationType;
+        if (task != null && relationType != null) {
+            return "(" + task + " , " + relationType + ")";
+        }else if(source != null && target != null){
+            return "(" + source.getName() + " , " + target.getName() + ")";
+        }
+        return null;
     }
 }

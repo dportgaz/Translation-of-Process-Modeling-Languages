@@ -72,8 +72,18 @@ public class BPMN {
         ArrayList<Task> coordinationProcess = parse.getCoordinationTasks(coordinationProcessObjects);
         ArrayList<Relation> relations = new ArrayList<>();
 
-        for(Participant p : allParticipants){
-            System.out.println(p.getName());
+        for(AbstractRelation relation : relationsDataModel){
+            Double sourceId = (Double) relation.getParameters().get(0);
+            Double targetId = (Double) relation.getParameters().get(1);
+            for(Participant source : allParticipants){
+                if(source.getKey().equals(sourceId)){
+                    for(Participant target : allParticipants){
+                        if(target.getKey().equals(targetId)){
+                            relations.add(new Relation(source, target));
+                        }
+                    }
+                }
+            }
         }
         System.out.println(relations);
         System.out.println(coordinationProcess + "\n" + relationsDataModel);
