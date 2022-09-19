@@ -2,6 +2,7 @@ package org.bpmn.bpmn_elements.task;
 
 import com.google.gson.internal.LinkedTreeMap;
 import org.bpmn.bpmn_elements.BPMNElement;
+import org.bpmn.bpmn_elements.Port;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.association.DataOutputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
@@ -83,6 +84,10 @@ public class Task implements BPMNElement {
 
     ArrayList<SequenceFlow> flows = new ArrayList<>();
 
+    Double coordinationStepTypeId;
+
+    ArrayList<Port> ports = new ArrayList<>();
+
     public Task(Double createdEntityId, String name, Participant participant) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
@@ -103,6 +108,18 @@ public class Task implements BPMNElement {
         setElement();
         setDataOutputAssociation();
 
+    }
+
+    public ArrayList<Port> getPorts() {
+        return ports;
+    }
+
+    public void setCoordinationStepTypeId(Double coordinationStepTypeId) {
+        this.coordinationStepTypeId = coordinationStepTypeId;
+    }
+
+    public Double getCoordinationStepTypeId() {
+        return coordinationStepTypeId;
     }
 
     public void setElement() {

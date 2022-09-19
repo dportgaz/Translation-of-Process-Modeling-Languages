@@ -39,58 +39,10 @@
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -2989872443971724850,
-        "MethodName": "AddPortType",
-        "Parameters": [
-          3814634802727690821
-        ],
-        "CreatedEntityId": -3536388346727244896
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 4299506974590745932,
-        "MethodName": "AddCoordinationTransitionType",
-        "Parameters": [
-          -6466526333305806101,
-          -3536388346727244896
-        ],
-        "CreatedEntityId": 2697376248566945685
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 2037998827135675641,
-        "MethodName": "DeleteCoordinationTransitionType",
-        "Parameters": [
-          2697376248566945685
-        ],
-        "DeletedEntityId": 2697376248566945685
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": -6969404112584571086,
-        "MethodName": "DeletePortType",
-        "Parameters": [
-          -3536388346727244896
-        ],
-        "DeletedEntityId": -3536388346727244896
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
         "Id": -6123426502250832955,
         "MethodName": "AddCoordinationStepType",
         "Parameters": [],
         "CreatedEntityId": 5877011757317183340
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -1800385502056600084,
-        "MethodName": "UpdateCoordinationStepType",
-        "Parameters": [
-          5877011757317183340,
-          -166705613928844728,
-          null
-        ],
-        "UpdatedEntityId": 5877011757317183340
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
@@ -131,17 +83,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -4274429215742152583,
-        "MethodName": "UpdateCoordinationStepType",
-        "Parameters": [
-          -2334486574925904640,
-          2856076165299773694,
-          null
-        ],
-        "UpdatedEntityId": -2334486574925904640
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": 8331434472427938734,
         "MethodName": "UpdateCoordinationStepType",
         "Parameters": [
@@ -179,17 +120,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 6439838573380231932,
-        "MethodName": "UpdateCoordinationStepType",
-        "Parameters": [
-          4657321428797098839,
-          -166705613928844728,
-          null
-        ],
-        "UpdatedEntityId": 4657321428797098839
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": 8229494804913011185,
         "MethodName": "UpdateCoordinationStepType",
         "Parameters": [
@@ -224,17 +154,6 @@
         "MethodName": "AddCoordinationStepType",
         "Parameters": [],
         "CreatedEntityId": -7366442471884987357
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 2474843476235471069,
-        "MethodName": "UpdateCoordinationStepType",
-        "Parameters": [
-          -7366442471884987357,
-          2856076165299773694,
-          null
-        ],
-        "UpdatedEntityId": -7366442471884987357
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",

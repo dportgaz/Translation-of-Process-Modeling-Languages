@@ -518,7 +518,6 @@ public class FillBPMNDI {
     public void addDataObjectsTwo(Element rootElement, ArrayList<Task> tasks) {
 
         if(tasks.size() > 0) {
-            System.out.println(tasks);
             Shape firstBsTask = getBPMNShapeByTaskTwo(tasks.get(0).getId());
             double xTask = firstBsTask.getBounds().getX();
 

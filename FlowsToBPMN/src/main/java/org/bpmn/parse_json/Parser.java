@@ -1,6 +1,7 @@
 package org.bpmn.parse_json;
 
 import org.bpmn.bpmn_elements.Loop;
+import org.bpmn.bpmn_elements.Port;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
@@ -153,4 +154,57 @@ public class Parser {
             });
         }
     }
+
+    public static ArrayList<Task> parseCoordinationSteps(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects){
+
+        ArrayList<Task> coordinationTasks = new ArrayList<>();
+        for (Double key : coordinationProcessObjects.keySet()) {
+            coordinationProcessObjects.get(key).forEach(obj -> {
+                if (obj != null && obj.getMethodName().equals("UpdateCoordinationStepType")) {
+
+                    Double coordinationId = (Double) obj.getParameters().get(0);
+                    Double taskId = (Double) obj.getParameters().get(2);
+
+                    for (Task task : allTasks) {
+                        if (task.getCreatedEntityId().equals(taskId)) {
+                            task.setCoordinationStepTypeId(coordinationId);
+                            coordinationTasks.add(task);
+                        }
+                    }
+                }
+            });
+        }
+        return coordinationTasks;
+    }
+
+    public static void parseCoordinationPorts(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects){
+
+        ArrayList<Task> coordinationTasks = parseCoordinationSteps(coordinationProcessObjects);
+        for (Double key : coordinationProcessObjects.keySet()) {
+            coordinationProcessObjects.get(key).forEach(obj -> {
+                if (obj != null && obj.getMethodName().equals("AddPortType")) {
+
+                    Port port = new Port(obj.getCreatedEntityId(), (Double) obj.getParameters().get(0));
+
+                    for (Task task : coordinationTasks) {
+                        if (task.getCoordinationStepTypeId().equals(port.getTaskId())) {
+                            task.getPorts().add(port);
+                        }
+                    }
+                }
+            });
+        }
+        System.out.println("PARSER + parseCoordinationPorts()");
+        for(Task task : coordinationTasks){
+            System.out.print(task);
+            if(task.getPorts().size() > 0){
+                System.out.print(" , Ports: ");
+                for(Port port : task.getPorts()){
+                    System.out.print(port + " , ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
 }
