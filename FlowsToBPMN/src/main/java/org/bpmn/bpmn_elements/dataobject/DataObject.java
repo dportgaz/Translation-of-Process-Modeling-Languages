@@ -2,7 +2,6 @@ package org.bpmn.bpmn_elements.dataobject;
 
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
-import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;

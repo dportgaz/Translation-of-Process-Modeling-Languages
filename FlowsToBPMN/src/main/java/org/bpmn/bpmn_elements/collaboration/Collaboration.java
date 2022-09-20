@@ -4,7 +4,6 @@ import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
 
-import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -19,8 +18,6 @@ public class Collaboration {
     Element elementCollaboration;
 
     public static ArrayList<Object> objects = new ArrayList<>();
-
-    public static ArrayList<User> users = new ArrayList<>();
 
 
     public Collaboration() {
@@ -71,34 +68,6 @@ public class Collaboration {
         }
     }
 
-    public void setParticipants(HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects) {
-
-        for (Double key : userTypeObjects.keySet()) {
-            userTypeObjects.get(key).forEach(obj -> {
-                if (obj != null && obj.getMethodName().equals("UpdateGlobalRoleName")) {
-
-                    String name = (String) obj.getParameters().get(1);
-                    Double updatedEntityId = obj.getUpdatedEntityId();
-                    User user = new User(this, key, name, updatedEntityId);
-
-                    // TODO: JSON BUG
-                    if (!users.contains(user)) {
-                        users.add(user);
-                    }
-
-                    // add participant to collaboration element
-                    elementCollaboration.appendChild(user.getParticipantElement());
-
-                }
-            });
-        }
-
-        for (User participant : users) {
-            participant.setProcessRef(userTypeObjects);
-        }
-
-    }
-
     private boolean containsParticipant(String participantName) {
 
         for (Object participant : objects) {
@@ -108,15 +77,5 @@ public class Collaboration {
         }
         return false;
 
-    }
-
-    public static User getUser(Double id) {
-
-        for (User user : users) {
-            if (user.getUpdatedEntityId().equals(id)) {
-                return user;
-            }
-        }
-        return null;
     }
 }

@@ -10,9 +10,19 @@ public class Port {
     Double taskId;
     ArrayList<Relation> incoming = new ArrayList<>();
 
+    int cntOther;
+
     public Port(Double id, Double taskId){
         this.id = id;
         this.taskId = taskId;
+    }
+
+    public int getCntOther() {
+        return cntOther;
+    }
+
+    public void incCntOther() {
+        cntOther++;
     }
 
     public Double getId() {

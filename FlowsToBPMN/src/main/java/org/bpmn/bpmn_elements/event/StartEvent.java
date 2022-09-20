@@ -24,6 +24,10 @@ public class StartEvent extends Event{
 
     Element elementOutgoing;
 
+    SequenceFlow incoming;
+
+    Element elementIncoming;
+
     BPMNElement beforeElement;
 
     BPMNElement afterElement;

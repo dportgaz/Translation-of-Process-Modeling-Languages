@@ -89,14 +89,31 @@ public class Task implements BPMNElement {
 
     ArrayList<Port> ports = new ArrayList<>();
 
+    String participantName;
+
+    int cntOtherRelations;
+
     public Task(Double createdEntityId, String name, Participant participant) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
         this.name = "Provide " + name;
         this.participant = participant;
+        this.participantName = name;
         this.elementTask = doc.createElement("bpmn:task");
         this.elementTask.setAttribute("id", this.id);
         this.elementTask.setAttribute("name", this.name);
+    }
+
+    public String getParticipantName() {
+        return participantName;
+    }
+
+    public int getCntOtherRelations() {
+        return cntOtherRelations;
+    }
+
+    public void intCntOtherRelations(){
+        cntOtherRelations++;
     }
 
     public Task(Double createdEntityId, String name, Participant participant, ArrayList<AbstractObjectType> objects) {

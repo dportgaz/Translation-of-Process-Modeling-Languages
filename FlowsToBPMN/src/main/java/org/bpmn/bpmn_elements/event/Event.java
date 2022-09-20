@@ -53,7 +53,6 @@ public class Event implements BPMNElement {
     @Override
     public void setElement() {
     }
-
     public ArrayList<BPMNElement> getBefore() {
         return before;
     }

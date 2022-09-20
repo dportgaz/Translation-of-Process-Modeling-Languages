@@ -1,5 +1,6 @@
 package org.bpmn.bpmn_elements.collaboration.participant;
 
+import org.bpmn.process.FlowsProcessObject;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.w3c.dom.Element;
@@ -13,6 +14,9 @@ public abstract class Participant {
     String name;
     Element participantElement;
     Collaboration collaboration;
+
+    FlowsProcessObject processRef;
+
 
     public Participant(Collaboration collaboration, Double key, String name) {
 
@@ -57,5 +61,14 @@ public abstract class Participant {
 
     public Collaboration getCollaboration() {
         return collaboration;
+    }
+
+    public FlowsProcessObject getProcessRef() {
+        return processRef;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

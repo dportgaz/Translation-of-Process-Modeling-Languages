@@ -165,7 +165,7 @@ public class FlowsProcessObject {
         return null;
     }
 
-    private SequenceFlow getFlowBySource(SequenceFlow flowIn) {
+    public SequenceFlow getFlowBySource(SequenceFlow flowIn) {
         for (SequenceFlow flow : flows) {
             if (flowIn.getSourceRef().equals(flow.getSourceRef())) {
                 return flow;
@@ -174,9 +174,9 @@ public class FlowsProcessObject {
         return null;
     }
 
-    private SequenceFlow getFlowByTarget(SequenceFlow flowIn) {
+    public SequenceFlow getFlowByTarget(BPMNElement target) {
         for (SequenceFlow flow : flows) {
-            if (flowIn.getTargetRef().equals(flow.getTargetRef())) {
+            if (flow.getTargetRef().getId() != null && flow.getTargetRef().getId().equals(target.getId())) {
                 return flow;
             }
         }
@@ -326,7 +326,7 @@ public class FlowsProcessObject {
 
     }
 
-    private void setFlows() {
+    public void setFlows() {
 
         for (SequenceFlow flow : flows) {
             elementFlowsProcess.appendChild(flow.getElementSequenceFlow());

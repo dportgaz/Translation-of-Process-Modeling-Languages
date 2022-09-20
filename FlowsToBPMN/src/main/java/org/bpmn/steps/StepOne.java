@@ -28,7 +28,7 @@ public class StepOne implements Step{
     Element definitionsElement;
     HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects;
 
-    public static ArrayList<Participant> allParticipants = new ArrayList();
+    public static ArrayList<Object> allParticipants = new ArrayList();
     public static ArrayList<Task> allTasks = new ArrayList();
 
     public static ArrayList<SequenceFlow> allFlows = new ArrayList();
@@ -57,6 +57,20 @@ public class StepOne implements Step{
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);
 
         createXml(file);
+
+    }
+
+    public void executeForStepThree() {
+
+        Collaboration collaboration = new Collaboration();
+        collaboration.setParticipants(objectTypeObjects);
+        Element collaborationElement = collaboration.getElementCollaboration();
+
+        definitionsElement.appendChild(collaborationElement);
+        setProcesses(definitionsElement);
+
+        FillBPMNDI di = new FillBPMNDI();
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);
 
     }
 

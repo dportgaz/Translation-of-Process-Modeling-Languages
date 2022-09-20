@@ -3,6 +3,7 @@ package org.bpmn.steps;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Array;
+import java.lang.reflect.Executable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -16,9 +17,15 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.Port;
 import org.bpmn.bpmn_elements.Relation;
+import org.bpmn.bpmn_elements.RelationType;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
+import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
+import org.bpmn.bpmn_elements.event.IntermediateThrowEvent;
+import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.flows_objects.AbstractRelation;
@@ -26,6 +33,7 @@ import org.bpmn.flows_objects.ConcreteObjectType;
 
 import org.bpmn.flows_objects.RelationList;
 import org.bpmn.parse_json.Parser;
+import org.bpmn.process.FlowsProcessObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -50,6 +58,7 @@ public class BPMN {
         ConcreteObjectType objects = new ConcreteObjectType(jsonFlowsPath);
         HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects = objects.getObjectTypeObjects();
         HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects = objects.getUserTypeObjects();
+
         HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects = objects.getCoordinationProcessTypeActionLogs();
         Parser parse = new Parser();
         ArrayList<AbstractRelation> relationsDataModel = objects.getRelations().getList();
@@ -60,34 +69,28 @@ public class BPMN {
 
         // ____________________________________________________________________________________________________________
 
+
         doc.removeChild(doc.getFirstChild());
         Element definitionsElement2 = doc.createElement("bpmn:definitions");
         doc.appendChild(definitionsElement2);
         setHeader(definitionsElement2);
 
-        String fileTempTwo = "PHOODLE_STEP_TWO_RENEW.xml";
-        StepTwo s2 = new StepTwo(fileTempTwo, definitionsElement2, userTypeObjects, objectTypeObjects);
-        s2.execute();
 
-        ArrayList<Task> coordinationProcess = parse.getCoordinationTasks(coordinationProcessObjects);
-        ArrayList<Relation> relations = new ArrayList<>();
+        String fileTempThree = "PHOODLE_STEP_THREE_RENEW.xml";
+        StepThree s3 = new StepThree(s1, fileTempThree, definitionsElement2, objectTypeObjects, coordinationProcessObjects, relationsDataModel);
+        s3.execute();
 
-        for(AbstractRelation relation : relationsDataModel){
-            Double sourceId = (Double) relation.getParameters().get(0);
-            Double targetId = (Double) relation.getParameters().get(1);
-            for(Participant source : allParticipants){
-                if(source.getKey().equals(sourceId)){
-                    for(Participant target : allParticipants){
-                        if(target.getKey().equals(targetId)){
-                            relations.add(new Relation(source, target));
-                        }
-                    }
-                }
+
+        // _______________________________
+    }
+
+    private Participant findParticipantByKey(Double participantKey) {
+        for (Participant participant : allParticipants) {
+            if (participant.getKey().equals(participantKey)) {
+                return participant;
             }
         }
-        System.out.println(relations);
-        System.out.println(coordinationProcess + "\n" + relationsDataModel);
-
+        return null;
     }
 
     private static void setHeader(Element rootElement) {
