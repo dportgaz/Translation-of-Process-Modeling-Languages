@@ -91,7 +91,7 @@ public class IntermediateCatchEvent implements BPMNElement{
 
     @Override
     public String getId() {
-        return null;
+        return this.id;
     }
 
     @Override

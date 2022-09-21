@@ -5,6 +5,7 @@ import org.bpmn.bpmn_elements.Loop;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
+import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
@@ -58,6 +59,8 @@ public class FlowsProcessObject {
 
     DataObject finishedDataObject;
 
+    HashSet<IntermediateCatchEvent> intermediateCatchEvents = new HashSet<>();
+
 
     public FlowsProcessObject(Object participant, HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
@@ -92,6 +95,10 @@ public class FlowsProcessObject {
         addFlowsToTasks();
         setGateways();
 
+    }
+
+    public HashSet<IntermediateCatchEvent> getIntermediateCatchEvents() {
+        return intermediateCatchEvents;
     }
 
     private void setStartEventElement() {
@@ -436,6 +443,13 @@ public class FlowsProcessObject {
         setTaskElement();
         setFlowsElement();
         setGatewaysElement();
+        setIntermediateEvent();
+    }
+
+    private void setIntermediateEvent() {
+        for(IntermediateCatchEvent event : intermediateCatchEvents){
+            this.elementFlowsProcess.appendChild(event.getElement());
+        }
     }
 
     public static void resetCountProcess() {

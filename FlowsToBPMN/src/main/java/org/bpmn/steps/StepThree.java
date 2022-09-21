@@ -66,15 +66,8 @@ public class StepThree {
         Element collaborationElement = collaboration.getElementCollaboration();
 
         definitionsElement.appendChild(collaborationElement);
-        setProcesses(definitionsElement);
-
         coordinationProcess = parser.getCoordinationTasks(coordinationProcessObjects);
 
-
-        FillBPMNDI di = new FillBPMNDI();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);
-
-        /*
 
         for (AbstractRelation relation : relationsDataModel) {
 
@@ -101,18 +94,6 @@ public class StepThree {
                     relations.put(sourceId, p);
                 }
             }
-        }
-
-        System.out.println(relations + "\n");
-        for (Task task : coordinationProcess) {
-            System.out.print(task + " ");
-            if (task.getPorts().size() > 0) {
-                for (Port port : task.getPorts()) {
-                    System.out.print(port + " ");
-                    System.out.print(port.getIncoming() + " ");
-                }
-            }
-            System.out.println();
         }
 
         // _______________________________
@@ -151,9 +132,9 @@ public class StepThree {
                         }
 
                         for(Relation relation : port.getIncoming()){
-
                             if(relation.getRelationType() == RelationType.OTHER){
                                 IntermediateCatchEvent messageCatch = new IntermediateCatchEvent();
+                                fp.getIntermediateCatchEvents().add(messageCatch);
                                 fp.getFlows().add(new SequenceFlow(gateSplit, messageCatch));
                                 fp.getFlows().add(new SequenceFlow(messageCatch, gateJoin));
                             }else{
@@ -166,11 +147,27 @@ public class StepThree {
 
                 }
             }
-            for (SequenceFlow flow : fp.getFlows()) {
-                fp.getElementFlowsProcess().appendChild(flow.getElementSequenceFlow());
-            }
         }
-        */
+
+        setProcesses(definitionsElement);
+
+        System.out.println(relations + "\n");
+        for (Task task : coordinationProcess) {
+            System.out.print(task + " ");
+            if (task.getPorts().size() > 0) {
+                for (Port port : task.getPorts()) {
+                    System.out.print(port + " ");
+                    System.out.print(port.getIncoming() + " ");
+                }
+            }
+            System.out.println();
+        }
+
+        /*
+        FillBPMNDI di = new FillBPMNDI();
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);
+
+         */
 
         createXml(file);
     }
