@@ -59,6 +59,7 @@ public class StepThree {
 
     public void execute() throws TransformerException {
 
+
         Collaboration collaboration = new Collaboration();
         collaboration.setParticipants(objectTypeObjects);
         Element collaborationElement = collaboration.getElementCollaboration();
@@ -66,10 +67,10 @@ public class StepThree {
         definitionsElement.appendChild(collaborationElement);
         setProcesses(definitionsElement);
 
+        coordinationProcess = parser.getCoordinationTasks(coordinationProcessObjects);
+
         FillBPMNDI di = new FillBPMNDI();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);
-
-        coordinationProcess = parser.getCoordinationTasks(coordinationProcessObjects);
 
         for (AbstractRelation relation : relationsDataModel) {
 

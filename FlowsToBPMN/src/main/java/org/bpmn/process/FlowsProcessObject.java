@@ -17,6 +17,7 @@ import org.bpmn.bpmn_elements.collaboration.participant.Object;
 import org.bpmn.steps.BPMN;
 import org.w3c.dom.Element;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,8 +79,8 @@ public class FlowsProcessObject {
         this.loops = parser.parseLoops(this, objects);
         predicates = parser.parsePredicates(objects);
 
-        setStartEvent();
-        setEndEvent();
+        this.startEvent = new StartEvent();
+        this.endEvent = new EndEvent();
         setDataObjects();
         this.flows = parser.parseFlows(this, objects);
         sortProcess();
@@ -89,13 +90,26 @@ public class FlowsProcessObject {
         setSubProcesses();
         setBeforeAndAfterElements();
         setLoops();
-        setGateways();
-        setFlows();
+        setGatewaysMachine();
         addFlowsToTasks();
-        setTasks();
-        addGateways();
+        setGateways();
 
     }
+
+    private void setStartEventElement() {
+
+        Element elementStartEvent = startEvent.getElement();
+        this.elementFlowsProcess.appendChild(elementStartEvent);
+
+    }
+
+    private void setEndEventElement() {
+
+        Element elementEndEvent = endEvent.getElement();
+        this.elementFlowsProcess.appendChild(elementEndEvent);
+
+    }
+
 
     private void setBeforeAndAfterElements() {
 
@@ -183,7 +197,7 @@ public class FlowsProcessObject {
         return null;
     }
 
-    private void setGateways() {
+    private void setGatewaysMachine() {
 
         setSplitGateways();
         setJoinGateways();
@@ -317,19 +331,10 @@ public class FlowsProcessObject {
 
     }
 
-
-    private void setTasks() {
-
-        for (Task task : tasks) {
-            this.elementFlowsProcess.appendChild(task.getElement());
-        }
-
-    }
-
-    public void setFlows() {
+    public void setFlowsElement() {
 
         for (SequenceFlow flow : flows) {
-            elementFlowsProcess.appendChild(flow.getElementSequenceFlow());
+            this.elementFlowsProcess.appendChild(flow.getElementSequenceFlow());
         }
 
     }
@@ -345,41 +350,37 @@ public class FlowsProcessObject {
             DataObject dObj = task.getDataObject();
             dataObjects.add(dObj);
 
+        }
+
+        finishedDataObject = new DataObject(participant);
+        dataObjects.add(finishedDataObject);
+        Element tempObj = doc.createElement("bpmn:dataObject");
+        tempObj.setAttribute("id", finishedDataObject.getId());
+
+    }
+
+    private void setTaskElement(){
+        for(Task task : tasks){
+            this.elementFlowsProcess.appendChild(task.getElement());
+        }
+    }
+
+    private void setDataObjectsElement() {
+
+        for (DataObject dObj : dataObjects) {
+
             this.elementFlowsProcess.appendChild(dObj.getElementDataObject());
 
             Element tempObj = doc.createElement("bpmn:dataObject");
             tempObj.setAttribute("id", dObj.getId());
             this.elementFlowsProcess.appendChild(tempObj);
-            this.elementFlowsProcess.appendChild(task.getElement());
 
         }
 
-        finishedDataObject = new DataObject(participant);
-        dataObjects.add(finishedDataObject);
         this.elementFlowsProcess.appendChild(finishedDataObject.getElementDataObject());
         Element tempObj = doc.createElement("bpmn:dataObject");
         tempObj.setAttribute("id", finishedDataObject.getId());
         this.elementFlowsProcess.appendChild(tempObj);
-
-    }
-
-    private void setStartEvent() {
-
-        StartEvent startEvent = new StartEvent();
-        Element elementStartEvent = startEvent.getElement();
-
-        this.startEvent = startEvent;
-        this.elementFlowsProcess.appendChild(elementStartEvent);
-
-    }
-
-    private void setEndEvent() {
-
-        EndEvent endEvent = new EndEvent();
-        Element elementEndEvent = endEvent.getElement();
-
-        this.endEvent = endEvent;
-        this.elementFlowsProcess.appendChild(elementEndEvent);
 
     }
 
@@ -435,6 +436,12 @@ public class FlowsProcessObject {
             isExecutable = "false";
             this.elementFlowsProcess.setAttribute("isExecutable", this.isExecutable);
         }
+        setStartEventElement();
+        setEndEventElement();
+        setDataObjectsElement();
+        setTaskElement();
+        setFlowsElement();
+        setGatewaysElement();
     }
 
     private void addFlowsToTasks() {
@@ -464,11 +471,10 @@ public class FlowsProcessObject {
 
     }
 
-    private void addGateways() {
+    private void setGateways() {
 
         for (ExclusiveGateway gate : gateways) {
             allGateways.add(gate);
-            this.elementFlowsProcess.appendChild(gate.getElementExclusiveGateway());
             for (SequenceFlow sf : flows) {
                 if (sf.getSourceRef().getId().equals(gate.getId())) {
                     Element out = doc.createElement("bpmn:outgoing");
@@ -481,6 +487,12 @@ public class FlowsProcessObject {
                     gate.getElementExclusiveGateway().appendChild(inc);
                 }
             }
+        }
+    }
+
+    private void setGatewaysElement(){
+        for(ExclusiveGateway gate : gateways) {
+            this.elementFlowsProcess.appendChild(gate.getElementExclusiveGateway());
         }
     }
 
