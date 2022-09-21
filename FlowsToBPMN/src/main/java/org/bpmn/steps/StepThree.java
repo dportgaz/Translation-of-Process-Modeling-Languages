@@ -70,6 +70,7 @@ public class StepThree {
 
         coordinationProcess = parser.getCoordinationTasks(coordinationProcessObjects);
 
+
         FillBPMNDI di = new FillBPMNDI();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);
 
@@ -172,7 +173,6 @@ public class StepThree {
         */
 
         createXml(file);
-
     }
 
     public void setProcesses(Element definitionsElement) {

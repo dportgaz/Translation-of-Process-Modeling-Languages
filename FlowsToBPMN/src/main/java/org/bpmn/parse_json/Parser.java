@@ -4,17 +4,21 @@ import org.bpmn.bpmn_elements.Loop;
 import org.bpmn.bpmn_elements.Port;
 import org.bpmn.bpmn_elements.Relation;
 import org.bpmn.bpmn_elements.RelationType;
+import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.process.FlowsProcessObject;
+import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static org.bpmn.bpmn_elements.flows.SequenceFlow.getFlowBySource;
 import static org.bpmn.bpmn_elements.flows.SequenceFlow.getFlowByTarget;
@@ -245,4 +249,5 @@ public class Parser {
     public ArrayList<Task> getCoordinationTasks(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects) {
         return appendPortsToTasks(coordinationProcessObjects);
     }
+
 }

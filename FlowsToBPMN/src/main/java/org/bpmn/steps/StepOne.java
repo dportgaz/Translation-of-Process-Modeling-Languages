@@ -9,6 +9,7 @@ import org.bpmn.bpmn_elements.task.Task;
 //import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.flows_objects.AbstractObjectType;
+import org.bpmn.process.FlowsProcessObject;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
@@ -70,7 +71,7 @@ public class StepOne implements Step{
             definitionsElement.appendChild(participant.getProcessRef().getElementFlowsProcess());
 
         }
-
+         FlowsProcessObject.resetCountProcess();
     }
 
     public Collaboration getCollaboration() {

@@ -62,12 +62,10 @@ public class FlowsProcessObject {
     public FlowsProcessObject(Object participant, HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects) {
 
         this.id = "Process_" + RandomIdGenerator.generateRandomUniqueId(6);
-        this.elementFlowsProcess = doc.createElement("bpmn:process");
         this.participant = participant;
         this.objects = objectTypeObjects.get(participant.getKey());
         setFlowsProcess();
         //setElementFlowsProcess();
-        countProcess++;
 
     }
 
@@ -347,8 +345,7 @@ public class FlowsProcessObject {
 
         for (Task task : tasks) {
 
-            DataObject dObj = task.getDataObject();
-            dataObjects.add(dObj);
+            dataObjects.add(task.getDataObject());
 
         }
 
@@ -422,9 +419,13 @@ public class FlowsProcessObject {
     }
 
     public void setElementFlowsProcess() {
+        // for step 3; reseting first
+        this.elementFlowsProcess = null;
+        this.elementFlowsProcess = doc.createElement("bpmn:process");
         this.elementFlowsProcess.setAttribute("id", this.id);
         if (countProcess == 0) {
             this.elementFlowsProcess.setAttribute("isExecutable", this.isExecutable);
+            countProcess++;
         } else {
             isExecutable = "false";
             this.elementFlowsProcess.setAttribute("isExecutable", this.isExecutable);
@@ -435,6 +436,11 @@ public class FlowsProcessObject {
         setTaskElement();
         setFlowsElement();
         setGatewaysElement();
+    }
+
+    public static void resetCountProcess() {
+        countProcess = 0;
+        isExecutable = "true";
     }
 
     private void addFlowsToTasks() {
