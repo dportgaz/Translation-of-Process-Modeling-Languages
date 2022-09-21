@@ -5,6 +5,7 @@ import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
+import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
@@ -57,17 +58,15 @@ public class StepThree {
         this.coordinationProcessObjects = coordinationProcessObjects;
         this.parser = new Parser();
         this.relationsDataModel = relationsDataModel;
+        this.collaboration = stepOne.getCollaboration();
+
     }
+
 
     public void execute() throws TransformerException {
 
 
-        this.collaboration = stepOne.getCollaboration();
-        Element collaborationElement = collaboration.getElementCollaboration();
-
-        definitionsElement.appendChild(collaborationElement);
         coordinationProcess = parser.getCoordinationTasks(coordinationProcessObjects);
-
 
         for (AbstractRelation relation : relationsDataModel) {
 
@@ -135,6 +134,9 @@ public class StepThree {
                             if(relation.getRelationType() == RelationType.OTHER){
                                 IntermediateCatchEvent messageCatch = new IntermediateCatchEvent();
                                 fp.getIntermediateCatchEvents().add(messageCatch);
+                                MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
+                                collaboration.getMessageFlows().add(messageFlow);
+                                collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
                                 fp.getFlows().add(new SequenceFlow(gateSplit, messageCatch));
                                 fp.getFlows().add(new SequenceFlow(messageCatch, gateJoin));
                             }else{
@@ -173,6 +175,8 @@ public class StepThree {
     }
 
     public void setProcesses(Element definitionsElement) {
+
+        definitionsElement.appendChild(collaboration.getElementCollaboration());
 
         for (Object participant : objects) {
 

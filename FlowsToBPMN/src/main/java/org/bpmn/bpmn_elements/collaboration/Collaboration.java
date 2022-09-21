@@ -1,5 +1,6 @@
 package org.bpmn.bpmn_elements.collaboration;
 
+import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
@@ -8,6 +9,7 @@ import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static org.bpmn.steps.BPMN.doc;
 
@@ -19,11 +21,17 @@ public class Collaboration {
 
     public static ArrayList<Object> objects = new ArrayList<>();
 
+    HashSet<MessageFlow> messageFlows = new HashSet<>();
+
 
     public Collaboration() {
         this.id = "Collaboration_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementCollaboration = doc.createElement("bpmn:collaboration");
         setElementCollaboration();
+    }
+
+    public HashSet<MessageFlow> getMessageFlows() {
+        return messageFlows;
     }
 
     // fill attributes of collaboration Element
