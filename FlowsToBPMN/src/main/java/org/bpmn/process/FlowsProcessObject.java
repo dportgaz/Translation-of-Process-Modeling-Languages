@@ -66,7 +66,7 @@ public class FlowsProcessObject {
         this.participant = participant;
         this.objects = objectTypeObjects.get(participant.getKey());
         setFlowsProcess();
-        setElementFlowsProcess();
+        //setElementFlowsProcess();
         countProcess++;
 
     }
@@ -354,8 +354,6 @@ public class FlowsProcessObject {
 
         finishedDataObject = new DataObject(participant);
         dataObjects.add(finishedDataObject);
-        Element tempObj = doc.createElement("bpmn:dataObject");
-        tempObj.setAttribute("id", finishedDataObject.getId());
 
     }
 
@@ -376,11 +374,6 @@ public class FlowsProcessObject {
             this.elementFlowsProcess.appendChild(tempObj);
 
         }
-
-        this.elementFlowsProcess.appendChild(finishedDataObject.getElementDataObject());
-        Element tempObj = doc.createElement("bpmn:dataObject");
-        tempObj.setAttribute("id", finishedDataObject.getId());
-        this.elementFlowsProcess.appendChild(tempObj);
 
     }
 
@@ -428,7 +421,7 @@ public class FlowsProcessObject {
 
     }
 
-    private void setElementFlowsProcess() {
+    public void setElementFlowsProcess() {
         this.elementFlowsProcess.setAttribute("id", this.id);
         if (countProcess == 0) {
             this.elementFlowsProcess.setAttribute("isExecutable", this.isExecutable);
@@ -472,7 +465,6 @@ public class FlowsProcessObject {
         // add flow to endEvent
         for (SequenceFlow sf : flows) {
             if (sf.getTargetRef().getId().equals(endEvent.getId())) {
-                System.out.println(sf);
                 endEvent.setIncoming(sf);
             }
         }

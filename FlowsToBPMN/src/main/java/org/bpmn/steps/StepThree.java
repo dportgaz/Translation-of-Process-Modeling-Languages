@@ -45,6 +45,8 @@ public class StepThree {
     StepOne stepOne;
     static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
 
+    private Collaboration collaboration;
+
     public StepThree(StepOne stepOne, String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects,
                      HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects, ArrayList<AbstractRelation> relationsDataModel) {
         this.stepOne = stepOne;
@@ -60,8 +62,7 @@ public class StepThree {
     public void execute() throws TransformerException {
 
 
-        Collaboration collaboration = new Collaboration();
-        collaboration.setParticipants(objectTypeObjects);
+        this.collaboration = stepOne.getCollaboration();
         Element collaborationElement = collaboration.getElementCollaboration();
 
         definitionsElement.appendChild(collaborationElement);
@@ -178,6 +179,7 @@ public class StepThree {
 
         for (Object participant : objects) {
 
+            participant.getProcessRef().setElementFlowsProcess();
             definitionsElement.appendChild(participant.getProcessRef().getElementFlowsProcess());
 
         }

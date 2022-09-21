@@ -37,6 +37,8 @@ public class StepOne implements Step{
     public static ArrayList<Predicate> predicates = new ArrayList<>();
     static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
 
+    private Collaboration collaboration;
+
     public StepOne(String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects) {
         this.file = file;
         this.definitionsElement = definitionsElement;
@@ -46,7 +48,7 @@ public class StepOne implements Step{
 
     public void execute() throws TransformerException {
 
-        Collaboration collaboration = new Collaboration();
+        this.collaboration = new Collaboration();
         collaboration.setParticipants(objectTypeObjects);
         Element collaborationElement = collaboration.getElementCollaboration();
 
@@ -60,27 +62,18 @@ public class StepOne implements Step{
 
     }
 
-    public void executeForStepThree() {
-
-        Collaboration collaboration = new Collaboration();
-        collaboration.setParticipants(objectTypeObjects);
-        Element collaborationElement = collaboration.getElementCollaboration();
-
-        definitionsElement.appendChild(collaborationElement);
-        setProcesses(definitionsElement);
-
-        FillBPMNDI di = new FillBPMNDI();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);
-
-    }
-
      public void setProcesses(Element definitionsElement) {
 
         for (Object participant : objects) {
 
+            participant.getProcessRef().setElementFlowsProcess();
             definitionsElement.appendChild(participant.getProcessRef().getElementFlowsProcess());
 
         }
 
+    }
+
+    public Collaboration getCollaboration() {
+        return collaboration;
     }
 }
