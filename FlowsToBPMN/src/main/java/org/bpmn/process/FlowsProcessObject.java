@@ -469,6 +469,13 @@ public class FlowsProcessObject {
             }
         }
 
+        // add flow to endEvent
+        for (SequenceFlow sf : flows) {
+            if (sf.getTargetRef().getId().equals(endEvent.getId())) {
+                System.out.println(sf);
+                endEvent.setIncoming(sf);
+            }
+        }
     }
 
     private void setGateways() {

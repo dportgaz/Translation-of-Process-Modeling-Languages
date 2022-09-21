@@ -72,6 +72,8 @@ public class StepThree {
         FillBPMNDI di = new FillBPMNDI();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);
 
+        /*
+
         for (AbstractRelation relation : relationsDataModel) {
 
             Double sourceId = (Double) relation.getParameters().get(0);
@@ -166,6 +168,7 @@ public class StepThree {
                 fp.getElementFlowsProcess().appendChild(flow.getElementSequenceFlow());
             }
         }
+        */
 
         createXml(file);
 
