@@ -94,6 +94,7 @@ public class FlowsProcessObject {
         setGatewaysMachine();
         addFlowsToTasks();
         setGateways();
+        setBeforeAndAfterElements();
 
     }
 

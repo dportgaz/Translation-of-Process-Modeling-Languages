@@ -115,9 +115,16 @@ public class StepThree {
                 fp.getGateways().add(gateSplit);
                 fp.getGateways().add(gateJoin);
 
-                fp.getFlows().add(new SequenceFlow(gateJoin, task));
-                fp.getFlows().add(new SequenceFlow(task.getBeforeElement(), gateSplit));
+                SequenceFlow joinToTask = new SequenceFlow(gateJoin, task);
+                SequenceFlow taskBeforeToSplit = new SequenceFlow(task.getBeforeElement(), gateSplit);
+                System.out.println(task.getBeforeElement());
+                fp.getFlows().add(joinToTask);
+                fp.getFlows().add(taskBeforeToSplit);
 
+                System.out.println(joinToTask);
+                System.out.println(taskBeforeToSplit);
+
+                System.out.println(flow);
                 fp.getFlows().remove(flow);
 
                 if (task.getIsSubprocess()) {
