@@ -33,7 +33,7 @@ public class Parser {
     public ArrayList<Port> coordinationPorts = new ArrayList<>();
 
 
-    public ArrayList<Task> parseTasks(Participant participant, ArrayList<AbstractObjectType> objects) {
+    public ArrayList<Task> parseTasks(Participant participant, ArrayList<AbstractObjectType> objects, boolean adHoc) {
 
         ArrayList<Task> tasks = new ArrayList<>();
 
@@ -44,7 +44,7 @@ public class Parser {
                 String taskName = obj.getParameters().get(1) + " " + participant.getName();
                 Double createdEntityId = (Double) obj.getParameters().get(0);
 
-                Task task = new Task(createdEntityId, taskName, participant, objects);
+                Task task = new Task(createdEntityId, taskName, participant, objects, adHoc);
                 tasks.add(task);
                 allTasks.add(task);
 

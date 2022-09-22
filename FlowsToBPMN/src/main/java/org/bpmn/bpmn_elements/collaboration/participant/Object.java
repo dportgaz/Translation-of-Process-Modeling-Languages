@@ -43,8 +43,8 @@ public class Object extends Participant {
 
     }
 
-    public void setProcessRef(HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects) {
-        this.processRef = new FlowsProcessObject(this, objectTypeObjects);
+    public void setProcessRef(HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects, boolean adHoc) {
+        this.processRef = new FlowsProcessObject(this, objectTypeObjects, adHoc);
         this.participantElement.setAttribute("processRef", this.processRef.getId());
     }
 

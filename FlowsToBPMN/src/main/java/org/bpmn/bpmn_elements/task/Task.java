@@ -93,6 +93,8 @@ public class Task implements BPMNElement {
 
     int cntOtherRelations;
 
+    boolean adHoc;
+
     public Task(Double createdEntityId, String name, Participant participant) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
@@ -116,12 +118,13 @@ public class Task implements BPMNElement {
         cntOtherRelations++;
     }
 
-    public Task(Double createdEntityId, String name, Participant participant, ArrayList<AbstractObjectType> objects) {
+    public Task(Double createdEntityId, String name, Participant participant, ArrayList<AbstractObjectType> objects, boolean adHoc) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
         this.name = name;
         this.participant = participant;
         this.dataObject = new DataObject(this);
+        this.adHoc = adHoc;
         this.steps = setSteps(objects);
         setElement();
         setDataOutputAssociation();
@@ -143,7 +146,11 @@ public class Task implements BPMNElement {
     public void setElement() {
         if (this.steps.size() > 0) {
             this.isSubprocess = true;
-            this.elementTask = doc.createElement("bpmn:subProcess");
+            if(adHoc){
+                this.elementTask = doc.createElement("bpmn:adHocSubProcess");
+            } else{
+                this.elementTask = doc.createElement("bpmn:subProcess");
+            }
             setSubProcess();
         } else {
             this.isSubprocess = false;
@@ -201,17 +208,20 @@ public class Task implements BPMNElement {
 
     private void setSubProcess() {
 
-        StartEvent startEvent = new StartEvent();
-        EndEvent endEvent = new EndEvent();
-        start = startEvent;
-        end = endEvent;
-        this.elementTask.appendChild(startEvent.getElement());
-        this.elementTask.appendChild(endEvent.getElement());
-
         for (Step step : steps) {
             this.elementTask.appendChild(step.getElement());
         }
 
+    }
+
+    public void setStartEvent(){
+        this.start = new StartEvent();
+        this.elementTask.appendChild(this.start.getElement());
+    }
+
+    public void setEndEvent(){
+        this.end = new EndEvent();
+        this.elementTask.appendChild(this.end.getElement());
     }
 
     public boolean getIsEndTask() {

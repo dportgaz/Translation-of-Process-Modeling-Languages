@@ -2,7 +2,6 @@ package org.bpmn.process;
 
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.Loop;
-import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
@@ -15,10 +14,8 @@ import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.parse_json.Parser;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
-import org.bpmn.steps.BPMN;
 import org.w3c.dom.Element;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,12 +58,15 @@ public class FlowsProcessObject {
 
     HashSet<IntermediateCatchEvent> intermediateCatchEvents = new HashSet<>();
 
+    boolean adHoc;
 
-    public FlowsProcessObject(Object participant, HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects) {
+
+    public FlowsProcessObject(Object participant, HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects, boolean adHoc) {
 
         this.id = "Process_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.participant = participant;
         this.objects = objectTypeObjects.get(participant.getKey());
+        this.adHoc = adHoc;
         setFlowsProcess();
         //setElementFlowsProcess();
 
@@ -76,7 +76,7 @@ public class FlowsProcessObject {
 
         Parser parser = new Parser();
 
-        this.tasks = parser.parseTasks(this.participant, objects);
+        this.tasks = parser.parseTasks(this.participant, objects, adHoc);
         this.loops = parser.parseLoops(this, objects);
         predicates = parser.parsePredicates(objects);
 
@@ -88,7 +88,9 @@ public class FlowsProcessObject {
         setEndTasks();
         addEndEventFlows();
         setAssociations();
-        setSubProcesses();
+        if (!adHoc) {
+            setSubProcesses();
+        }
         setBeforeAndAfterElements();
         setLoops();
         setGatewaysMachine();
@@ -291,6 +293,8 @@ public class FlowsProcessObject {
 
         for (Task task : tasks) {
             if (task.getIsSubprocess()) {
+                task.setStartEvent();
+                task.setEndEvent();
                 subprocesses.add(task);
                 ArrayList<Step> steps = task.getSteps();
                 SequenceFlow sfStart = new SequenceFlow(task.getStart(), steps.get(0));
@@ -325,15 +329,15 @@ public class FlowsProcessObject {
 
     private void setAssociations() {
 
-            startEvent.setDataOutputAssociation();
-            startEvent.getDataOutputAssociation().setOutputAssociationTarget(tasks.get(0).getDataObject());
+        startEvent.setDataOutputAssociation();
+        startEvent.getDataOutputAssociation().setOutputAssociationTarget(tasks.get(0).getDataObject());
 
-            for(int i = 0; i < tasks.size()-1; i++) {
-                // add data output association
-                // task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
-                tasks.get(i).getDataOutputAssociation().setOutputAssociationTarget(tasks.get(i+1).getDataObject());
-            }
-            tasks.get(tasks.size()-1).getDataOutputAssociation().setOutputAssociationTarget(finishedDataObject);
+        for (int i = 0; i < tasks.size() - 1; i++) {
+            // add data output association
+            // task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
+            tasks.get(i).getDataOutputAssociation().setOutputAssociationTarget(tasks.get(i + 1).getDataObject());
+        }
+        tasks.get(tasks.size() - 1).getDataOutputAssociation().setOutputAssociationTarget(finishedDataObject);
 
     }
 
@@ -362,8 +366,8 @@ public class FlowsProcessObject {
 
     }
 
-    private void setTaskElement(){
-        for(Task task : tasks){
+    private void setTaskElement() {
+        for (Task task : tasks) {
             this.elementFlowsProcess.appendChild(task.getElement());
         }
     }
@@ -448,7 +452,7 @@ public class FlowsProcessObject {
     }
 
     private void setIntermediateEvent() {
-        for(IntermediateCatchEvent event : intermediateCatchEvents){
+        for (IntermediateCatchEvent event : intermediateCatchEvents) {
             this.elementFlowsProcess.appendChild(event.getElement());
         }
     }
@@ -510,8 +514,8 @@ public class FlowsProcessObject {
         }
     }
 
-    private void setGatewaysElement(){
-        for(ExclusiveGateway gate : gateways) {
+    private void setGatewaysElement() {
+        for (ExclusiveGateway gate : gateways) {
             this.elementFlowsProcess.appendChild(gate.getElementExclusiveGateway());
         }
     }
