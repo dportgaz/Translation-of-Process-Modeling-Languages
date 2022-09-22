@@ -39,25 +39,6 @@
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -2168078459507709536,
-        "MethodName": "AddPortType",
-        "Parameters": [
-          808487636042925095
-        ],
-        "CreatedEntityId": 6460918940486233875
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": -5008084094574391008,
-        "MethodName": "AddCoordinationTransitionType",
-        "Parameters": [
-          2387122258909537856,
-          6460918940486233875
-        ],
-        "CreatedEntityId": 1473958606824479994
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
         "Id": -8861397604911283882,
         "MethodName": "AddCoordinationStepType",
         "Parameters": [],
@@ -73,61 +54,6 @@
           -5746586811596953039
         ],
         "UpdatedEntityId": -1550418829033516606
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 3155433634931125660,
-        "MethodName": "AddPortType",
-        "Parameters": [
-          -1550418829033516606
-        ],
-        "CreatedEntityId": 4887849061453394220
-      },
-      {
-        "__type": "EntityCreatedLog:#Shared.Data.History",
-        "Id": 3897421439492262138,
-        "MethodName": "AddCoordinationTransitionType",
-        "Parameters": [
-          2387122258909537856,
-          4887849061453394220
-        ],
-        "CreatedEntityId": 2456928010115884331
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": -6964311485822762964,
-        "MethodName": "DeleteCoordinationTransitionType",
-        "Parameters": [
-          1473958606824479994
-        ],
-        "DeletedEntityId": 1473958606824479994
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 7626377570920455271,
-        "MethodName": "DeletePortType",
-        "Parameters": [
-          6460918940486233875
-        ],
-        "DeletedEntityId": 6460918940486233875
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": 6186199186375897,
-        "MethodName": "DeleteCoordinationTransitionType",
-        "Parameters": [
-          2456928010115884331
-        ],
-        "DeletedEntityId": 2456928010115884331
-      },
-      {
-        "__type": "EntityDeletedLog:#Shared.Data.History",
-        "Id": -4682210426660894289,
-        "MethodName": "DeletePortType",
-        "Parameters": [
-          4887849061453394220
-        ],
-        "DeletedEntityId": 4887849061453394220
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
