@@ -63,7 +63,7 @@ public class BPMN {
         Parser parse = new Parser();
         ArrayList<AbstractRelation> relationsDataModel = objects.getRelations().getList();
 
-        String fileTempOne = "PHOODLE_STEP_ONE_RENEW.xml";
+        String fileTempOne = "Recruitment_Step1.xml";
         StepOne s1 = new StepOne(fileTempOne, definitionsElement1, objectTypeObjects);
         s1.execute();
 
@@ -76,21 +76,12 @@ public class BPMN {
         setHeader(definitionsElement2);
 
 
-        String fileTempThree = "PHOODLE_STEP_THREE_RENEW.xml";
+        String fileTempThree = "Recruitment_Step3.xml";
         StepThree s3 = new StepThree(s1, fileTempThree, definitionsElement2, objectTypeObjects, coordinationProcessObjects, relationsDataModel);
         s3.execute();
 
 
         // _______________________________
-    }
-
-    private Participant findParticipantByKey(Double participantKey) {
-        for (Participant participant : allParticipants) {
-            if (participant.getKey().equals(participantKey)) {
-                return participant;
-            }
-        }
-        return null;
     }
 
     private static void setHeader(Element rootElement) {

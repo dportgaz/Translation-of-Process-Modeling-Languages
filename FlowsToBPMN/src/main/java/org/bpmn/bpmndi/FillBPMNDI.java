@@ -359,6 +359,7 @@ public class FillBPMNDI {
             flow.setAttribute("id", sf.getId() + "_di");
             flow.setAttribute("bpmnElement", sf.getId());
 
+            // JSON BUG FINDING : System.out.println(sf);
             double xStart = bsSource.getBounds().getX() + bsSource.getBounds().getWidth();
             double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2;
 

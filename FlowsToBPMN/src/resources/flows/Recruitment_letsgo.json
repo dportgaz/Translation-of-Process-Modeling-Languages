@@ -1536,7 +1536,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           7580319268532151335,
-          "Applicant\rAssessment"
+          "Applicant Assessment"
         ],
         "UpdatedEntityId": 7580319268532151335
       },
@@ -1695,16 +1695,6 @@
         "CreatedEntityId": 4887319864190762404
       },
       {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -7001513210450627738,
-        "MethodName": "UpdateStateType",
-        "Parameters": [
-          3046652504108637961,
-          "Confirmation"
-        ],
-        "UpdatedEntityId": 3046652504108637961
-      },
-      {
         "__type": "EntityCreatedLog:#Shared.Data.History",
         "Id": 7155462477019065503,
         "MethodName": "AddTransitionType",
@@ -1856,7 +1846,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           6479781507062103835,
-          "Reject\rProposed"
+          "Reject Proposed"
         ],
         "UpdatedEntityId": 6479781507062103835
       },
@@ -2301,16 +2291,6 @@
         "UpdatedEntityId": -7279995151824194361
       },
       {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -6773728015179082327,
-        "MethodName": "UpdateStateType",
-        "Parameters": [
-          -7279995151824194361,
-          "Appointment\rConfirmation"
-        ],
-        "UpdatedEntityId": -7279995151824194361
-      },
-      {
         "__type": "EntityCreatedLog:#Shared.Data.History",
         "Id": 7283387232677685141,
         "MethodName": "AddStateType",
@@ -2321,47 +2301,7 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 866193401139515465,
-        "MethodName": "UpdateStateType",
-        "Parameters": [
-          -7279995151824194361,
-          "Appointment\rConfirmation"
-        ],
-        "UpdatedEntityId": -7279995151824194361
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": -8910180417163303809,
-        "MethodName": "UpdateStateType",
-        "Parameters": [
-          -111883191023457413,
-          "Closed"
-        ],
-        "UpdatedEntityId": -111883191023457413
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 7039541379856265235,
-        "MethodName": "UpdateStateType",
-        "Parameters": [
-          -111883191023457413,
-          "Closed"
-        ],
-        "UpdatedEntityId": -111883191023457413
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -2380971144988024903,
-        "MethodName": "UpdateStateType",
-        "Parameters": [
-          -111883191023457413,
-          "Closed"
-        ],
-        "UpdatedEntityId": -111883191023457413
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 2689458411136990849,
         "MethodName": "UpdateStateType",
         "Parameters": [
           -111883191023457413,
@@ -3089,16 +3029,6 @@
           "New State"
         ],
         "CreatedEntityId": 6735960467248696753
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": -6747997107592221823,
-        "MethodName": "UpdateStateType",
-        "Parameters": [
-          -5196353745074254794,
-          "Preparation"
-        ],
-        "UpdatedEntityId": -5196353745074254794
       },
       {
         "__type": "EntityCreatedLog:#Shared.Data.History",
