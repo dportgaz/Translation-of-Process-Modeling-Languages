@@ -6,6 +6,7 @@ import org.bpmn.bpmn_elements.Port;
 import org.bpmn.bpmn_elements.RelationType;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.association.DataOutputAssociation;
+import org.bpmn.bpmn_elements.collaboration.participant.Object;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 import static org.bpmn.steps.BPMN.doc;
 
 public class Task implements BPMNElement {
@@ -95,15 +97,35 @@ public class Task implements BPMNElement {
 
     boolean adHoc;
 
+    Permission permission;
+
     public Task(Double createdEntityId, String name, Participant participant) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
-        this.name = "Provide " + name;
+        this.permission = permissionForStep(name);
+        this.name = stepName() + " " + name;
         this.participant = participant;
         this.participantName = name;
         this.elementTask = doc.createElement("bpmn:task");
         this.elementTask.setAttribute("id", this.id);
         this.elementTask.setAttribute("name", this.name);
+    }
+
+    private Permission permissionForStep(String name) {
+        for(Object object : objects){
+            if(name.equals(object.getName())){
+                return Permission.READ;
+            }
+        }
+        return Permission.WRITE;
+    }
+
+    private String stepName(){
+        if(this.permission == Permission.WRITE){
+            return "Write";
+        }else{
+            return "Read";
+        }
     }
 
     public String getParticipantName() {
