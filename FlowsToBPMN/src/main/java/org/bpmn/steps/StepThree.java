@@ -9,6 +9,7 @@ import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
+import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.flows_objects.AbstractObjectType;
@@ -22,6 +23,7 @@ import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 import static org.bpmn.steps.BPMN.createXml;
@@ -66,8 +68,10 @@ public class StepThree {
     public void execute() throws TransformerException {
 
 
+        // fill coordination Process
         coordinationProcess = parser.getCoordinationTasks(coordinationProcessObjects);
 
+        // fill Data Model
         for (AbstractRelation relation : relationsDataModel) {
 
             Double sourceId = (Double) relation.getParameters().get(0);
@@ -95,7 +99,11 @@ public class StepThree {
             }
         }
 
+        // complement coordination process with data model relation
+
+
         // _______________________________
+        /*
         for (Task task : coordinationProcess) {
 
             int cntPorts = task.getPorts().size();
@@ -153,6 +161,29 @@ public class StepThree {
             }
         }
 
+         */
+
+        for (Participant object : objects) {
+
+            for (Task task : object.getProcessRef().getTasks()) {
+
+                if (task.getIsSubprocess()) {
+                    //System.out.println(object + " ; " + task + " : " + task.getSteps());
+                    for (Step step : task.getSteps()) {
+
+                        Participant stepParticipant = step.getStepParticipant();
+                        if (stepParticipant != null) {
+                            //System.out.println("\t" + task + " , " + step + " , " + stepParticipant);
+
+                        }
+
+                    }
+                }
+
+            }
+
+        }
+
         setProcesses(definitionsElement);
 
         System.out.println(relations + "\n");
@@ -174,7 +205,9 @@ public class StepThree {
          */
 
         createXml(file);
+
     }
+
 
     public void setProcesses(Element definitionsElement) {
 
@@ -187,6 +220,15 @@ public class StepThree {
 
         }
 
+    }
+
+    private Participant findParticipant(Double id) {
+        for (Participant object : objects) {
+            if (object.getKey().equals(id)) {
+                return object;
+            }
+        }
+        return null;
     }
 
 }

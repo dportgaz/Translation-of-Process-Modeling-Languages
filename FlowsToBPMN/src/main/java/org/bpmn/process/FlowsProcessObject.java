@@ -16,6 +16,7 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
 import org.w3c.dom.Element;
 
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,7 +55,7 @@ public class FlowsProcessObject {
 
     ArrayList<Loop> loops = new ArrayList<>();
 
-    DataObject finishedDataObject;
+    HashSet<DataObject> finishedDataObjects = new HashSet<>();
 
     HashSet<IntermediateCatchEvent> intermediateCatchEvents = new HashSet<>();
 
@@ -82,8 +83,8 @@ public class FlowsProcessObject {
 
         this.startEvent = new StartEvent();
         this.endEvent = new EndEvent();
-        setDataObjects();
         this.flows = parser.parseFlows(this, objects);
+        setDataObjects();
         sortProcess();
         setEndTasks();
         addEndEventFlows();
@@ -329,15 +330,23 @@ public class FlowsProcessObject {
 
     private void setAssociations() {
 
+        /*
         startEvent.setDataOutputAssociation();
         startEvent.getDataOutputAssociation().setOutputAssociationTarget(tasks.get(0).getDataObject());
 
-        for (int i = 0; i < tasks.size() - 1; i++) {
+         */
+
+        for (int i = 0; i < tasks.size() - finishedDataObjects.size(); i++) {
             // add data output association
             // task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
-            tasks.get(i).getDataOutputAssociation().setOutputAssociationTarget(tasks.get(i + 1).getDataObject());
+            tasks.get(i).getDataOutputAssociation().setOutputAssociationTarget(tasks.get(i).getDataObject());
         }
-        tasks.get(tasks.size() - 1).getDataOutputAssociation().setOutputAssociationTarget(finishedDataObject);
+
+
+        for (DataObject d : finishedDataObjects) {
+            tasks.get(tasks.size() - finishedDataObjects.size()).getDataOutputAssociation().setOutputAssociationTarget(d);
+        }
+
 
     }
 
@@ -349,20 +358,26 @@ public class FlowsProcessObject {
 
     }
 
-    public DataObject getFinishedDataObject() {
-        return finishedDataObject;
+    public HashSet<DataObject> getFinishedDataObject() {
+        return finishedDataObjects;
     }
 
     private void setDataObjects() {
 
         for (Task task : tasks) {
-
             dataObjects.add(task.getDataObject());
-
+            boolean isLast = true;
+            for (SequenceFlow flow : flows) {
+                if (flow.getSourceRef().getId().equals(task.getId())) {
+                    isLast = false;
+                }
+            }
+            if (isLast) {
+                DataObject last = new DataObject(participant);
+                finishedDataObjects.add(last);
+                dataObjects.add(last);
+            }
         }
-
-        finishedDataObject = new DataObject(participant);
-        dataObjects.add(finishedDataObject);
 
     }
 

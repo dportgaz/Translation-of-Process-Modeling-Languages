@@ -196,7 +196,7 @@ public class FillBPMNDI {
 
         f(rootElement, x, y, start, fp, tasks, flows, null);
         addFlowsEdge(rootElement, flows);
-        addDataObjects(rootElement, tasks, fp);
+        addDataObjects(rootElement, tasks);
         shapes.clear();
 
     }
@@ -282,67 +282,14 @@ public class FillBPMNDI {
         return null;
 
     }
+    public void addDataObjects(Element rootElement, ArrayList<Task> tasks) {
 
-    private DataObject findDataObjectById(ArrayList<Task> tasks, String id) {
-
-        for (Task task : tasks) {
-            if (task.getDataObject().getRefId().equals(id)) {
-                return task.getDataObject();
-            }
-        }
-        return null;
-    }
-
-    public void addDataObjects(Element rootElement, ArrayList<Task> tasks, FlowsProcessObject fp) {
-
-        DataObject firstTaskDataObject = tasks.get(0).getDataObject();
-
-        Element dataObjectStart = doc.createElement("bpmndi:BPMNShape");
-        dataObjectStart.setAttribute("id", firstTaskDataObject.getRefId() + "_di");
-        dataObjectStart.setAttribute("bpmnElement", firstTaskDataObject.getRefId());
-
-        String xBoundStart = String.valueOf(startEventX - dataObjectWidth / 2 + eventWidth / 2);
-        String yBoundStart = String.valueOf(poolHeight + poolHeightOffset);
-
-        Element dataObjectBoundsStart = doc.createElement("dc:Bounds");
-        dataObjectBoundsStart.setAttribute("x", xBoundStart);
-        dataObjectBoundsStart.setAttribute("y", yBoundStart);
-
-        firstTaskDataObject.setX(String.valueOf(startEventX + dataObjectWidth / 2));
-        firstTaskDataObject.setY(String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight));
-
-        dataObjectBoundsStart.setAttribute("width", String.valueOf(dataObjectWidth));
-        dataObjectBoundsStart.setAttribute("height", String.valueOf(dataObjectHeight));
-        dataObjectStart.appendChild(dataObjectBoundsStart);
-
-        Element dataObjectFlowOutputStart = doc.createElement("bpmndi:BPMNEdge");
-        //TODO: POTENZIELL BUGGY
-        dataObjectFlowOutputStart.setAttribute("id", fp.getStartEvent().getDataOutputAssociation().getId() + "_di");
-        dataObjectFlowOutputStart.setAttribute("bpmnElement", fp.getStartEvent().getDataOutputAssociation().getId());
-
-        Element waypointOutStartStartEvent = doc.createElement("di:waypoint");
-        Element waypointOutEndStartEvent = doc.createElement("di:waypoint");
-
-        String waypointOutStartXStartEvent = String.valueOf(startEventX + eventWidth / 2);
-        String waypointOutStartYStartEvent = String.valueOf(startEventYInc);
-        String waypointOutEndXStartEvent = String.valueOf(startEventX + eventWidth / 2);
-        String waypointOutEndYStartEvent = String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight);
-
-        waypointOutStartStartEvent.setAttribute("x", waypointOutStartXStartEvent);
-        waypointOutStartStartEvent.setAttribute("y", waypointOutStartYStartEvent);
-        waypointOutEndStartEvent.setAttribute("x", waypointOutEndXStartEvent);
-        waypointOutEndStartEvent.setAttribute("y", waypointOutEndYStartEvent);
-
-        dataObjectFlowOutputStart.appendChild(waypointOutStartStartEvent);
-        dataObjectFlowOutputStart.appendChild(waypointOutEndStartEvent);
-        rootElement.appendChild(dataObjectFlowOutputStart);
-
-        rootElement.appendChild(dataObjectStart);
-
-        for (int i = 0; i < tasks.size()-1; i++) {
+        Double xPrev = 0d;
+        Double xBoundOffset = 0d;
+        for (int i = 0; i < tasks.size(); i++) {
 
             Task task = tasks.get(i);
-            DataObject d = tasks.get(i+1).getDataObject();
+            DataObject d = task.getDataObject();
             Shape bs = getBPMNShapeByTask(task.getId());
 
             if (d != null) {
@@ -351,8 +298,15 @@ public class FillBPMNDI {
                 dataObject.setAttribute("id", d.getRefId() + "_di");
                 dataObject.setAttribute("bpmnElement", d.getRefId());
 
-                Double xBound = bs.getBounds().getX();
+                Double xBound = bs.getBounds().getX() + xBoundOffset;
                 Double yBound = poolHeight + poolHeightOffset;
+
+                if(xPrev.equals(xBound)){
+                    xBoundOffset += 150;
+                    xBound += xBoundOffset;
+                }
+
+                xPrev = xBound;
 
                 Element dataObjectBounds = doc.createElement("dc:Bounds");
                 dataObjectBounds.setAttribute("x", String.valueOf(xBound));
@@ -390,56 +344,6 @@ public class FillBPMNDI {
                 rootElement.appendChild(dataObject);
 
             }
-
-        }
-
-        Task task = tasks.get(tasks.size()-1);
-        DataObject d = fp.getFinishedDataObject();
-        Shape bs = getBPMNShapeByTask(task.getId());
-
-        if (d != null) {
-
-            Element dataObject = doc.createElement("bpmndi:BPMNShape");
-            dataObject.setAttribute("id", d.getRefId() + "_di");
-            dataObject.setAttribute("bpmnElement", d.getRefId());
-
-            Double xBound = bs.getBounds().getX();
-            Double yBound = poolHeight + poolHeightOffset;
-
-            Element dataObjectBounds = doc.createElement("dc:Bounds");
-            dataObjectBounds.setAttribute("x", String.valueOf(xBound));
-            dataObjectBounds.setAttribute("y", String.valueOf(yBound));
-
-            d.setX(String.valueOf(xBound + dataObjectWidth / 2));
-            d.setY(String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight));
-
-            dataObjectBounds.setAttribute("width", String.valueOf(dataObjectWidth));
-            dataObjectBounds.setAttribute("height", String.valueOf(dataObjectHeight));
-            dataObject.appendChild(dataObjectBounds);
-
-            Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
-            //TODO: POTENZIELL BUGGY
-            dataObjectFlowOutput.setAttribute("id", task.getDataOutputAssociation().getId() + "_di");
-            dataObjectFlowOutput.setAttribute("bpmnElement", task.getDataOutputAssociation().getId());
-
-            Element waypointOutStart = doc.createElement("di:waypoint");
-            Element waypointOutEnd = doc.createElement("di:waypoint");
-
-            String waypointOutStartX = String.valueOf(xBound + activityWidth / 2);
-            String waypointOutStartY = String.valueOf(bs.getBounds().getY());
-            String waypointOutEndX = String.valueOf(xBound + activityWidth / 2);
-            String waypointOutEndY = String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight);
-
-            waypointOutStart.setAttribute("x", waypointOutStartX);
-            waypointOutStart.setAttribute("y", waypointOutStartY);
-            waypointOutEnd.setAttribute("x", waypointOutEndX);
-            waypointOutEnd.setAttribute("y", waypointOutEndY);
-
-            dataObjectFlowOutput.appendChild(waypointOutStart);
-            dataObjectFlowOutput.appendChild(waypointOutEnd);
-            rootElement.appendChild(dataObjectFlowOutput);
-
-            rootElement.appendChild(dataObject);
 
         }
     }

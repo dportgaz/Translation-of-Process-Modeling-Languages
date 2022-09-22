@@ -99,6 +99,8 @@ public class Task implements BPMNElement {
 
     Permission permission;
 
+    Participant stepParticipant;
+
     public Task(Double createdEntityId, String name, Participant participant) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
@@ -114,6 +116,7 @@ public class Task implements BPMNElement {
     private Permission permissionForStep(String name) {
         for(Object object : objects){
             if(name.equals(object.getName())){
+                this.stepParticipant = object;
                 return Permission.READ;
             }
         }
@@ -126,6 +129,10 @@ public class Task implements BPMNElement {
         }else{
             return "Read";
         }
+    }
+
+    public Participant getStepParticipant() {
+        return stepParticipant;
     }
 
     public String getParticipantName() {
@@ -513,6 +520,7 @@ public class Task implements BPMNElement {
 
                         if (m.find() && obj2.getParameters().get(0).equals(tempId)) {
                             String name = (String) obj2.getParameters().get(1);
+                            System.out.println(name);
                             return new Step(tempId, name, this.participant, this);
                         }
                     }
