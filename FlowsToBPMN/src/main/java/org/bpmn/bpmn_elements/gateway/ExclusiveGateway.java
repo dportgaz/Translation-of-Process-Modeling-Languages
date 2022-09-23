@@ -33,6 +33,13 @@ public class ExclusiveGateway implements BPMNElement {
         setElementExclusiveGateway();
     }
 
+    // TODO: create event based class?
+    public ExclusiveGateway(boolean eventBased) {
+        this.id = "Gateway_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.elementExclusiveGateway = doc.createElement("bpmn:eventBasedGateway");
+        setElementExclusiveGateway();
+    }
+
     private void setElementExclusiveGateway() {
         this.elementExclusiveGateway.setAttribute("id", this.id);
     }
@@ -45,11 +52,11 @@ public class ExclusiveGateway implements BPMNElement {
         return id;
     }
 
-    public void addBeforeElement(BPMNElement element){
+    public void addBeforeElement(BPMNElement element) {
         beforeElements.add(element);
     }
 
-    public void addAfterElement(BPMNElement element){
+    public void addAfterElement(BPMNElement element) {
         afterElements.add(element);
     }
 
