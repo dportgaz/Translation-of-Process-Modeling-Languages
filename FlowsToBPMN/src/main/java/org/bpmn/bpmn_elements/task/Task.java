@@ -101,14 +101,21 @@ public class Task implements BPMNElement {
 
     Participant stepParticipant;
 
-    public Task(Double createdEntityId, String name, Participant participant) {
+    boolean computationStep;
+
+    public Task(Double createdEntityId, String name, Participant participant, boolean computationStep) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
         this.permission = permissionForStep(name);
         this.name = stepName() + " " + name;
         this.participant = participant;
         this.participantName = name;
-        this.elementTask = doc.createElement("bpmn:task");
+        this.computationStep = computationStep;
+        if(computationStep){
+            this.elementTask = doc.createElement("bpmn:serviceTask");
+        } else {
+            this.elementTask = doc.createElement("bpmn:task");
+        }
         this.elementTask.setAttribute("id", this.id);
         this.elementTask.setAttribute("name", this.name);
     }
@@ -474,7 +481,8 @@ public class Task implements BPMNElement {
 
         objects.forEach(obj -> {
 
-            if (obj != null && obj.getMethodName().equals("AddStepType")) {
+            if (obj != null && (obj.getMethodName().equals("AddStepType") || obj.getMethodName().equals("AddComputationStepType"))) {
+                boolean computationStep = obj.getMethodName().equals("AddComputationStepType");
                 Double tempId = (Double) obj.getParameters().get(0);
                 if (this.getCreatedEntityId().equals(tempId)) {
                     // trim steps by removing default steps
@@ -483,7 +491,7 @@ public class Task implements BPMNElement {
                                 && obj2.getMethodName().equals("UpdateStepAttributeType")
                                 && obj2.getParameters().get(0).equals(obj.getCreatedEntityId())
                                 && !stepIsPredicate(objects, (Double) obj2.getParameters().get(1))) {
-                            this.steps.add(this.getStep(objects, obj));
+                            this.steps.add(this.getStep(objects, obj, computationStep));
                         }
                     });
                 }
@@ -505,7 +513,7 @@ public class Task implements BPMNElement {
         return false;
     }
 
-    private Step getStep(ArrayList<AbstractObjectType> objects, AbstractObjectType absObj) {
+    private Step getStep(ArrayList<AbstractObjectType> objects, AbstractObjectType absObj, boolean computationStep) {
 
         Double id = absObj.getCreatedEntityId();
 
@@ -520,7 +528,7 @@ public class Task implements BPMNElement {
 
                         if (m.find() && obj2.getParameters().get(0).equals(tempId)) {
                             String name = (String) obj2.getParameters().get(1);
-                            return new Step(tempId, name, this.participant, this);
+                            return new Step(tempId, name, this.participant, this, computationStep);
                         }
                     }
                 }

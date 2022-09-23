@@ -15,7 +15,7 @@ public class App {
 
 
         BPMN bpmn = new BPMN();
-        String filePHoodle = "FlowsToBPMN/src/resources/flows/Recruitment_letsgo.json";
+        String filePHoodle = "FlowsToBPMN/src/resources/flows/Computation_Step_Test.json";
         bpmn.create(filePHoodle, "PHoodle_RENEW.xml");
 
 /*

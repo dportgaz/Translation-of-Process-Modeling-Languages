@@ -6,9 +6,9 @@ public class Step extends Task {
 
     Task associatedTask;
 
-    public Step(Double createdEntityId, String name, Participant participant, Task task) {
+    public Step(Double createdEntityId, String name, Participant participant, Task task, boolean computationStep) {
 
-        super(createdEntityId, name, participant);
+        super(createdEntityId, name, participant, computationStep);
         this.associatedTask = task;
 
     }
