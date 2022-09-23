@@ -83,7 +83,6 @@ public class FillBPMNDI {
         Bounds tempBounds = null;
 
         if (previous != null) {
-
             activityMatcherPrev = activityPattern.matcher(previous);
             eventMatcherPrev = eventPattern.matcher(previous);
             gatewayMatcherPrev = gatewayPattern.matcher(previous);

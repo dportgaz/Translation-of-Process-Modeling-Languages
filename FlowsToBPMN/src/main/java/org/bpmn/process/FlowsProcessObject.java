@@ -120,7 +120,7 @@ public class FlowsProcessObject {
     }
 
 
-    private void setBeforeAndAfterElements() {
+    public void setBeforeAndAfterElements() {
 
         for (SequenceFlow flow : flows) {
 

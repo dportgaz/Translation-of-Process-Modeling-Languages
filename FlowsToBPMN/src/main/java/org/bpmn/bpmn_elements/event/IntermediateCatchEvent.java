@@ -37,7 +37,7 @@ public class IntermediateCatchEvent implements BPMNElement{
 
     DataOutputAssociation dataOutputAssociation;
 
-    String parallelMultiple;
+    boolean parallelMultiple;
 
     public IntermediateCatchEvent() {
         this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -45,7 +45,7 @@ public class IntermediateCatchEvent implements BPMNElement{
         setElement();
     }
 
-    public IntermediateCatchEvent(String parallelMultiple) {
+    public IntermediateCatchEvent(boolean parallelMultiple) {
         this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementCatchEvent = doc.createElement("bpmn:intermediateCatchEvent");
         this.parallelMultiple = parallelMultiple;
@@ -55,7 +55,7 @@ public class IntermediateCatchEvent implements BPMNElement{
     private void setElementMultiple() {
         this.elementCatchEvent.setAttribute("id", this.id);
         this.elementCatchEvent.setAttribute("name","");
-        this.elementCatchEvent.setAttribute("parallelMultiple", this.parallelMultiple);
+        this.elementCatchEvent.setAttribute("parallelMultiple", String.valueOf(this.parallelMultiple));
         Element cancelEventDefinition = doc.createElement("bpmn:cancelEventDefinition ");
         cancelEventDefinition.setAttribute("id", "CancelEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
         Element terminateEventDefinition = doc.createElement("bpmn:terminateEventDefinition ");

@@ -113,6 +113,7 @@ public class StepThree {
 
             FlowsProcessObject fp = task.getParticipant().getProcessRef();
             ArrayList<SequenceFlow> flows = fp.getFlows();
+            IntermediateCatchEvent messageCatch = null;
 
             if (cntPorts >= 2 && task.getCntOtherRelations() >= 1) {
 
@@ -133,41 +134,65 @@ public class StepThree {
 
                 fp.getFlows().remove(flow);
 
-                if (task.getIsSubprocess()) {
-                    //TODO
-                } else {
+                for (Port port : task.getPorts()) {
 
-                    for (Port port : task.getPorts()) {
-
-                        if (port.getIncoming().size() > 1) {
-
-                        }
-
-                        for (Relation relation : port.getIncoming()) {
-
-                            IntermediateCatchEvent messageCatch = new IntermediateCatchEvent();
-                            fp.getIntermediateCatchEvents().add(messageCatch);
-                            MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
-                            collaboration.getMessageFlows().add(messageFlow);
-                            collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
-
-                            SequenceFlow splitToCatch = new SequenceFlow(gateSplit, messageCatch);
-                            SequenceFlow catchToJoin = new SequenceFlow(messageCatch, gateJoin);
-
-                            gateSplit.addOutgoing(splitToCatch);
-                            gateJoin.addIncoming(catchToJoin);
-                            messageCatch.setIncoming(splitToCatch);
-                            messageCatch.setOutgoing(catchToJoin);
-
-                            fp.getFlows().add(splitToCatch);
-                            fp.getFlows().add(catchToJoin);
-
-                        }
-
+                    // case: port has more than one relation --> parallel multiple
+                    if (port.getIncoming().size() > 1) {
+                        messageCatch = setParallelPort(port);
+                    } else {
+                        messageCatch = new IntermediateCatchEvent();
+                        MessageFlow messageFlow = new MessageFlow(port.getIncoming().get(0).getTask(), messageCatch);
+                        collaboration.getMessageFlows().add(messageFlow);
+                        collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
                     }
 
+                    fp.getIntermediateCatchEvents().add(messageCatch);
+
+                    SequenceFlow splitToCatch = new SequenceFlow(gateSplit, messageCatch);
+                    SequenceFlow catchToJoin = new SequenceFlow(messageCatch, gateJoin);
+
+                    gateSplit.addOutgoing(splitToCatch);
+                    gateJoin.addIncoming(catchToJoin);
+                    messageCatch.setIncoming(splitToCatch);
+                    messageCatch.setOutgoing(catchToJoin);
+
+                    fp.getFlows().add(splitToCatch);
+                    fp.getFlows().add(catchToJoin);
+
+
+                }
+
+                fp.setBeforeAndAfterElements();
+            }
+            else if (cntPorts == 1) {
+                Port port = task.getPorts().get(0);
+                if (port.getIncoming().size() >= 2) {
+                    messageCatch = setParallelPort(port);
+                } else {
+                    Relation relation = port.getIncoming().get(0);
+                    if (relation.getRelationType() == RelationType.OTHER) {
+                        messageCatch = new IntermediateCatchEvent();
+
+                        MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
+                        collaboration.getMessageFlows().add(messageFlow);
+                        collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
+
+                    }
+                }
+                if(messageCatch != null) {
+                    fp.getIntermediateCatchEvents().add(messageCatch);
+
+                    SequenceFlow flow = fp.getFlowByTarget(task);
+                    SequenceFlow beforeTaskToCatch = new SequenceFlow(task.getBeforeElement(), messageCatch);
+                    SequenceFlow catchToTask = new SequenceFlow(messageCatch, task);
+
+                    fp.getFlows().add(beforeTaskToCatch);
+                    fp.getFlows().add(catchToTask);
+                    fp.getFlows().remove(flow);
+                    fp.setBeforeAndAfterElements();
                 }
             }
+
         }
 
 
@@ -185,14 +210,45 @@ public class StepThree {
             System.out.println();
         }
 
-        /*
         FillBPMNDI di = new FillBPMNDI();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);
 
-         */
-
         createXml(file);
 
+    }
+
+
+    private IntermediateCatchEvent setParallelPort(Port port) {
+
+        IntermediateCatchEvent messageCatch = new IntermediateCatchEvent();
+        if (port.getCntOther() == 1) {
+
+            // find other relation for messageflow
+            for (Relation relation : port.getIncoming()) {
+
+                if (relation.getRelationType() == RelationType.OTHER) {
+                    MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
+                    collaboration.getMessageFlows().add(messageFlow);
+                    collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
+                }
+
+            }
+        } else if (port.getCntOther() > 1) {
+
+            messageCatch = new IntermediateCatchEvent(true);
+
+            // find other relations for messageflows
+            for (Relation relation : port.getIncoming()) {
+
+                if (relation.getRelationType() == RelationType.OTHER) {
+                    MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
+                    collaboration.getMessageFlows().add(messageFlow);
+                    collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
+                }
+
+            }
+        }
+        return messageCatch;
     }
 
 
