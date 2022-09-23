@@ -22,8 +22,8 @@ import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 public class FillBPMNDI {
     final double participantX = 70.0;
     final double participantWidth = 2000.0;
-    final double participantHeight = 500.0;
-    final double participantYInc = 550.0;
+    final double participantHeight = 700.0;
+    final double participantYInc = participantHeight + 50.0;
 
     final double startEventYInc = 200.0;
     final double startEventX = 200.0;
@@ -299,14 +299,8 @@ public class FillBPMNDI {
                 dataObject.setAttribute("bpmnElement", d.getRefId());
 
                 Double xBound = bs.getBounds().getX() + xBoundOffset;
+                Double tempXBound = xBound;
                 Double yBound = poolHeight + poolHeightOffset;
-
-                if(xPrev.equals(xBound)){
-                    xBoundOffset += 150;
-                    xBound += xBoundOffset;
-                }
-
-                xPrev = xBound;
 
                 Element dataObjectBounds = doc.createElement("dc:Bounds");
                 dataObjectBounds.setAttribute("x", String.valueOf(xBound));

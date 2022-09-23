@@ -17,6 +17,7 @@ import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -111,7 +112,7 @@ public class Task implements BPMNElement {
         this.participant = participant;
         this.participantName = name;
         this.computationStep = computationStep;
-        if(computationStep){
+        if (computationStep) {
             this.elementTask = doc.createElement("bpmn:serviceTask");
         } else {
             this.elementTask = doc.createElement("bpmn:task");
@@ -121,8 +122,8 @@ public class Task implements BPMNElement {
     }
 
     private Permission permissionForStep(String name) {
-        for(Object object : objects){
-            if(name.equals(object.getName())){
+        for (Object object : objects) {
+            if (name.equals(object.getName())) {
                 this.stepParticipant = object;
                 return Permission.READ;
             }
@@ -130,10 +131,10 @@ public class Task implements BPMNElement {
         return Permission.WRITE;
     }
 
-    private String stepName(){
-        if(this.permission == Permission.WRITE){
+    private String stepName() {
+        if (this.permission == Permission.WRITE) {
             return "Write";
-        }else{
+        } else {
             return "Read";
         }
     }
@@ -150,7 +151,7 @@ public class Task implements BPMNElement {
         return cntOtherRelations;
     }
 
-    public void intCntOtherRelations(){
+    public void intCntOtherRelations() {
         cntOtherRelations++;
     }
 
@@ -182,9 +183,9 @@ public class Task implements BPMNElement {
     public void setElement() {
         if (this.steps.size() > 0) {
             this.isSubprocess = true;
-            if(adHoc){
+            if (adHoc) {
                 this.elementTask = doc.createElement("bpmn:adHocSubProcess");
-            } else{
+            } else {
                 this.elementTask = doc.createElement("bpmn:subProcess");
             }
             setSubProcess();
@@ -199,7 +200,7 @@ public class Task implements BPMNElement {
 
     public void setProperty(Property property) {
         this.property = property;
-        if(this.property!=null) {
+        if (this.property != null) {
             this.elementTask.appendChild(this.property.getElementProperty());
         }
     }
@@ -250,12 +251,12 @@ public class Task implements BPMNElement {
 
     }
 
-    public void setStartEvent(){
+    public void setStartEvent() {
         this.start = new StartEvent();
         this.elementTask.appendChild(this.start.getElement());
     }
 
-    public void setEndEvent(){
+    public void setEndEvent() {
         this.end = new EndEvent();
         this.elementTask.appendChild(this.end.getElement());
     }
@@ -477,8 +478,23 @@ public class Task implements BPMNElement {
         return this.name;
     }
 
+    private boolean stepIsPredicate(ArrayList<AbstractObjectType> objects, Double id) {
+        for (AbstractObjectType obj : objects) {
+            if (obj != null && obj.getMethodName().equals("UpdatePredicateStepTypeExpression")) {
+                LinkedTreeMap link = (LinkedTreeMap) obj.getParameters().get(1);
+                LinkedTreeMap innerLink = (LinkedTreeMap) link.get("Left");
+                if (innerLink.get("AttributeTypeId").equals(id)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // TODO: GEHT BESSER SETSTEPS()
     public ArrayList<Step> setSteps(ArrayList<AbstractObjectType> objects) {
 
+        HashSet<String> stepNames = new HashSet<>();
         objects.forEach(obj -> {
 
             if (obj != null && (obj.getMethodName().equals("AddStepType") || obj.getMethodName().equals("AddComputationStepType"))) {
@@ -497,20 +513,8 @@ public class Task implements BPMNElement {
                 }
             }
         });
-        return steps;
-    }
 
-    private boolean stepIsPredicate(ArrayList<AbstractObjectType> objects, Double id) {
-        for (AbstractObjectType obj : objects) {
-            if (obj != null && obj.getMethodName().equals("UpdatePredicateStepTypeExpression")) {
-                LinkedTreeMap link = (LinkedTreeMap) obj.getParameters().get(1);
-                LinkedTreeMap innerLink = (LinkedTreeMap) link.get("Left");
-                if (innerLink.get("AttributeTypeId").equals(id)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return steps;
     }
 
     private Step getStep(ArrayList<AbstractObjectType> objects, AbstractObjectType absObj, boolean computationStep) {

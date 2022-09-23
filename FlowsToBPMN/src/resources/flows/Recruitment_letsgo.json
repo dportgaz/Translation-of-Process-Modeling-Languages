@@ -1810,7 +1810,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           3189199733057681839,
-          "Invite\rProposed"
+          "Invite Proposed"
         ],
         "UpdatedEntityId": 3189199733057681839
       },
@@ -2212,7 +2212,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -7279995151824194361,
-          "New State"
+          "Appointment Confirmation"
         ],
         "UpdatedEntityId": -7279995151824194361
       },

@@ -336,16 +336,22 @@ public class FlowsProcessObject {
 
          */
 
-        for (int i = 0; i < tasks.size() - finishedDataObjects.size(); i++) {
+        for (int i = 0; i < tasks.size(); i++) {
             // add data output association
             // task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
             tasks.get(i).getDataOutputAssociation().setOutputAssociationTarget(tasks.get(i).getDataObject());
         }
 
 
+        /*
+        int i = 1;
         for (DataObject d : finishedDataObjects) {
-            tasks.get(tasks.size() - finishedDataObjects.size()).getDataOutputAssociation().setOutputAssociationTarget(d);
+            System.out.println(finishedDataObjects);
+            tasks.get(tasks.size() - i).getDataOutputAssociation().setOutputAssociationTarget(d);
+            i++;
         }
+
+         */
 
 
     }
@@ -366,19 +372,7 @@ public class FlowsProcessObject {
 
         for (Task task : tasks) {
             dataObjects.add(task.getDataObject());
-            boolean isLast = true;
-            for (SequenceFlow flow : flows) {
-                if (flow.getSourceRef().getId().equals(task.getId())) {
-                    isLast = false;
-                }
-            }
-            if (isLast) {
-                DataObject last = new DataObject(participant);
-                finishedDataObjects.add(last);
-                dataObjects.add(last);
-            }
         }
-
     }
 
     private void setTaskElement() {
