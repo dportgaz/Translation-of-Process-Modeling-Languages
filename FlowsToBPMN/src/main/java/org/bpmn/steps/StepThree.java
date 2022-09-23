@@ -103,7 +103,7 @@ public class StepThree {
 
 
         // _______________________________
-        /*
+
         for (Task task : coordinationProcess) {
 
             int cntPorts = task.getPorts().size();
@@ -117,14 +117,17 @@ public class StepThree {
             if (cntPorts >= 2 && task.getCntOtherRelations() >= 1) {
 
                 SequenceFlow flow = fp.getFlowByTarget(task);
-                ExclusiveGateway gateSplit = new ExclusiveGateway();
+                ExclusiveGateway gateSplit = new ExclusiveGateway(true);
                 ExclusiveGateway gateJoin = new ExclusiveGateway();
 
                 fp.getGateways().add(gateSplit);
                 fp.getGateways().add(gateJoin);
 
                 SequenceFlow joinToTask = new SequenceFlow(gateJoin, task);
+                gateJoin.addOutgoing(joinToTask);
                 SequenceFlow taskBeforeToSplit = new SequenceFlow(task.getBeforeElement(), gateSplit);
+                gateSplit.addIncoming(taskBeforeToSplit);
+
                 fp.getFlows().add(joinToTask);
                 fp.getFlows().add(taskBeforeToSplit);
 
@@ -136,22 +139,28 @@ public class StepThree {
 
                     for (Port port : task.getPorts()) {
 
-                        if(port.getIncoming().size() > 1){
+                        if (port.getIncoming().size() > 1) {
 
                         }
 
-                        for(Relation relation : port.getIncoming()){
-                            if(relation.getRelationType() == RelationType.OTHER){
-                                IntermediateCatchEvent messageCatch = new IntermediateCatchEvent();
-                                fp.getIntermediateCatchEvents().add(messageCatch);
-                                MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
-                                collaboration.getMessageFlows().add(messageFlow);
-                                collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
-                                fp.getFlows().add(new SequenceFlow(gateSplit, messageCatch));
-                                fp.getFlows().add(new SequenceFlow(messageCatch, gateJoin));
-                            }else{
-                                fp.getFlows().add(new SequenceFlow(gateSplit, gateJoin));
-                            }
+                        for (Relation relation : port.getIncoming()) {
+
+                            IntermediateCatchEvent messageCatch = new IntermediateCatchEvent();
+                            fp.getIntermediateCatchEvents().add(messageCatch);
+                            MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
+                            collaboration.getMessageFlows().add(messageFlow);
+                            collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
+
+                            SequenceFlow splitToCatch = new SequenceFlow(gateSplit, messageCatch);
+                            SequenceFlow catchToJoin = new SequenceFlow(messageCatch, gateJoin);
+
+                            gateSplit.addOutgoing(splitToCatch);
+                            gateJoin.addIncoming(catchToJoin);
+                            messageCatch.setIncoming(splitToCatch);
+                            messageCatch.setOutgoing(catchToJoin);
+
+                            fp.getFlows().add(splitToCatch);
+                            fp.getFlows().add(catchToJoin);
 
                         }
 
@@ -161,28 +170,6 @@ public class StepThree {
             }
         }
 
-         */
-
-        for (Participant object : objects) {
-
-            for (Task task : object.getProcessRef().getTasks()) {
-
-                if (task.getIsSubprocess()) {
-                    //System.out.println(object + " ; " + task + " : " + task.getSteps());
-                    for (Step step : task.getSteps()) {
-
-                        Participant stepParticipant = step.getStepParticipant();
-                        if (stepParticipant != null) {
-                            //System.out.println("\t" + task + " , " + step + " , " + stepParticipant);
-
-                        }
-
-                    }
-                }
-
-            }
-
-        }
 
         setProcesses(definitionsElement);
 
