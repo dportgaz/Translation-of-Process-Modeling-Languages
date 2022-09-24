@@ -59,6 +59,8 @@ public class FlowsProcessObject {
 
     HashSet<IntermediateCatchEvent> intermediateCatchEvents = new HashSet<>();
 
+    HashSet<Element> associationFlows = new HashSet<>();
+
     boolean adHoc;
 
 
@@ -88,7 +90,6 @@ public class FlowsProcessObject {
         sortProcess();
         setEndTasks();
         addEndEventFlows();
-        setAssociations();
         if (!adHoc) {
             setSubProcesses();
         }
@@ -98,6 +99,7 @@ public class FlowsProcessObject {
         addFlowsToTasks();
         setGateways();
         setBeforeAndAfterElements();
+        setAssociations();
 
     }
 
@@ -336,10 +338,29 @@ public class FlowsProcessObject {
 
          */
 
+        /*
         for (int i = 0; i < tasks.size(); i++) {
             // add data output association
             // task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
             tasks.get(i).getDataOutputAssociation().setOutputAssociationTarget(tasks.get(i).getDataObject());
+        }
+
+         */
+
+        for(Task task : tasks){
+            for(SequenceFlow flow : flows){
+                if(flow.getSourceRef().getId().equals(task.getId())){
+                    String id = "FlowAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
+                    flow.setAssociationId(id);
+                    flow.setDataObject(task.getDataObject());
+                    Element associationFlow = doc.createElement("bpmn:association");
+                    associationFlow.setAttribute("associationDirection", "None");
+                    associationFlow.setAttribute("id", id);
+                    associationFlow.setAttribute("sourceRef", flow.getId());
+                    associationFlow.setAttribute("targetRef", task.getDataObject().getRefId());
+                    associationFlows.add(associationFlow);
+                }
+            }
         }
 
 
@@ -391,6 +412,10 @@ public class FlowsProcessObject {
             tempObj.setAttribute("id", dObj.getId());
             this.elementFlowsProcess.appendChild(tempObj);
 
+        }
+
+        for(Element associationFlow : associationFlows){
+            this.elementFlowsProcess.appendChild(associationFlow);
         }
 
     }

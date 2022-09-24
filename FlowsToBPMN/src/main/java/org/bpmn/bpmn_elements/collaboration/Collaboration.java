@@ -72,7 +72,7 @@ public class Collaboration {
             });
         }
         for (Object object : objects) {
-            object.setProcessRef(objectTypeObjects, false);
+            object.setProcessRef(objectTypeObjects, true);
         }
     }
 

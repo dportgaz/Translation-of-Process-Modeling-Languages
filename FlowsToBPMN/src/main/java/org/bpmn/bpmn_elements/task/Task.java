@@ -381,7 +381,7 @@ public class Task implements BPMNElement {
     public void setDataOutputAssociation() {
 
         this.dataOutputAssociation = new DataOutputAssociation();
-        this.elementTask.appendChild(this.dataOutputAssociation.getElementDataOutputAssociation());
+        // this.elementTask.appendChild(this.dataOutputAssociation.getElementDataOutputAssociation());
 
     }
 

@@ -1,6 +1,7 @@
 package org.bpmn.bpmn_elements.flows;
 
 import org.bpmn.bpmn_elements.BPMNElement;
+import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
@@ -25,6 +26,18 @@ public class SequenceFlow {
 
     Element elementSequenceFlow;
 
+    Double xStart;
+
+    Double xEnd;
+
+    Double yStart;
+
+    Double yEnd;
+
+    String associationId;
+
+    DataObject dataObject;
+
     public SequenceFlow() {
         this.id = "Flow_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementSequenceFlow = doc.createElement("bpmn:sequenceFlow");
@@ -37,6 +50,54 @@ public class SequenceFlow {
         setElementSequenceFlow();
         setSourceRef(sourceRef);
         setTargetRef(targetRef);
+    }
+
+    public void setDataObject(DataObject dataObject) {
+        this.dataObject = dataObject;
+    }
+
+    public DataObject getDataObject() {
+        return dataObject;
+    }
+
+    public void setAssociationId(String associationId) {
+        this.associationId = associationId;
+    }
+
+    public String getAssociationId() {
+        return associationId;
+    }
+
+    public Double getxEnd() {
+        return xEnd;
+    }
+
+    public Double getxStart() {
+        return xStart;
+    }
+
+    public Double getyEnd() {
+        return yEnd;
+    }
+
+    public Double getyStart() {
+        return yStart;
+    }
+
+    public void setxEnd(Double xEnd) {
+        this.xEnd = xEnd;
+    }
+
+    public void setxStart(Double xStart) {
+        this.xStart = xStart;
+    }
+
+    public void setyStart(Double yStart) {
+        this.yStart = yStart;
+    }
+
+    public void setyEnd(Double yEnd) {
+        this.yEnd = yEnd;
     }
 
     private void setElementSequenceFlow() {

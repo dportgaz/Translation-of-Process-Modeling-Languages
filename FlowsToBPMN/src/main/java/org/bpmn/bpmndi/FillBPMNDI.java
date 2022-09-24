@@ -195,7 +195,7 @@ public class FillBPMNDI {
 
         f(rootElement, x, y, start, fp, tasks, flows, null);
         addFlowsEdge(rootElement, flows);
-        addDataObjects(rootElement, tasks);
+        addDataObjects(rootElement, tasks, flows);
         shapes.clear();
 
     }
@@ -281,6 +281,8 @@ public class FillBPMNDI {
         return null;
 
     }
+
+    /*
     public void addDataObjects(Element rootElement, ArrayList<Task> tasks) {
 
         Double xPrev = 0d;
@@ -341,6 +343,8 @@ public class FillBPMNDI {
         }
     }
 
+     */
+
     public void addFlowsEdge(Element rootElement, ArrayList<SequenceFlow> flows) {
 
         for (SequenceFlow sf : flows) {
@@ -358,7 +362,13 @@ public class FillBPMNDI {
             double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2;
 
             double xEnd = bsTarget.getBounds().getX();
-            double yEnd = bsTarget.getBounds().getY() + bsTarget.getBounds().getHeight() / 2;
+            double yEnd = yStart;
+
+
+            sf.setxStart(xStart);
+            sf.setyStart(yStart);
+            sf.setxEnd(xEnd);
+            sf.setyEnd(yEnd);
 
             Element waypointStart = doc.createElement("di:waypoint");
             waypointStart.setAttribute("x", String.valueOf(xStart));
@@ -377,6 +387,68 @@ public class FillBPMNDI {
 
     }
 
+    public void addDataObjects(Element rootElement, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows) {
+
+        for (SequenceFlow flow : flows) {
+            if (flow.getAssociationId() != null) {
+                setDataObject(rootElement, flow);
+            }
+
+        }
+    }
+
+
+    public void setDataObject(Element rootElement, SequenceFlow flow) {
+
+        DataObject d = flow.getDataObject();
+
+        if (d != null) {
+
+            Element dataObject = doc.createElement("bpmndi:BPMNShape");
+            dataObject.setAttribute("id", d.getRefId() + "_di");
+            dataObject.setAttribute("bpmnElement", d.getRefId());
+
+            Double xBound = (flow.getxStart() + flow.getxEnd()) / 2 - dataObjectWidth / 2;
+            Double tempXBound = xBound;
+            Double yBound = poolHeight + poolHeightOffset;
+
+            Element dataObjectBounds = doc.createElement("dc:Bounds");
+            dataObjectBounds.setAttribute("x", String.valueOf(xBound));
+            dataObjectBounds.setAttribute("y", String.valueOf(yBound));
+
+            d.setX(String.valueOf(xBound + dataObjectWidth / 2));
+            d.setY(String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight));
+
+            dataObjectBounds.setAttribute("width", String.valueOf(dataObjectWidth));
+            dataObjectBounds.setAttribute("height", String.valueOf(dataObjectHeight));
+            dataObject.appendChild(dataObjectBounds);
+
+            Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
+            //TODO: POTENZIELL BUGGY
+            dataObjectFlowOutput.setAttribute("id", flow.getAssociationId() + "_di");
+            dataObjectFlowOutput.setAttribute("bpmnElement", flow.getAssociationId());
+
+            Element waypointOutStart = doc.createElement("di:waypoint");
+            Element waypointOutEnd = doc.createElement("di:waypoint");
+
+            String waypointOutStartX = String.valueOf(xBound);
+            String waypointOutStartY = String.valueOf(flow.getyEnd());
+            String waypointOutEndX = String.valueOf(xBound + dataObjectWidth / 2);
+            String waypointOutEndY = String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight);
+
+            waypointOutStart.setAttribute("x", waypointOutStartX);
+            waypointOutStart.setAttribute("y", waypointOutStartY);
+            waypointOutEnd.setAttribute("x", waypointOutEndX);
+            waypointOutEnd.setAttribute("y", waypointOutEndY);
+
+            dataObjectFlowOutput.appendChild(waypointOutStart);
+            dataObjectFlowOutput.appendChild(waypointOutEnd);
+            rootElement.appendChild(dataObjectFlowOutput);
+
+            rootElement.appendChild(dataObject);
+
+        }
+    }
 }
 
 
