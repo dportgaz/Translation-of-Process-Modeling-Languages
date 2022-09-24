@@ -32,8 +32,7 @@ import java.util.regex.Pattern;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 import static org.bpmn.steps.BPMN.createXml;
 import static org.bpmn.steps.BPMN.doc;
-import static org.bpmn.steps.StepOne.allGateways;
-import static org.bpmn.steps.StepOne.allParticipants;
+import static org.bpmn.steps.StepOne.*;
 
 public class StepThree {
 
@@ -105,7 +104,7 @@ public class StepThree {
             }
         }
 
-        // complement coordination process with data model relation
+        // TODO: complement coordination process with data model relation
 
 
         // _______________________________
@@ -147,9 +146,7 @@ public class StepThree {
                     } else {
                         Task coordinationTask = port.getIncoming().get(0).getTask();
                         messageCatch = new IntermediateCatchEvent("Receive " + coordinationTask.getName());
-                        MessageFlow messageFlow = new MessageFlow(coordinationTask, messageCatch);
-                        collaboration.getMessageFlows().add(messageFlow);
-                        collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
+                        collaboration.getMessageFlows().add(new MessageFlow(coordinationTask, messageCatch));
                         DataObject d = new DataObject(coordinationTask);
                         fp.getDataObjects().add(d);
                         messageCatch.getDataObjects().add(d);
@@ -160,7 +157,7 @@ public class StepThree {
                     SequenceFlow splitToCatch = new SequenceFlow(gateSplit, messageCatch);
                     SequenceFlow catchToJoin = new SequenceFlow(messageCatch, gateJoin);
 
-                    for(DataObject d : messageCatch.getDataObjects()){
+                    for (DataObject d : messageCatch.getDataObjects()) {
                         String id = "FlowAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
                         catchToJoin.getAssociations().add(new Association(id, d));
                         Element associationFlow = doc.createElement("bpmn:association");
@@ -183,8 +180,7 @@ public class StepThree {
                 }
 
                 fp.setBeforeAndAfterElements();
-            }
-            else if (cntPorts == 1) {
+            } else if (cntPorts == 1) {
                 Port port = task.getPorts().get(0);
                 if (port.getIncoming().size() >= 2) {
                     messageCatch = setParallelPort(port, fp);
@@ -196,20 +192,18 @@ public class StepThree {
                         DataObject d = new DataObject(relation.getTask());
                         fp.getDataObjects().add(d);
                         messageCatch.getDataObjects().add(d);
-                        MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
-                        collaboration.getMessageFlows().add(messageFlow);
-                        collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
+                        collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
 
                     }
                 }
-                if(messageCatch != null) {
+                if (messageCatch != null) {
                     fp.getIntermediateCatchEvents().add(messageCatch);
 
                     SequenceFlow flow = fp.getFlowByTarget(task);
                     SequenceFlow beforeTaskToCatch = new SequenceFlow(task.getBeforeElement(), messageCatch);
                     SequenceFlow catchToTask = new SequenceFlow(messageCatch, task);
 
-                    for(DataObject d : messageCatch.getDataObjects()){
+                    for (DataObject d : messageCatch.getDataObjects()) {
                         String id = "FlowAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
                         catchToTask.getAssociations().add(new Association(id, d));
                         Element associationFlow = doc.createElement("bpmn:association");
@@ -241,12 +235,11 @@ public class StepThree {
             System.out.println();
         }
 
-
-        // TODO: Very ugly, needs refactor; transforms XOR to event
-        for(Participant object : allParticipants){
+        // TODO: Very ugly, needs refactor; replaces XOR to event when appropiate
+        for (Participant object : allParticipants) {
 
             ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
-            for(int i = 0; i < flows.size(); i++){
+            for (int i = 0; i < flows.size(); i++) {
 
                 boolean needsChange = false;
                 String id = null;
@@ -256,13 +249,13 @@ public class StepThree {
                 Pattern p2 = Pattern.compile("^ReceiveActivity_");
                 Matcher m2 = p2.matcher(flow.getTargetRef().getId());
 
-                if(m.find() && m2.find()){
-                    for(int j = i+1; j < flows.size(); j++){
+                if (m.find() && m2.find()) {
+                    for (int j = i + 1; j < flows.size(); j++) {
 
                         SequenceFlow flowInner = flows.get(j);
                         Matcher m3 = p2.matcher(flowInner.getTargetRef().getId());
-                        if(flow.getSourceRef().getId().equals(flowInner.getSourceRef().getId()) && m3.find()){
-                            ((ExclusiveGateway)flowInner.getSourceRef()).setEventBased();
+                        if (flow.getSourceRef().getId().equals(flowInner.getSourceRef().getId()) && m3.find()) {
+                            ((ExclusiveGateway) flowInner.getSourceRef()).setEventBased();
                             id = flowInner.getSourceRef().getId();
                             flowInner.setSourceRef(flowInner.getSourceRef());
                             needsChange = true;
@@ -271,13 +264,13 @@ public class StepThree {
                     }
                 }
 
-                if(needsChange){
-                    for(SequenceFlow flowOuter : flows){
-                        if(flowOuter.getTargetRef().getId().equals(flow.getSourceRef().getId())){
+                if (needsChange) {
+                    for (SequenceFlow flowOuter : flows) {
+                        if (flowOuter.getTargetRef().getId().equals(flow.getSourceRef().getId())) {
                             flowOuter.setTargetRef(flow.getSourceRef());
                         }
                     }
-                    ((ExclusiveGateway)flow.getSourceRef()).setEventBased(id);
+                    ((ExclusiveGateway) flow.getSourceRef()).setEventBased(id);
                     flow.setSourceRef(flow.getSourceRef());
 
                 }
@@ -286,7 +279,46 @@ public class StepThree {
 
         }
 
+        // transforms throwing message tasks to sendTasks
 
+        HashSet<Task> tasksToTransform = new HashSet<>();
+
+        for (MessageFlow mf : collaboration.getMessageFlows()) {
+
+            for (Task task : allTasks) {
+
+                if (task.getId().equals(mf.getSourceRef().getId())) {
+                    tasksToTransform.add(task);
+                }
+
+            }
+
+        }
+
+        // fill allFlows
+        for (Participant object : allParticipants) {
+            allFlows.addAll(object.getProcessRef().getFlows());
+        }
+
+        for (Task task : tasksToTransform) {
+            task.setSendTask();
+            for (MessageFlow mf : collaboration.getMessageFlows()) {
+                if (mf.getSourceRef().getId().equals(task.getId())) {
+                    mf.getElementMessageFlow().setAttribute("sourceRef", task.getId());
+                }
+            }
+            for (SequenceFlow sf : allFlows) {
+                if (sf.getSourceRef().getId().equals(task.getId())) {
+                    sf.getElementSequenceFlow().setAttribute("sourceRef", task.getId());
+                }
+                if (sf.getTargetRef().getId().equals(task.getId())) {
+                    sf.getElementSequenceFlow().setAttribute("targetRef", task.getId());
+                }
+            }
+
+        }
+
+        System.out.println(tasksToTransform);
 
 
         setProcesses(definitionsElement);
@@ -298,7 +330,6 @@ public class StepThree {
 
     }
 
-
     private IntermediateCatchEvent setParallelPort(Port port, FlowsProcessObject fp) {
 
         IntermediateCatchEvent messageCatch = null;
@@ -309,12 +340,10 @@ public class StepThree {
 
                 if (relation.getRelationType() == RelationType.OTHER) {
                     messageCatch = new IntermediateCatchEvent("Receive " + relation.getTask().getName());
-                    MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
                     DataObject d = new DataObject(relation.getTask());
                     fp.getDataObjects().add(d);
                     messageCatch.getDataObjects().add(d);
-                    collaboration.getMessageFlows().add(messageFlow);
-                    collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
+                    collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
                 }
 
             }
@@ -326,15 +355,13 @@ public class StepThree {
             for (Relation relation : port.getIncoming()) {
 
                 if (relation.getRelationType() == RelationType.OTHER) {
-                    MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
                     messageCatch.setName(messageCatch.getName() + " " + relation.getTask().getName() + ", ");
                     DataObject d = new DataObject(relation.getTask());
                     fp.getDataObjects().add(d);
                     messageCatch.getDataObjects().add(d);
-                    collaboration.getMessageFlows().add(messageFlow);
-                    collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
+                    collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
                 }
-                messageCatch.setName(messageCatch.getName().substring(0, messageCatch.getName().length()-1));
+                messageCatch.setName(messageCatch.getName().substring(0, messageCatch.getName().length() - 1));
 
             }
         }
@@ -345,6 +372,10 @@ public class StepThree {
     public void setProcesses(Element definitionsElement) {
 
         definitionsElement.appendChild(collaboration.getElementCollaboration());
+
+        for (MessageFlow mf : collaboration.getMessageFlows()) {
+            collaboration.getElementCollaboration().appendChild(mf.getElement());
+        }
 
         for (Object participant : objects) {
 

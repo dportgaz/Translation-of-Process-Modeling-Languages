@@ -104,6 +104,8 @@ public class Task implements BPMNElement {
 
     boolean computationStep;
 
+    boolean isSendTask;
+
     public Task(Double createdEntityId, String name, Participant participant, boolean computationStep) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
@@ -117,6 +119,14 @@ public class Task implements BPMNElement {
         } else {
             this.elementTask = doc.createElement("bpmn:task");
         }
+        this.elementTask.setAttribute("id", this.id);
+        this.elementTask.setAttribute("name", this.name);
+    }
+
+    public void setSendTask() {
+        this.isSendTask = true;
+        this.id = "SendActivity" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.elementTask = doc.createElement("bpmn:sendTask");
         this.elementTask.setAttribute("id", this.id);
         this.elementTask.setAttribute("name", this.name);
     }

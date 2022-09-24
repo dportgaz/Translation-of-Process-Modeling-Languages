@@ -6,7 +6,7 @@ import org.w3c.dom.Element;
 
 import static org.bpmn.steps.BPMN.doc;
 
-public class MessageFlow extends SequenceFlow{
+public class MessageFlow {
 
     String id;
 
@@ -41,6 +41,10 @@ public class MessageFlow extends SequenceFlow{
         this.elementMessageFlow.setAttribute("sourceRef", sourceRef.getId());
     }
 
+    public Element getElementMessageFlow() {
+        return elementMessageFlow;
+    }
+
     public void setTargetRef(BPMNElement targetRef) {
         this.targetRef = targetRef;
         this.elementMessageFlow.setAttribute("targetRef", targetRef.getId());
@@ -48,6 +52,14 @@ public class MessageFlow extends SequenceFlow{
 
     private void setElementMessageFlow() {
         this.elementMessageFlow.setAttribute("id", this.id);
+    }
+
+    public BPMNElement getSourceRef() {
+        return sourceRef;
+    }
+
+    public BPMNElement getTargetRef() {
+        return targetRef;
     }
 
     public Element getElement() {
