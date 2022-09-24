@@ -43,17 +43,31 @@ public class IntermediateCatchEvent implements BPMNElement{
 
     HashSet<DataObject> dataObjects = new HashSet<>();
 
-    public IntermediateCatchEvent() {
-        this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
-        this.elementCatchEvent = doc.createElement("bpmn:intermediateCatchEvent");
+    String name;
+
+    public IntermediateCatchEvent(String name) {
+        this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.name = name;
+        this.elementCatchEvent = doc.createElement("bpmn:receiveTask");
         setElement();
     }
 
     public IntermediateCatchEvent(boolean parallelMultiple) {
-        this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
-        this.elementCatchEvent = doc.createElement("bpmn:intermediateCatchEvent");
+        this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.name = "Receive ";
+        this.elementCatchEvent = doc.createElement("bpmn:receiveTask");
         this.parallelMultiple = parallelMultiple;
         setElementMultiple();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        this.elementCatchEvent.setAttribute("name", this.name);
+
     }
 
     public HashSet<DataObject> getDataObjects() {
@@ -62,21 +76,24 @@ public class IntermediateCatchEvent implements BPMNElement{
 
     private void setElementMultiple() {
         this.elementCatchEvent.setAttribute("id", this.id);
-        this.elementCatchEvent.setAttribute("name","");
-        this.elementCatchEvent.setAttribute("parallelMultiple", String.valueOf(this.parallelMultiple));
-        Element cancelEventDefinition = doc.createElement("bpmn:cancelEventDefinition ");
-        cancelEventDefinition.setAttribute("id", "CancelEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
-        Element terminateEventDefinition = doc.createElement("bpmn:terminateEventDefinition ");
-        terminateEventDefinition.setAttribute("id", "TerminateEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
-        this.elementCatchEvent.appendChild(cancelEventDefinition);
-        this.elementCatchEvent.appendChild(terminateEventDefinition);
+        this.elementCatchEvent.setAttribute("name", this.name);
+        //this.elementCatchEvent.setAttribute("name","");
+        //this.elementCatchEvent.setAttribute("parallelMultiple", String.valueOf(this.parallelMultiple));
+        //Element cancelEventDefinition = doc.createElement("bpmn:cancelEventDefinition ");
+        //cancelEventDefinition.setAttribute("id", "CancelEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
+        //Element terminateEventDefinition = doc.createElement("bpmn:terminateEventDefinition ");
+        //terminateEventDefinition.setAttribute("id", "TerminateEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
+        //this.elementCatchEvent.appendChild(cancelEventDefinition);
+        //this.elementCatchEvent.appendChild(terminateEventDefinition);
     }
 
     public void setElement() {
         this.elementCatchEvent.setAttribute("id", this.id);
-        Element messageEventDefinition = doc.createElement("bpmn:messageEventDefinition");
-        messageEventDefinition.setAttribute("id", "MessageEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
-        this.elementCatchEvent.appendChild(messageEventDefinition);
+        this.elementCatchEvent.setAttribute("name", this.name);
+
+        //Element messageEventDefinition = doc.createElement("bpmn:messageEventDefinition");
+        //messageEventDefinition.setAttribute("id", "MessageEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
+        //this.elementCatchEvent.appendChild(messageEventDefinition);
     }
 
     public void setIncoming(SequenceFlow incoming) {

@@ -145,8 +145,8 @@ public class StepThree {
                     if (port.getIncoming().size() > 1) {
                         messageCatch = setParallelPort(port, fp);
                     } else {
-                        messageCatch = new IntermediateCatchEvent();
                         Task coordinationTask = port.getIncoming().get(0).getTask();
+                        messageCatch = new IntermediateCatchEvent("Receive " + coordinationTask.getName());
                         MessageFlow messageFlow = new MessageFlow(coordinationTask, messageCatch);
                         collaboration.getMessageFlows().add(messageFlow);
                         collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
@@ -191,7 +191,8 @@ public class StepThree {
                 } else {
                     Relation relation = port.getIncoming().get(0);
                     if (relation.getRelationType() == RelationType.OTHER) {
-                        messageCatch = new IntermediateCatchEvent();
+                        Task coordinationTask = relation.getTask();
+                        messageCatch = new IntermediateCatchEvent("Receive " + coordinationTask.getName());
                         DataObject d = new DataObject(relation.getTask());
                         fp.getDataObjects().add(d);
                         messageCatch.getDataObjects().add(d);
@@ -300,13 +301,14 @@ public class StepThree {
 
     private IntermediateCatchEvent setParallelPort(Port port, FlowsProcessObject fp) {
 
-        IntermediateCatchEvent messageCatch = new IntermediateCatchEvent();
+        IntermediateCatchEvent messageCatch = null;
         if (port.getCntOther() == 1) {
 
             // find other relation for messageflow
             for (Relation relation : port.getIncoming()) {
 
                 if (relation.getRelationType() == RelationType.OTHER) {
+                    messageCatch = new IntermediateCatchEvent("Receive " + relation.getTask().getName());
                     MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
                     DataObject d = new DataObject(relation.getTask());
                     fp.getDataObjects().add(d);
@@ -325,12 +327,14 @@ public class StepThree {
 
                 if (relation.getRelationType() == RelationType.OTHER) {
                     MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
+                    messageCatch.setName(messageCatch.getName() + " " + relation.getTask().getName() + ", ");
                     DataObject d = new DataObject(relation.getTask());
                     fp.getDataObjects().add(d);
                     messageCatch.getDataObjects().add(d);
                     collaboration.getMessageFlows().add(messageFlow);
                     collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
                 }
+                messageCatch.setName(messageCatch.getName().substring(0, messageCatch.getName().length()-1));
 
             }
         }
