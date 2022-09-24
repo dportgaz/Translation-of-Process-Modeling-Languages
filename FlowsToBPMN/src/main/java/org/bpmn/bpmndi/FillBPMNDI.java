@@ -73,9 +73,9 @@ public class FillBPMNDI {
         ArrayList<String> list = new ArrayList<>();
 
         // extract in method to recognize if activity, event or gateway
-        Pattern activityPattern = Pattern.compile("Activity*");
-        Pattern eventPattern = Pattern.compile("Event*");
-        Pattern gatewayPattern = Pattern.compile("Gateway*");
+        Pattern activityPattern = Pattern.compile("(Activity_+|ReceiveActivity_)");
+        Pattern eventPattern = Pattern.compile("Event_+");
+        Pattern gatewayPattern = Pattern.compile("(Gateway_+|EventGate_+)");
         Matcher activityMatcher = activityPattern.matcher(e);
         Matcher eventMatcher = eventPattern.matcher(e);
         Matcher gatewayMatcher = gatewayPattern.matcher(e);

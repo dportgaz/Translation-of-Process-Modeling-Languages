@@ -253,7 +253,7 @@ public class StepThree {
                 SequenceFlow flow = flows.get(i);
                 Pattern p = Pattern.compile("^Gateway_");
                 Matcher m = p.matcher(flow.getSourceRef().getId());
-                Pattern p2 = Pattern.compile("^Event_");
+                Pattern p2 = Pattern.compile("^ReceiveActivity_");
                 Matcher m2 = p2.matcher(flow.getTargetRef().getId());
 
                 if(m.find() && m2.find()){

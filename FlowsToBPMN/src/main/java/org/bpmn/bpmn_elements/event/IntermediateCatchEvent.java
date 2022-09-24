@@ -46,14 +46,14 @@ public class IntermediateCatchEvent implements BPMNElement{
     String name;
 
     public IntermediateCatchEvent(String name) {
-        this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.id = "ReceiveActivity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.name = name;
         this.elementCatchEvent = doc.createElement("bpmn:receiveTask");
         setElement();
     }
 
     public IntermediateCatchEvent(boolean parallelMultiple) {
-        this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.id = "ReceiveActivity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.name = "Receive ";
         this.elementCatchEvent = doc.createElement("bpmn:receiveTask");
         this.parallelMultiple = parallelMultiple;
