@@ -79,26 +79,11 @@ public class DataObject {
         this.elementDataObject.setAttribute("dataObjectRef", this.id);
         this.elementDataObject.setAttribute("id", this.refId);
 
-        String task = associatedTask.getName();
-        String obj = "";
-        char[] temp = task.toCharArray();
-        int i = temp.length-1;
+        String obj = associatedTask.getParticipant().getName();
+        String temp = associatedTask.getName().replaceAll(obj, "");
+        String state = temp.substring(0, temp.length()-1);
 
-        for(; i >= 0; i--){
-            obj += temp[i];
-            if(temp[i] == ' '){
-                break;
-            }
-        }
-        obj = new StringBuilder(obj).reverse().substring(1, obj.length());
-
-        String state = "[";
-        for(int j = 0; j < i; j++){
-            state += temp[j];
-        }
-        state +="]";
-
-        this.elementDataObject.setAttribute("name", obj + " " + state);
+        this.elementDataObject.setAttribute("name", obj + " " + "[" + state + "]");
 
     }
 
