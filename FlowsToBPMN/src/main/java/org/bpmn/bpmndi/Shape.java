@@ -45,7 +45,7 @@ public class Shape {
     private void setElement(boolean isSubprocess) {
         bpmnElement.setAttribute("bpmnElement", elementId);
         bpmnElement.setAttribute("id", elementIdDi);
-        if(isSubprocess){
+        if (isSubprocess) {
             bpmnElement.setAttribute("isExpanded", "false");
         }
         bpmnElement.appendChild(bounds.getElementBounds());
@@ -69,8 +69,8 @@ public class Shape {
         this.bounds = bounds;
         this.bpmnElement = doc.createElement("bpmndi:BPMNShape");
 
-        for(Task task : tasks){
-            if(task.getId().equals(elementId) && task.getIsSubprocess()){
+        for (Task task : tasks) {
+            if (task.getId().equals(elementId) && task.getIsSubprocess()) {
                 this.isSubprocess = true;
             }
         }
@@ -81,7 +81,7 @@ public class Shape {
         bpmnElement.setAttribute("id", elementIdDi);
         bpmnElement.setAttribute("bpmnElement", elementId);
         //bpmnElement.setAttribute("isHorizontal", isHorizontal);
-        if(isSubprocess) {
+        if (isSubprocess) {
             bpmnElement.setAttribute("isExpanded", "false");
         }
 
@@ -92,7 +92,7 @@ public class Shape {
         bpmnElement.setAttribute("id", elementIdDi);
         bpmnElement.setAttribute("bpmnElement", elementId);
         bpmnElement.setAttribute("isHorizontal", isHorizontal);
-        if(isSubprocess) {
+        if (isSubprocess) {
             bpmnElement.setAttribute("isExpanded", "false");
         }
 

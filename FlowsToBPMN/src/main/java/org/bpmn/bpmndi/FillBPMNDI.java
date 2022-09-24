@@ -5,7 +5,6 @@ import org.bpmn.bpmn_elements.flows.Association;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Task;
-//import org.bpmn.process.FlowsProcessUser;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
@@ -64,9 +63,9 @@ public class FillBPMNDI {
 
     HashSet<String> targetMark = new HashSet<>();
 
-    ArrayList<Shape> shapes = new ArrayList<>();
+    HashSet<Shape> shapes = new HashSet<>();
 
-    ArrayList<Shape> shapesTwo = new ArrayList<>();
+    HashSet<Shape> allShapes = new HashSet<>();
 
     public void f(Element rootElement, double x, double y, String e, FlowsProcessObject fp, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous) {
 
@@ -198,29 +197,30 @@ public class FillBPMNDI {
         f(rootElement, x, y, start, fp, tasks, flows, null);
         addFlowsEdge(rootElement, flows);
         addDataObjects(rootElement, flows);
+        allShapes.addAll(shapes);
         shapes.clear();
 
     }
 
-    public void fillBPMNDI(String bpmndiagramID, Element rootElement, Collaboration collaboration) {
+    public void fillBPMNDI(String bpmndiagramID, Element rootElement, Collaboration collaboration, boolean visibleMessageFloes) {
 
-        Element bpmndiagram = doc.createElement("bpmndi:BPMNDiagram");
-        bpmndiagram.setAttribute("id", bpmndiagramID);
-        rootElement.appendChild(bpmndiagram);
+        Element bpmnDiagram = doc.createElement("bpmndi:BPMNDiagram");
+        bpmnDiagram.setAttribute("id", bpmndiagramID);
+        rootElement.appendChild(bpmnDiagram);
 
-        Element bpmnlane = doc.createElement("bpmndi:BPMNPlane");
-        bpmnlane.setAttribute("id", "BPMNlane_" + RandomIdGenerator.generateRandomUniqueId(6));
-        bpmnlane.setAttribute("bpmnElement", collaboration.getId());
-        bpmndiagram.appendChild(bpmnlane);
+        Element bpmnLane = doc.createElement("bpmndi:BPMNPlane");
+        bpmnLane.setAttribute("id", "BPMNlane_" + RandomIdGenerator.generateRandomUniqueId(6));
+        bpmnLane.setAttribute("bpmnElement", collaboration.getId());
+        bpmnDiagram.appendChild(bpmnLane);
 
         double participantStartY = 100.0;
         double startEventY = participantHeight / 2 - 20 + participantStartY;
         for (Object participant : objects) {
 
             // add pools
-            addParticipantsShape(bpmnlane, participant, participantStartY);
+            addParticipantsShape(bpmnLane, participant, participantStartY);
 
-            parseFlows(bpmnlane, participant.getProcessRef(), startEventX, startEventY);
+            parseFlows(bpmnLane, participant.getProcessRef(), startEventX, startEventY);
 
             // adapt positions for next participant/pool
             participantStartY += participantYInc;
@@ -228,16 +228,44 @@ public class FillBPMNDI {
 
         }
 
-        // TODO
-        /*
-        HashSet<MessageFlow> messageFlows = collaboration.getMessageFlows();
-        setMessageFlows(messageFlows, rootElement);
-
-         */
+        if(visibleMessageFloes) {
+            setMessageFlows(bpmnLane, collaboration);
+        }
     }
 
-    private void setMessageFlows(HashSet<MessageFlow> messageFlows, Element rootElement) {
-        // TODO
+    private void setMessageFlows(Element rootElement, Collaboration collaboration) {
+
+        HashSet<MessageFlow> messageFlows = collaboration.getMessageFlows();
+
+        for(MessageFlow mf : messageFlows) {
+            Element flow = doc.createElement("bpmndi:BPMNEdge");
+            flow.setAttribute("id", mf.getId() + "_di");
+            flow.setAttribute("bpmnElement", mf.getId());
+
+            Shape bsSource = getBPMNShapeByFlowMessage(mf.getSourceRef().getId());
+            Shape bsTarget = getBPMNShapeByFlowMessage(mf.getTargetRef().getId());
+
+            // JSON BUG FINDING :
+            // System.out.println(((Task)mf.getSourceRef()).getName());
+            double xStart = bsSource.getBounds().getX() + bsSource.getBounds().getWidth() - activityWidth/2;
+            double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2;
+
+            double xEnd = bsTarget.getBounds().getX() + activityWidth/2;
+            double yEnd = yStart;
+
+            Element waypointStart = doc.createElement("di:waypoint");
+            waypointStart.setAttribute("x", String.valueOf(xStart));
+            waypointStart.setAttribute("y", String.valueOf(yStart));
+
+            Element waypointEnd = doc.createElement("di:waypoint");
+            waypointEnd.setAttribute("x", String.valueOf(xEnd));
+            waypointEnd.setAttribute("y", String.valueOf(yEnd));
+
+            flow.appendChild(waypointStart);
+            flow.appendChild(waypointEnd);
+            rootElement.appendChild(flow);
+        }
+
     }
 
     public void addParticipantsShape(Element rootElement, Participant p, double participantY) {
@@ -265,11 +293,11 @@ public class FillBPMNDI {
 
     }
 
-    private Shape getBPMNShapeByTask(String taskId) {
+    private Shape getBPMNShapeByFlowMessage(String sfId) {
 
-        for (Shape bs : shapes) {
+        for (Shape bs : allShapes) {
 
-            if (bs.getElementId().equals(taskId)) {
+            if (bs.getElementId().equals(sfId)) {
                 return bs;
             }
 
@@ -279,9 +307,9 @@ public class FillBPMNDI {
 
     }
 
-    private Shape getBPMNShapeByTaskTwo(String taskId) {
+    private Shape getBPMNShapeByTask(String taskId) {
 
-        for (Shape bs : shapesTwo) {
+        for (Shape bs : shapes) {
 
             if (bs.getElementId().equals(taskId)) {
                 return bs;

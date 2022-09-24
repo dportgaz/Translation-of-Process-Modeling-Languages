@@ -65,4 +65,13 @@ public class MessageFlow {
     public Element getElement() {
         return elementMessageFlow;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        return sourceRef.getId() + " --> " + targetRef.getId();
+    }
 }

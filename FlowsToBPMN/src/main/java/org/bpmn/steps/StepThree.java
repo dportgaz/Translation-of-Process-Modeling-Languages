@@ -223,6 +223,7 @@ public class StepThree {
 
         }
 
+        // prints coordination process and data relations
         System.out.println(relations + "\n");
         for (Task task : coordinationProcess) {
             System.out.print(task + " ");
@@ -300,6 +301,7 @@ public class StepThree {
             allFlows.addAll(object.getProcessRef().getFlows());
         }
 
+        // transforms throwing message tasks to sendTasks; helping method
         for (Task task : tasksToTransform) {
             task.setSendTask();
             for (MessageFlow mf : collaboration.getMessageFlows()) {
@@ -318,13 +320,10 @@ public class StepThree {
 
         }
 
-        System.out.println(tasksToTransform);
-
-
         setProcesses(definitionsElement);
 
         FillBPMNDI di = new FillBPMNDI();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false);
 
         createXml(file);
 
