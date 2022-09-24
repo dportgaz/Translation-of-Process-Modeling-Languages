@@ -161,10 +161,10 @@ public class StepThree {
                         String id = "FlowAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
                         catchToJoin.getAssociations().add(new Association(id, d));
                         Element associationFlow = doc.createElement("bpmn:association");
-                        associationFlow.setAttribute("associationDirection", "None");
+                        associationFlow.setAttribute("associationDirection", "One");
                         associationFlow.setAttribute("id", id);
-                        associationFlow.setAttribute("sourceRef", catchToJoin.getId());
-                        associationFlow.setAttribute("targetRef", d.getRefId());
+                        associationFlow.setAttribute("sourceRef", d.getRefId());
+                        associationFlow.setAttribute("targetRef", catchToJoin.getId());
                         fp.getAssociationFlows().add(associationFlow);
                     }
 
@@ -207,10 +207,10 @@ public class StepThree {
                         String id = "FlowAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
                         catchToTask.getAssociations().add(new Association(id, d));
                         Element associationFlow = doc.createElement("bpmn:association");
-                        associationFlow.setAttribute("associationDirection", "None");
+                        associationFlow.setAttribute("associationDirection", "One");
                         associationFlow.setAttribute("id", id);
-                        associationFlow.setAttribute("sourceRef", catchToTask.getId());
-                        associationFlow.setAttribute("targetRef", d.getRefId());
+                        associationFlow.setAttribute("sourceRef", d.getRefId());
+                        associationFlow.setAttribute("targetRef", catchToTask.getId());
                         fp.getAssociationFlows().add(associationFlow);
                     }
 
@@ -236,7 +236,7 @@ public class StepThree {
             System.out.println();
         }
 
-        // TODO: Very ugly, needs refactor; replaces XOR to event when appropiate
+        // TODO: Very ugly, needs refactor; replaces XOR to event when appropriate
         for (Participant object : allParticipants) {
 
             ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
@@ -245,9 +245,9 @@ public class StepThree {
                 boolean needsChange = false;
                 String id = null;
                 SequenceFlow flow = flows.get(i);
-                Pattern p = Pattern.compile("^Gateway_");
+                Pattern p = Pattern.compile("^Gateway_+");
                 Matcher m = p.matcher(flow.getSourceRef().getId());
-                Pattern p2 = Pattern.compile("^ReceiveActivity_");
+                Pattern p2 = Pattern.compile("(^ReceiveActivity_+|^EventGateway_+)");
                 Matcher m2 = p2.matcher(flow.getTargetRef().getId());
 
                 if (m.find() && m2.find()) {
@@ -277,6 +277,41 @@ public class StepThree {
                 }
 
             }
+
+        }
+
+        // trim eventgate --> eventgate
+        for(Participant object : allParticipants){
+
+            ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
+            HashSet<SequenceFlow> flowsToRemove = new HashSet<>();
+            HashSet<ExclusiveGateway> gatewaysToRemove = new HashSet<>();
+            HashSet<SequenceFlow> flowsToAdd = new HashSet<>();
+
+            for(SequenceFlow flow : flows){
+                Pattern p = Pattern.compile("^EventGateway_+");
+                Matcher matchSource = p.matcher(flow.getSourceRef().getId());
+                Matcher matchTarget = p.matcher(flow.getTargetRef().getId());
+
+                if(matchSource.find() && matchTarget.find()){
+                    flowsToRemove.add(flow);
+                    gatewaysToRemove.add((ExclusiveGateway) flow.getTargetRef());
+                    ArrayList<SequenceFlow> outgoingOuterEventBased = new ArrayList<>();
+                    for(SequenceFlow outerFlow : flows){
+                        if(outerFlow.getSourceRef().getId().equals(flow.getTargetRef().getId())){
+                            outgoingOuterEventBased.add(outerFlow);
+                            flowsToRemove.add(outerFlow);
+                        }
+                    }
+                    for(SequenceFlow temp : outgoingOuterEventBased){
+                        flowsToAdd.add(new SequenceFlow(flow.getSourceRef(), temp.getTargetRef()));
+                    }
+                }
+            }
+
+            flows.removeAll(flowsToRemove);
+            flows.addAll(flowsToAdd);
+            object.getProcessRef().getGateways().removeAll(gatewaysToRemove);
 
         }
 

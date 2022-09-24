@@ -468,7 +468,7 @@ public class FillBPMNDI {
         Element waypointOutStart = doc.createElement("di:waypoint");
         Element waypointOutEnd = doc.createElement("di:waypoint");
 
-        String waypointOutStartX = String.valueOf(xBound);
+        String waypointOutStartX = String.valueOf(xBound + dataObjectWidth / 2);
         String waypointOutStartY = String.valueOf(flow.getYEnd());
         String waypointOutEndX = String.valueOf(xBound + dataObjectWidth / 2);
         String waypointOutEndY = String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight);

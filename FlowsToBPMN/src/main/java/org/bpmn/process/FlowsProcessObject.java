@@ -354,10 +354,10 @@ public class FlowsProcessObject {
                     String id = "FlowAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
                     flow.getAssociations().add(new Association(id, task.getDataObject()));
                     Element associationFlow = doc.createElement("bpmn:association");
-                    associationFlow.setAttribute("associationDirection", "None");
+                    associationFlow.setAttribute("associationDirection", "One");
                     associationFlow.setAttribute("id", id);
-                    associationFlow.setAttribute("sourceRef", flow.getId());
-                    associationFlow.setAttribute("targetRef", task.getDataObject().getRefId());
+                    associationFlow.setAttribute("sourceRef", task.getDataObject().getRefId());
+                    associationFlow.setAttribute("targetRef", flow.getId());
                     associationFlows.add(associationFlow);
                 }
             }
