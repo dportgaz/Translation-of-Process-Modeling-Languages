@@ -483,7 +483,7 @@ public class Task implements BPMNElement {
             if (obj != null && obj.getMethodName().equals("UpdatePredicateStepTypeExpression")) {
                 LinkedTreeMap link = (LinkedTreeMap) obj.getParameters().get(1);
                 LinkedTreeMap innerLink = (LinkedTreeMap) link.get("Left");
-                if (innerLink.get("AttributeTypeId").equals(id)) {
+                if (innerLink.get("AttributeTypeId") != null && innerLink.get("AttributeTypeId").equals(id)) {
                     return true;
                 }
             }

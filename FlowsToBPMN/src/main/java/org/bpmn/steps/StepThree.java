@@ -24,9 +24,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 import static org.bpmn.steps.BPMN.createXml;
+import static org.bpmn.steps.StepOne.allGateways;
 import static org.bpmn.steps.StepOne.allParticipants;
 
 public class StepThree {
@@ -112,7 +115,6 @@ public class StepThree {
             }
 
             FlowsProcessObject fp = task.getParticipant().getProcessRef();
-            ArrayList<SequenceFlow> flows = fp.getFlows();
             IntermediateCatchEvent messageCatch = null;
 
             if (cntPorts >= 2 && task.getCntOtherRelations() >= 1) {
@@ -195,9 +197,6 @@ public class StepThree {
 
         }
 
-
-        setProcesses(definitionsElement);
-
         System.out.println(relations + "\n");
         for (Task task : coordinationProcess) {
             System.out.print(task + " ");
@@ -209,6 +208,56 @@ public class StepThree {
             }
             System.out.println();
         }
+
+
+        // TODO: Very ugly, needs refactor; transforms XOR to event
+        for(Participant object : allParticipants){
+
+            ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
+            for(int i = 0; i < flows.size(); i++){
+
+                boolean needsChange = false;
+                String id = null;
+                SequenceFlow flow = flows.get(i);
+                Pattern p = Pattern.compile("^Gateway_");
+                Matcher m = p.matcher(flow.getSourceRef().getId());
+                Pattern p2 = Pattern.compile("^Event_");
+                Matcher m2 = p2.matcher(flow.getTargetRef().getId());
+
+                if(m.find() && m2.find()){
+                    for(int j = i+1; j < flows.size(); j++){
+
+                        SequenceFlow flowInner = flows.get(j);
+                        Matcher m3 = p2.matcher(flowInner.getTargetRef().getId());
+                        if(flow.getSourceRef().getId().equals(flowInner.getSourceRef().getId()) && m3.find()){
+                            ((ExclusiveGateway)flowInner.getSourceRef()).setEventBased();
+                            id = flowInner.getSourceRef().getId();
+                            flowInner.setSourceRef(flowInner.getSourceRef());
+                            needsChange = true;
+                        }
+
+                    }
+                }
+
+                if(needsChange){
+                    for(SequenceFlow flowOuter : flows){
+                        if(flowOuter.getTargetRef().getId().equals(flow.getSourceRef().getId())){
+                            flowOuter.setTargetRef(flow.getSourceRef());
+                        }
+                    }
+                    ((ExclusiveGateway)flow.getSourceRef()).setEventBased(id);
+                    flow.setSourceRef(flow.getSourceRef());
+
+                }
+
+            }
+
+        }
+
+
+
+
+        setProcesses(definitionsElement);
 
         FillBPMNDI di = new FillBPMNDI();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration);

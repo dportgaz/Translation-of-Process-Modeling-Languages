@@ -27,6 +27,8 @@ public class ExclusiveGateway implements BPMNElement {
 
     BPMNElement afterElement;
 
+    boolean eventBased;
+
     public ExclusiveGateway() {
         this.id = "Gateway_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementExclusiveGateway = doc.createElement("bpmn:exclusiveGateway");
@@ -35,7 +37,22 @@ public class ExclusiveGateway implements BPMNElement {
 
     // TODO: create event based class?
     public ExclusiveGateway(boolean eventBased) {
+        this.eventBased = eventBased;
         this.id = "EventGateway_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.elementExclusiveGateway = doc.createElement("bpmn:eventBasedGateway");
+        setElementExclusiveGateway();
+    }
+
+    public void setEventBased() {
+        this.eventBased = true;
+        this.id = "EventGateway_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.elementExclusiveGateway = doc.createElement("bpmn:eventBasedGateway");
+        setElementExclusiveGateway();
+    }
+
+    public void setEventBased(String id) {
+        this.eventBased = true;
+        this.id = id;
         this.elementExclusiveGateway = doc.createElement("bpmn:eventBasedGateway");
         setElementExclusiveGateway();
     }
@@ -109,12 +126,27 @@ public class ExclusiveGateway implements BPMNElement {
 
     }
 
+    public ArrayList<SequenceFlow> getIncomings() {
+        return incomings;
+    }
+
+    public ArrayList<SequenceFlow> getOutgoings() {
+        return outgoings;
+    }
+
     public void addIncoming(SequenceFlow incoming) {
         incomings.add(incoming);
+        Element temp = doc.createElement("bpmn:incoming");
+        temp.setTextContent(incoming.getId());
+        elementExclusiveGateway.appendChild(temp);
     }
 
     public void addOutgoing(SequenceFlow outgoing) {
         outgoings.add(outgoing);
+        incomings.add(outgoing);
+        Element temp = doc.createElement("bpmn:outgoing");
+        temp.setTextContent(outgoing.getId());
+        elementExclusiveGateway.appendChild(temp);
     }
 
     @Override
