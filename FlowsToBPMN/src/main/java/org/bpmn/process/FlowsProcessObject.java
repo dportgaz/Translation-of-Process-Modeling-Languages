@@ -377,6 +377,10 @@ public class FlowsProcessObject {
 
     }
 
+    public HashSet<Element> getAssociationFlows() {
+        return associationFlows;
+    }
+
     public void setFlowsElement() {
 
         for (SequenceFlow flow : flows) {

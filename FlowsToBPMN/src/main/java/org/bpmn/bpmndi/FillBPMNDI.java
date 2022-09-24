@@ -2,6 +2,7 @@ package org.bpmn.bpmndi;
 
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.flows.Association;
+import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Task;
 //import org.bpmn.process.FlowsProcessUser;
@@ -196,7 +197,7 @@ public class FillBPMNDI {
 
         f(rootElement, x, y, start, fp, tasks, flows, null);
         addFlowsEdge(rootElement, flows);
-        addDataObjects(rootElement, tasks, flows);
+        addDataObjects(rootElement, flows);
         shapes.clear();
 
     }
@@ -225,9 +226,18 @@ public class FillBPMNDI {
             participantStartY += participantYInc;
             startEventY = participantHeight / 2 - 20 + participantStartY;
 
-
         }
 
+        // TODO
+        /*
+        HashSet<MessageFlow> messageFlows = collaboration.getMessageFlows();
+        setMessageFlows(messageFlows, rootElement);
+
+         */
+    }
+
+    private void setMessageFlows(HashSet<MessageFlow> messageFlows, Element rootElement) {
+        // TODO
     }
 
     public void addParticipantsShape(Element rootElement, Participant p, double participantY) {
@@ -388,7 +398,7 @@ public class FillBPMNDI {
 
     }
 
-    public void addDataObjects(Element rootElement, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows) {
+    public void addDataObjects(Element rootElement, ArrayList<SequenceFlow> flows) {
 
         for (SequenceFlow flow : flows) {
             for (Association association : flow.getAssociations()) {

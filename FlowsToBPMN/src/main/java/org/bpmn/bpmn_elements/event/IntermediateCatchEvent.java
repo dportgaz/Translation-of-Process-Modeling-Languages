@@ -3,11 +3,13 @@ package org.bpmn.bpmn_elements.event;
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.association.DataOutputAssociation;
+import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.bpmn.steps.BPMN.doc;
 
@@ -39,6 +41,8 @@ public class IntermediateCatchEvent implements BPMNElement{
 
     boolean parallelMultiple;
 
+    HashSet<DataObject> dataObjects = new HashSet<>();
+
     public IntermediateCatchEvent() {
         this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementCatchEvent = doc.createElement("bpmn:intermediateCatchEvent");
@@ -50,6 +54,10 @@ public class IntermediateCatchEvent implements BPMNElement{
         this.elementCatchEvent = doc.createElement("bpmn:intermediateCatchEvent");
         this.parallelMultiple = parallelMultiple;
         setElementMultiple();
+    }
+
+    public HashSet<DataObject> getDataObjects() {
+        return dataObjects;
     }
 
     private void setElementMultiple() {

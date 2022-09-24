@@ -4,7 +4,9 @@ import org.bpmn.bpmn_elements.*;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
+import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
+import org.bpmn.bpmn_elements.flows.Association;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
@@ -29,6 +31,7 @@ import java.util.regex.Pattern;
 
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 import static org.bpmn.steps.BPMN.createXml;
+import static org.bpmn.steps.BPMN.doc;
 import static org.bpmn.steps.StepOne.allGateways;
 import static org.bpmn.steps.StepOne.allParticipants;
 
@@ -140,18 +143,34 @@ public class StepThree {
 
                     // case: port has more than one relation --> parallel multiple
                     if (port.getIncoming().size() > 1) {
-                        messageCatch = setParallelPort(port);
+                        messageCatch = setParallelPort(port, fp);
                     } else {
                         messageCatch = new IntermediateCatchEvent();
-                        MessageFlow messageFlow = new MessageFlow(port.getIncoming().get(0).getTask(), messageCatch);
+                        Task coordinationTask = port.getIncoming().get(0).getTask();
+                        MessageFlow messageFlow = new MessageFlow(coordinationTask, messageCatch);
                         collaboration.getMessageFlows().add(messageFlow);
                         collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
+                        DataObject d = new DataObject(coordinationTask);
+                        fp.getDataObjects().add(d);
+                        messageCatch.getDataObjects().add(d);
                     }
 
                     fp.getIntermediateCatchEvents().add(messageCatch);
 
                     SequenceFlow splitToCatch = new SequenceFlow(gateSplit, messageCatch);
                     SequenceFlow catchToJoin = new SequenceFlow(messageCatch, gateJoin);
+
+                    for(DataObject d : messageCatch.getDataObjects()){
+                        String id = "FlowAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
+                        catchToJoin.getAssociations().add(new Association(id, d));
+                        Element associationFlow = doc.createElement("bpmn:association");
+                        associationFlow.setAttribute("associationDirection", "None");
+                        associationFlow.setAttribute("id", id);
+                        associationFlow.setAttribute("sourceRef", catchToJoin.getId());
+                        associationFlow.setAttribute("targetRef", d.getRefId());
+                        fp.getAssociationFlows().add(associationFlow);
+                    }
+
                     gateSplit.addOutgoing(splitToCatch);
                     gateJoin.addIncoming(catchToJoin);
                     messageCatch.setIncoming(splitToCatch);
@@ -168,12 +187,14 @@ public class StepThree {
             else if (cntPorts == 1) {
                 Port port = task.getPorts().get(0);
                 if (port.getIncoming().size() >= 2) {
-                    messageCatch = setParallelPort(port);
+                    messageCatch = setParallelPort(port, fp);
                 } else {
                     Relation relation = port.getIncoming().get(0);
                     if (relation.getRelationType() == RelationType.OTHER) {
                         messageCatch = new IntermediateCatchEvent();
-
+                        DataObject d = new DataObject(relation.getTask());
+                        fp.getDataObjects().add(d);
+                        messageCatch.getDataObjects().add(d);
                         MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
                         collaboration.getMessageFlows().add(messageFlow);
                         collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
@@ -186,6 +207,17 @@ public class StepThree {
                     SequenceFlow flow = fp.getFlowByTarget(task);
                     SequenceFlow beforeTaskToCatch = new SequenceFlow(task.getBeforeElement(), messageCatch);
                     SequenceFlow catchToTask = new SequenceFlow(messageCatch, task);
+
+                    for(DataObject d : messageCatch.getDataObjects()){
+                        String id = "FlowAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
+                        catchToTask.getAssociations().add(new Association(id, d));
+                        Element associationFlow = doc.createElement("bpmn:association");
+                        associationFlow.setAttribute("associationDirection", "None");
+                        associationFlow.setAttribute("id", id);
+                        associationFlow.setAttribute("sourceRef", catchToTask.getId());
+                        associationFlow.setAttribute("targetRef", d.getRefId());
+                        fp.getAssociationFlows().add(associationFlow);
+                    }
 
                     fp.getFlows().add(beforeTaskToCatch);
                     fp.getFlows().add(catchToTask);
@@ -266,7 +298,7 @@ public class StepThree {
     }
 
 
-    private IntermediateCatchEvent setParallelPort(Port port) {
+    private IntermediateCatchEvent setParallelPort(Port port, FlowsProcessObject fp) {
 
         IntermediateCatchEvent messageCatch = new IntermediateCatchEvent();
         if (port.getCntOther() == 1) {
@@ -276,6 +308,9 @@ public class StepThree {
 
                 if (relation.getRelationType() == RelationType.OTHER) {
                     MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
+                    DataObject d = new DataObject(relation.getTask());
+                    fp.getDataObjects().add(d);
+                    messageCatch.getDataObjects().add(d);
                     collaboration.getMessageFlows().add(messageFlow);
                     collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
                 }
@@ -290,6 +325,9 @@ public class StepThree {
 
                 if (relation.getRelationType() == RelationType.OTHER) {
                     MessageFlow messageFlow = new MessageFlow(relation.getTask(), messageCatch);
+                    DataObject d = new DataObject(relation.getTask());
+                    fp.getDataObjects().add(d);
+                    messageCatch.getDataObjects().add(d);
                     collaboration.getMessageFlows().add(messageFlow);
                     collaboration.getElementCollaboration().appendChild(messageFlow.getElement());
                 }
