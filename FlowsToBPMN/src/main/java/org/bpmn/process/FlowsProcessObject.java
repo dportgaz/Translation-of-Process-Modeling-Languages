@@ -6,6 +6,7 @@ import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
+import org.bpmn.bpmn_elements.flows.Association;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.task.Step;
@@ -351,8 +352,7 @@ public class FlowsProcessObject {
             for(SequenceFlow flow : flows){
                 if(flow.getSourceRef().getId().equals(task.getId())){
                     String id = "FlowAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
-                    flow.setAssociationId(id);
-                    flow.setDataObject(task.getDataObject());
+                    flow.getAssociations().add(new Association(id, task.getDataObject()));
                     Element associationFlow = doc.createElement("bpmn:association");
                     associationFlow.setAttribute("associationDirection", "None");
                     associationFlow.setAttribute("id", id);

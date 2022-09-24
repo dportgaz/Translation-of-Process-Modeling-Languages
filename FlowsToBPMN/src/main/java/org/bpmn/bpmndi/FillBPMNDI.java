@@ -1,6 +1,7 @@
 package org.bpmn.bpmndi;
 
 import org.bpmn.bpmn_elements.dataobject.DataObject;
+import org.bpmn.bpmn_elements.flows.Association;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Task;
 //import org.bpmn.process.FlowsProcessUser;
@@ -365,10 +366,10 @@ public class FillBPMNDI {
             double yEnd = yStart;
 
 
-            sf.setxStart(xStart);
-            sf.setyStart(yStart);
-            sf.setxEnd(xEnd);
-            sf.setyEnd(yEnd);
+            sf.setXStart(xStart);
+            sf.setYStart(yStart);
+            sf.setXEnd(xEnd);
+            sf.setYEnd(yEnd);
 
             Element waypointStart = doc.createElement("di:waypoint");
             waypointStart.setAttribute("x", String.valueOf(xStart));
@@ -390,65 +391,63 @@ public class FillBPMNDI {
     public void addDataObjects(Element rootElement, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows) {
 
         for (SequenceFlow flow : flows) {
-            if (flow.getAssociationId() != null) {
-                setDataObject(rootElement, flow);
+            for (Association association : flow.getAssociations()) {
+                setDataObject(rootElement, flow, association);
             }
-
         }
+
     }
 
 
-    public void setDataObject(Element rootElement, SequenceFlow flow) {
+    public void setDataObject(Element rootElement, SequenceFlow flow, Association association) {
 
-        DataObject d = flow.getDataObject();
+        DataObject d = association.getDataObject();
+        String associationId = association.getAssociationId();
 
-        if (d != null) {
+        Element dataObject = doc.createElement("bpmndi:BPMNShape");
+        dataObject.setAttribute("id", d.getRefId() + "_di");
+        dataObject.setAttribute("bpmnElement", d.getRefId());
 
-            Element dataObject = doc.createElement("bpmndi:BPMNShape");
-            dataObject.setAttribute("id", d.getRefId() + "_di");
-            dataObject.setAttribute("bpmnElement", d.getRefId());
+        Double xBound = (flow.getXStart() + flow.getXEnd()) / 2 - dataObjectWidth / 2;
+        Double yBound = poolHeight + poolHeightOffset;
 
-            Double xBound = (flow.getxStart() + flow.getxEnd()) / 2 - dataObjectWidth / 2;
-            Double tempXBound = xBound;
-            Double yBound = poolHeight + poolHeightOffset;
+        Element dataObjectBounds = doc.createElement("dc:Bounds");
+        dataObjectBounds.setAttribute("x", String.valueOf(xBound));
+        dataObjectBounds.setAttribute("y", String.valueOf(yBound));
 
-            Element dataObjectBounds = doc.createElement("dc:Bounds");
-            dataObjectBounds.setAttribute("x", String.valueOf(xBound));
-            dataObjectBounds.setAttribute("y", String.valueOf(yBound));
+        d.setX(String.valueOf(xBound + dataObjectWidth / 2));
+        d.setY(String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight));
 
-            d.setX(String.valueOf(xBound + dataObjectWidth / 2));
-            d.setY(String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight));
+        dataObjectBounds.setAttribute("width", String.valueOf(dataObjectWidth));
+        dataObjectBounds.setAttribute("height", String.valueOf(dataObjectHeight));
+        dataObject.appendChild(dataObjectBounds);
 
-            dataObjectBounds.setAttribute("width", String.valueOf(dataObjectWidth));
-            dataObjectBounds.setAttribute("height", String.valueOf(dataObjectHeight));
-            dataObject.appendChild(dataObjectBounds);
+        Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
+        //TODO: POTENZIELL BUGGY
+        dataObjectFlowOutput.setAttribute("id", associationId + "_di");
+        dataObjectFlowOutput.setAttribute("bpmnElement", associationId);
 
-            Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
-            //TODO: POTENZIELL BUGGY
-            dataObjectFlowOutput.setAttribute("id", flow.getAssociationId() + "_di");
-            dataObjectFlowOutput.setAttribute("bpmnElement", flow.getAssociationId());
+        Element waypointOutStart = doc.createElement("di:waypoint");
+        Element waypointOutEnd = doc.createElement("di:waypoint");
 
-            Element waypointOutStart = doc.createElement("di:waypoint");
-            Element waypointOutEnd = doc.createElement("di:waypoint");
+        String waypointOutStartX = String.valueOf(xBound);
+        String waypointOutStartY = String.valueOf(flow.getYEnd());
+        String waypointOutEndX = String.valueOf(xBound + dataObjectWidth / 2);
+        String waypointOutEndY = String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight);
 
-            String waypointOutStartX = String.valueOf(xBound);
-            String waypointOutStartY = String.valueOf(flow.getyEnd());
-            String waypointOutEndX = String.valueOf(xBound + dataObjectWidth / 2);
-            String waypointOutEndY = String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight);
+        waypointOutStart.setAttribute("x", waypointOutStartX);
+        waypointOutStart.setAttribute("y", waypointOutStartY);
+        waypointOutEnd.setAttribute("x", waypointOutEndX);
+        waypointOutEnd.setAttribute("y", waypointOutEndY);
 
-            waypointOutStart.setAttribute("x", waypointOutStartX);
-            waypointOutStart.setAttribute("y", waypointOutStartY);
-            waypointOutEnd.setAttribute("x", waypointOutEndX);
-            waypointOutEnd.setAttribute("y", waypointOutEndY);
+        dataObjectFlowOutput.appendChild(waypointOutStart);
+        dataObjectFlowOutput.appendChild(waypointOutEnd);
+        rootElement.appendChild(dataObjectFlowOutput);
 
-            dataObjectFlowOutput.appendChild(waypointOutStart);
-            dataObjectFlowOutput.appendChild(waypointOutEnd);
-            rootElement.appendChild(dataObjectFlowOutput);
+        rootElement.appendChild(dataObject);
 
-            rootElement.appendChild(dataObject);
-
-        }
     }
+
 }
 
 

@@ -152,7 +152,6 @@ public class StepThree {
 
                     SequenceFlow splitToCatch = new SequenceFlow(gateSplit, messageCatch);
                     SequenceFlow catchToJoin = new SequenceFlow(messageCatch, gateJoin);
-
                     gateSplit.addOutgoing(splitToCatch);
                     gateJoin.addIncoming(catchToJoin);
                     messageCatch.setIncoming(splitToCatch);

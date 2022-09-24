@@ -1,12 +1,12 @@
 package org.bpmn.bpmn_elements.flows;
 
 import org.bpmn.bpmn_elements.BPMNElement;
-import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.bpmn.steps.BPMN.doc;
 
@@ -34,9 +34,8 @@ public class SequenceFlow {
 
     Double yEnd;
 
-    String associationId;
+    HashSet<Association> associations = new HashSet<>();
 
-    DataObject dataObject;
 
     public SequenceFlow() {
         this.id = "Flow_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -52,51 +51,39 @@ public class SequenceFlow {
         setTargetRef(targetRef);
     }
 
-    public void setDataObject(DataObject dataObject) {
-        this.dataObject = dataObject;
+    public HashSet<Association> getAssociations() {
+        return associations;
     }
 
-    public DataObject getDataObject() {
-        return dataObject;
-    }
-
-    public void setAssociationId(String associationId) {
-        this.associationId = associationId;
-    }
-
-    public String getAssociationId() {
-        return associationId;
-    }
-
-    public Double getxEnd() {
+    public Double getXEnd() {
         return xEnd;
     }
 
-    public Double getxStart() {
+    public Double getXStart() {
         return xStart;
     }
 
-    public Double getyEnd() {
+    public Double getYEnd() {
         return yEnd;
     }
 
-    public Double getyStart() {
+    public Double getYStart() {
         return yStart;
     }
 
-    public void setxEnd(Double xEnd) {
+    public void setXEnd(Double xEnd) {
         this.xEnd = xEnd;
     }
 
-    public void setxStart(Double xStart) {
+    public void setXStart(Double xStart) {
         this.xStart = xStart;
     }
 
-    public void setyStart(Double yStart) {
+    public void setYStart(Double yStart) {
         this.yStart = yStart;
     }
 
-    public void setyEnd(Double yEnd) {
+    public void setYEnd(Double yEnd) {
         this.yEnd = yEnd;
     }
 
