@@ -370,15 +370,14 @@ public class FillBPMNDI {
                 dataObject.setAttribute("bpmnElement", d.getRefId());
 
                 Double xBound = bs.getBounds().getX() + xBoundOffset;
-                Double tempXBound = xBound;
-                Double yBound = poolHeight + poolHeightOffset;
+                Double yBound = bs.getBounds().getY() - 200;
 
                 Element dataObjectBounds = doc.createElement("dc:Bounds");
                 dataObjectBounds.setAttribute("x", String.valueOf(xBound));
                 dataObjectBounds.setAttribute("y", String.valueOf(yBound));
 
                 d.setX(xBound + dataObjectWidth / 2);
-                d.setY(poolHeight + poolHeightOffset + dataObjectHeight);
+                d.setY(yBound + dataObjectHeight);
 
                 dataObjectBounds.setAttribute("width", String.valueOf(dataObjectWidth));
                 dataObjectBounds.setAttribute("height", String.valueOf(dataObjectHeight));
@@ -395,7 +394,7 @@ public class FillBPMNDI {
                 String waypointOutStartX = String.valueOf(xBound + activityWidth / 2);
                 String waypointOutStartY = String.valueOf(bs.getBounds().getY());
                 String waypointOutEndX = String.valueOf(xBound + activityWidth / 2);
-                String waypointOutEndY = String.valueOf(poolHeight + poolHeightOffset + dataObjectHeight);
+                String waypointOutEndY = String.valueOf(yBound + dataObjectHeight);
 
                 waypointOutStart.setAttribute("x", waypointOutStartX);
                 waypointOutStart.setAttribute("y", waypointOutStartY);

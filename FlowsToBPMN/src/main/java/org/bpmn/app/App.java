@@ -18,10 +18,5 @@ public class App {
         String filePHoodle = "FlowsToBPMN/src/resources/flows/newR.json";
         bpmn.create(filePHoodle, "PHoodle_RENEW.xml");
 
-/*
-        String fileRecruitment = "FlowsToBPMN/src/resources/flows/recruitment.json";
-        fillXMLStepOneRenew.createBPMN(fileRecruitment, "Recruitment_RENEW.xml");
-*/
-
     }
 } 
