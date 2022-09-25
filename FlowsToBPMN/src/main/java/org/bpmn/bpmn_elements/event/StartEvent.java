@@ -3,6 +3,7 @@ package org.bpmn.bpmn_elements.event;
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.association.DataOutputAssociation;
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
@@ -36,10 +37,25 @@ public class StartEvent extends Event{
 
     DataOutputAssociation dataOutputAssociation;
 
+    User user;
+
     public StartEvent() {
         this.id = "StartEvent_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementStartEvent = doc.createElement("bpmn:startEvent");
         setElement();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public String getName() {
+        return this.id;
     }
 
     @Override

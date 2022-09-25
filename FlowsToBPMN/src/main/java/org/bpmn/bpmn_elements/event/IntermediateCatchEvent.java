@@ -3,6 +3,7 @@ package org.bpmn.bpmn_elements.event;
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.association.DataOutputAssociation;
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
@@ -45,16 +46,22 @@ public class IntermediateCatchEvent implements BPMNElement{
 
     String name;
 
-    public IntermediateCatchEvent(String name) {
+    User user;
+
+    public IntermediateCatchEvent(String name, User user) {
         this.id = "ReceiveActivity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.name = name;
+        this.user = user;
+        user.getElements().add(this);
         this.elementCatchEvent = doc.createElement("bpmn:receiveTask");
         setElement();
     }
 
-    public IntermediateCatchEvent(boolean parallelMultiple) {
+    public IntermediateCatchEvent(boolean parallelMultiple, User user) {
         this.id = "ReceiveActivity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.name = "Receive ";
+        this.user = user;
+        user.getElements().add(this);
         this.elementCatchEvent = doc.createElement("bpmn:receiveTask");
         this.parallelMultiple = parallelMultiple;
         setElementMultiple();
@@ -72,6 +79,14 @@ public class IntermediateCatchEvent implements BPMNElement{
 
     public HashSet<DataObject> getDataObjects() {
         return dataObjects;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     private void setElementMultiple() {

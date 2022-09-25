@@ -1,6 +1,7 @@
 package org.bpmn.bpmn_elements.gateway;
 
 import org.bpmn.bpmn_elements.BPMNElement;
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
@@ -29,6 +30,8 @@ public class ExclusiveGateway implements BPMNElement {
 
     boolean eventBased;
 
+    User user;
+
     public ExclusiveGateway() {
         this.id = "Gateway_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementExclusiveGateway = doc.createElement("bpmn:exclusiveGateway");
@@ -50,10 +53,31 @@ public class ExclusiveGateway implements BPMNElement {
         setElementExclusiveGateway();
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @Override
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public String getName() {
+        return this.id;
+    }
+
     public void setEventBased(String id) {
         this.eventBased = true;
         this.id = id;
         this.elementExclusiveGateway = doc.createElement("bpmn:eventBasedGateway");
+        setElementExclusiveGateway();
+    }
+
+    public void setExclusive(){
+        this.eventBased = true;
+        this.id = "Gateway_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.elementExclusiveGateway = doc.createElement("bpmn:exclusiveGateway");
         setElementExclusiveGateway();
     }
 

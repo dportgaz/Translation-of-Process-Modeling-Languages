@@ -7,6 +7,7 @@ import org.bpmn.bpmn_elements.RelationType;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.association.DataOutputAssociation;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
@@ -106,6 +107,8 @@ public class Task implements BPMNElement {
 
     boolean isSendTask;
 
+    User user;
+
     public Task(Double createdEntityId, String name, Participant participant, boolean computationStep) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
@@ -163,6 +166,14 @@ public class Task implements BPMNElement {
 
     public void intCntOtherRelations() {
         cntOtherRelations++;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public Task(Double createdEntityId, String name, Participant participant, ArrayList<AbstractObjectType> objects, boolean adHoc) {

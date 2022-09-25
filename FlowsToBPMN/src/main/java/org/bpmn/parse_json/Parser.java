@@ -4,6 +4,7 @@ import org.bpmn.bpmn_elements.Loop;
 import org.bpmn.bpmn_elements.Port;
 import org.bpmn.bpmn_elements.Relation;
 import org.bpmn.bpmn_elements.RelationType;
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
@@ -14,6 +15,7 @@ import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.process.FlowsProcessObject;
+import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -143,27 +145,23 @@ public class Parser {
         return predicates;
     }
 
-    /*
-    public void parsePermissions(HashMap<Double, ArrayList<AbstractObjectType>> users) {
+    public HashSet<User> parsePermissions(HashMap<Double, ArrayList<AbstractObjectType>> users) {
+        HashSet<User> user = new HashSet<>();
         for (Double key : users.keySet()) {
             users.get(key).forEach(obj -> {
-                if (obj != null && obj.getMethodName().equals("AddStateExecutionPermissionToGlobalRole")) {
+                if (obj != null && obj.getMethodName().equals("UpdateGlobalRoleName")) {
 
-                    Double participantId = (Double) obj.getParameters().get(0);
-                    Double taskId = (Double) obj.getParameters().get(1);
-                    User user = Collaboration.getUser(participantId);
-
-                    for (Task task : allTasks) {
-                        if (task.getCreatedEntityId().equals(taskId)) {
-                            task.setParticipant(user);
-                        }
-                    }
+                    Double userId = (Double) obj.getParameters().get(0);
+                    String name = (String) obj.getParameters().get(1);
+                    user.add(new User(userId, name));
                 }
             });
         }
+        Double d = 71238172381763d;
+        user.add(new User(d, "System"));
+        return user;
     }
 
-     */
 
     public void parseCoordinationSteps(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects) {
 

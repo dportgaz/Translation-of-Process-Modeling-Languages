@@ -4,6 +4,7 @@ import org.bpmn.bpmn_elements.*;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
 import org.bpmn.bpmn_elements.flows.Association;
@@ -55,12 +56,15 @@ public class StepThree {
 
     private Collaboration collaboration;
 
-    public StepThree(StepOne stepOne, String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects,
+    HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects = new HashMap<>();
+
+    public StepThree(StepOne stepOne, String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects,
                      HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects, ArrayList<AbstractRelation> relationsDataModel) {
         this.stepOne = stepOne;
         this.file = file;
         this.definitionsElement = definitionsElement;
         this.objectTypeObjects = objectTypeObjects;
+        this.userTypeObjects = userTypeObjects;
         this.step = ExecStep.THREE;
         this.coordinationProcessObjects = coordinationProcessObjects;
         this.parser = new Parser();
@@ -104,6 +108,46 @@ public class StepThree {
             }
         }
 
+        // set tasks to user
+        for (Participant object : allParticipants) {
+            HashSet<User> user = parser.parsePermissions(userTypeObjects);
+            for (Double key : userTypeObjects.keySet()) {
+                userTypeObjects.get(key).forEach(obj -> {
+                    if (obj != null && obj.getMethodName().equals("AddStateExecutionPermissionToGlobalRole")) {
+
+                        Double participantId = (Double) obj.getParameters().get(0);
+                        Double taskId = (Double) obj.getParameters().get(1);
+
+                        for (Task task : object.getProcessRef().getTasks()) {
+                            if (task.getCreatedEntityId().equals(taskId)) {
+                                for (User u : user) {
+                                    if (u.getId().equals(participantId)) {
+                                        task.setUser(u);
+                                        u.getElements().add(task);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                });
+            }
+
+            User systemUser = null;
+            for (User k : user) {
+                if (k.getName().equals("System")) {
+                    systemUser = k;
+                }
+            }
+            for (Task task : allTasks) {
+                if (task.getUser() == null) {
+                    task.setUser(systemUser);
+                    systemUser.getElements().add(task);
+                }
+            }
+        }
+
         // TODO: complement coordination process with data model relation
 
 
@@ -142,10 +186,10 @@ public class StepThree {
 
                     // case: port has more than one relation --> parallel multiple
                     if (port.getIncoming().size() > 1) {
-                        messageCatch = setParallelPort(port, fp);
+                        messageCatch = setParallelPort(port, fp, task);
                     } else {
                         Task coordinationTask = port.getIncoming().get(0).getTask();
-                        messageCatch = new IntermediateCatchEvent("Receive " + coordinationTask.getName());
+                        messageCatch = new IntermediateCatchEvent("Receive " + coordinationTask.getName(), task.getUser());
                         collaboration.getMessageFlows().add(new MessageFlow(coordinationTask, messageCatch));
                         DataObject d = new DataObject(coordinationTask);
                         fp.getDataObjects().add(d);
@@ -183,12 +227,12 @@ public class StepThree {
             } else if (cntPorts == 1) {
                 Port port = task.getPorts().get(0);
                 if (port.getIncoming().size() >= 2) {
-                    messageCatch = setParallelPort(port, fp);
+                    messageCatch = setParallelPort(port, fp, task);
                 } else {
                     Relation relation = port.getIncoming().get(0);
                     if (relation.getRelationType() == RelationType.OTHER) {
                         Task coordinationTask = relation.getTask();
-                        messageCatch = new IntermediateCatchEvent("Receive " + coordinationTask.getName());
+                        messageCatch = new IntermediateCatchEvent("Receive " + coordinationTask.getName(), task.getUser());
                         DataObject d = new DataObject(relation.getTask());
                         fp.getDataObjects().add(d);
                         messageCatch.getDataObjects().add(d);
@@ -281,29 +325,29 @@ public class StepThree {
         }
 
         // trim eventgate --> eventgate
-        for(Participant object : allParticipants){
+        for (Participant object : allParticipants) {
 
             ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
             HashSet<SequenceFlow> flowsToRemove = new HashSet<>();
             HashSet<ExclusiveGateway> gatewaysToRemove = new HashSet<>();
             HashSet<SequenceFlow> flowsToAdd = new HashSet<>();
 
-            for(SequenceFlow flow : flows){
+            for (SequenceFlow flow : flows) {
                 Pattern p = Pattern.compile("^EventGateway_+");
                 Matcher matchSource = p.matcher(flow.getSourceRef().getId());
                 Matcher matchTarget = p.matcher(flow.getTargetRef().getId());
 
-                if(matchSource.find() && matchTarget.find()){
+                if (matchSource.find() && matchTarget.find()) {
                     flowsToRemove.add(flow);
                     gatewaysToRemove.add((ExclusiveGateway) flow.getTargetRef());
                     ArrayList<SequenceFlow> outgoingOuterEventBased = new ArrayList<>();
-                    for(SequenceFlow outerFlow : flows){
-                        if(outerFlow.getSourceRef().getId().equals(flow.getTargetRef().getId())){
+                    for (SequenceFlow outerFlow : flows) {
+                        if (outerFlow.getSourceRef().getId().equals(flow.getTargetRef().getId())) {
                             outgoingOuterEventBased.add(outerFlow);
                             flowsToRemove.add(outerFlow);
                         }
                     }
-                    for(SequenceFlow temp : outgoingOuterEventBased){
+                    for (SequenceFlow temp : outgoingOuterEventBased) {
                         flowsToAdd.add(new SequenceFlow(flow.getSourceRef(), temp.getTargetRef()));
                     }
                 }
@@ -357,6 +401,59 @@ public class StepThree {
 
         setProcesses(definitionsElement);
 
+        // set lanes for pools
+        for (Participant object : allParticipants) {
+
+            HashSet<User> user = new HashSet<>();
+            HashSet<User> lanes = new HashSet<>();
+            ArrayList<Task> tasks = object.getProcessRef().getTasks();
+            HashSet<IntermediateCatchEvent> catchEvents = object.getProcessRef().getIntermediateCatchEvents();
+            HashSet<ExclusiveGateway> gateways = object.getProcessRef().getGateways();
+            ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
+
+            for (Task task : tasks) {
+                user.add(task.getUser());
+            }
+            for (IntermediateCatchEvent event : catchEvents) {
+                user.add(event.getUser());
+            }
+
+            object.getProcessRef().getStartEvent().setUser(tasks.get(0).getUser());
+            tasks.get(0).getUser().getElements().add(object.getProcessRef().getStartEvent());
+            object.getProcessRef().getEndEvent().setUser(tasks.get(tasks.size() - 1).getUser());
+            tasks.get(tasks.size() - 1).getUser().getElements().add(object.getProcessRef().getEndEvent());
+
+            for (ExclusiveGateway gateway : gateways) {
+                for (SequenceFlow flow : flows) {
+                    if (flow.getTargetRef().getId().equals(gateway.getId())) {
+                        User temp = flow.getSourceRef().getUser();
+                        if(temp != null) {
+                            gateway.setUser(temp);
+                            temp.getElements().add(gateway);
+                        }
+                    }
+                }
+            }
+
+            Element laneSet = doc.createElement("bpmn:laneSet");
+            laneSet.setAttribute("id", "LaneSet_" + RandomIdGenerator.generateRandomUniqueId(6));
+
+            for (User u : user) {
+                Element lane = doc.createElement("bpmn:lane");
+                lane.setAttribute("id", "Lane_" + RandomIdGenerator.generateRandomUniqueId(6));
+                lane.setAttribute("name", u.getName());
+                for (BPMNElement element : u.getElements()) {
+                    Element temp = doc.createElement("bpmn:flowNodeRef");
+                    temp.setTextContent(element.getName());
+                    lane.appendChild(temp);
+                }
+                laneSet.appendChild(lane);
+            }
+
+            object.getProcessRef().getElementFlowsProcess().appendChild(laneSet);
+
+        }
+
         FillBPMNDI di = new FillBPMNDI();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false);
 
@@ -364,7 +461,7 @@ public class StepThree {
 
     }
 
-    private IntermediateCatchEvent setParallelPort(Port port, FlowsProcessObject fp) {
+    private IntermediateCatchEvent setParallelPort(Port port, FlowsProcessObject fp, Task task) {
 
         IntermediateCatchEvent messageCatch = null;
         if (port.getCntOther() == 1) {
@@ -373,7 +470,7 @@ public class StepThree {
             for (Relation relation : port.getIncoming()) {
 
                 if (relation.getRelationType() == RelationType.OTHER) {
-                    messageCatch = new IntermediateCatchEvent("Receive " + relation.getTask().getName());
+                    messageCatch = new IntermediateCatchEvent("Receive " + relation.getTask().getName(), task.getUser());
                     DataObject d = new DataObject(relation.getTask());
                     fp.getDataObjects().add(d);
                     messageCatch.getDataObjects().add(d);
@@ -383,7 +480,7 @@ public class StepThree {
             }
         } else if (port.getCntOther() > 1) {
 
-            messageCatch = new IntermediateCatchEvent(true);
+            messageCatch = new IntermediateCatchEvent(true, task.getUser());
 
             // find other relations for messageflows
             for (Relation relation : port.getIncoming()) {

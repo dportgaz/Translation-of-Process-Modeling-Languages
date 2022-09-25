@@ -1,6 +1,7 @@
 package org.bpmn.bpmn_elements;
 
 
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -24,5 +25,10 @@ public interface BPMNElement {
     Element getElement();
 
     void setElement();
+
+    User getUser();
+
+    String getName();
+
 
 }

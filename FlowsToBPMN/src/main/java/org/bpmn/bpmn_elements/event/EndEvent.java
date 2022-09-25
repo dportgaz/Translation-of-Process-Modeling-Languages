@@ -1,6 +1,7 @@
 package org.bpmn.bpmn_elements.event;
 
 import org.bpmn.bpmn_elements.BPMNElement;
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
@@ -28,10 +29,25 @@ public class EndEvent extends Event{
 
     BPMNElement afterElement;
 
+    User user;
+
     public EndEvent() {
         this.id = "EndEvent_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementEndEvent = doc.createElement("bpmn:endEvent");
         setElement();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    @Override
+    public String getName() {
+        return this.id;
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.bpmn.bpmn_elements.event;
 
 import org.bpmn.bpmn_elements.BPMNElement;
 
+import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.w3c.dom.Element;
 import java.util.ArrayList;
 
@@ -53,6 +54,17 @@ public class Event implements BPMNElement {
     @Override
     public void setElement() {
     }
+
+    @Override
+    public User getUser() {
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return this.id;
+    }
+
     public ArrayList<BPMNElement> getBefore() {
         return before;
     }

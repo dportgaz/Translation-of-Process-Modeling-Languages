@@ -77,7 +77,7 @@ public class BPMN {
 
 
         String fileTempThree = "Recruitment_Step3.xml";
-        StepThree s3 = new StepThree(s1, fileTempThree, definitionsElement2, objectTypeObjects, coordinationProcessObjects, relationsDataModel);
+        StepThree s3 = new StepThree(s1, fileTempThree, definitionsElement2, objectTypeObjects, userTypeObjects, coordinationProcessObjects, relationsDataModel);
         s3.execute();
 
 
