@@ -285,7 +285,7 @@ public class FillBPMNDI {
         poolHeight = shape.getBounds().getY();
         rootElement.appendChild(shape.getBpmnElement());
 
-        Double yOff=0d;
+        int yOff=0;
         // add Lanes
         for(String id : p.getLanes().keySet()){
 

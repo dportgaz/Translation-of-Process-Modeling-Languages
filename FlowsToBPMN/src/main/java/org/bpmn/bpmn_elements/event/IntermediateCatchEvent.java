@@ -175,4 +175,9 @@ public class IntermediateCatchEvent implements BPMNElement{
     public void setElement(Element elementCatchEvent) {
         this.elementCatchEvent = elementCatchEvent;
     }
+
+    @Override
+    public String toString() {
+        return this.id;
+    }
 }

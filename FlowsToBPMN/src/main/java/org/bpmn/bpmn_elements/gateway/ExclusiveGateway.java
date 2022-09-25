@@ -38,6 +38,12 @@ public class ExclusiveGateway implements BPMNElement {
         setElementExclusiveGateway();
     }
 
+    public ExclusiveGateway(boolean parallel, boolean p) {
+        this.id = "Gateway_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.elementExclusiveGateway = doc.createElement("bpmn:parallelGateway");
+        setElementExclusiveGateway();
+    }
+
     // TODO: create event based class?
     public ExclusiveGateway(boolean eventBased) {
         this.eventBased = eventBased;

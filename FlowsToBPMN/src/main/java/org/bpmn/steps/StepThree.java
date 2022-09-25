@@ -358,20 +358,20 @@ public class StepThree {
         // transforms throwing message tasks to sendTasks; helping method; needs to be after "fill allFlows"
         HashSet<Task> transformedMessages = new HashSet<>();
         for (Task task : throwingMessageTasks) {
-            if(!task.getIsSubprocess()){
+            if (!task.getIsSubprocess()) {
                 String id = task.getId();
                 task.setSendTask();
                 transformedMessages.add(task);
-                for(SequenceFlow sf : allFlows){
-                    if(sf.getSourceRef().getId().equals(task.getId())){
+                for (SequenceFlow sf : allFlows) {
+                    if (sf.getSourceRef().getId().equals(task.getId())) {
                         sf.setSourceRef(task);
                     }
-                    if(sf.getTargetRef().getId().equals(task.getId())){
+                    if (sf.getTargetRef().getId().equals(task.getId())) {
                         sf.setTargetRef(task);
                     }
                 }
-                for(MessageFlow mf : collaboration.getMessageFlows()){
-                    if(mf.getSourceRef().getId().equals(task.getId())){
+                for (MessageFlow mf : collaboration.getMessageFlows()) {
+                    if (mf.getSourceRef().getId().equals(task.getId())) {
                         mf.setSourceRef(task);
                     }
                 }
@@ -381,10 +381,10 @@ public class StepThree {
 
         // set data input associations for receiving tasks
 
-        for(Participant object : objects){
+        for (Participant object : objects) {
             HashSet<IntermediateCatchEvent> events = object.getProcessRef().getIntermediateCatchEvents();
-            for(IntermediateCatchEvent event : events){
-                for(DataObject d : event.getDataObjects()){
+            for (IntermediateCatchEvent event : events) {
+                for (DataObject d : event.getDataObjects()) {
                     DataInputAssociation in = new DataInputAssociation();
                     d.getDataInputAssociations().add(in);
                     in.setAssociatedTaskId(event.getId());
@@ -400,77 +400,98 @@ public class StepThree {
 
         }
 
-        for(Participant object : objects){
-            HashSet<IntermediateCatchEvent> events = object.getProcessRef().getIntermediateCatchEvents();
-            for(IntermediateCatchEvent event : events){
-                    System.out.println(object.getName() + " " + event.getName() + " " + event.getDataObjects());
-                    for(DataObject d : event.getDataObjects()){
-                        for(DataInputAssociation in : d.getDataInputAssociations()) {
-                            System.out.println("\t" + in);
+        for (Participant object : allParticipants) {
+            ArrayList<Task> tasks = object.getProcessRef().getTasks();
+            for (Task task : tasks) {
+                HashSet<IntermediateCatchEvent> events = new HashSet<>();
+                if (task.getIsSubprocess()) {
+                    for (Step step : task.getSteps()) {
+                        boolean isCo = false;
+                        boolean takeCareOf = false;
+                        if (step.getIsRead()) {
+                            for (Task coordinationTask : coordinationProcess) {
+                                if (coordinationTask.getId().equals(task.getId())) {
+                                    isCo = true;
+                                    for (Port port : coordinationTask.getPorts()) {
+                                        for (Relation relation : port.getIncoming()) {
+                                            if (relation.getTask().getParticipant().getName().equals(step.getParticipantName())) {
+                                                takeCareOf = true;
+                                            }
+                                        }
+                                    }
+                                    if(!takeCareOf){
+                                        System.out.println(step.getParticipantName());
+                                        IntermediateCatchEvent messageCatch = new IntermediateCatchEvent("Receive " + step.getName(), task.getUser());
+                                        messageCatch.getDataObjects().add(task.getDataObject());
+                                        events.add(messageCatch);
+                                        object.getProcessRef().getIntermediateCatchEvents().add(messageCatch);
+                                        System.out.println(task + " , " + messageCatch);
+                                        System.out.println(events);
+                                        //collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
+                                    }
+                                }
+                            }
+                            if (!isCo) {
+                                IntermediateCatchEvent messageCatch = new IntermediateCatchEvent("Receive " + step.getName(), task.getUser());
+                                messageCatch.getDataObjects().add(task.getDataObject());
+                                events.add(messageCatch);
+                                object.getProcessRef().getIntermediateCatchEvents().add(messageCatch);
+                                System.out.println(task + " , " + messageCatch);
+                                System.out.println(events);
+                            }
                         }
                     }
+                    HashSet<SequenceFlow> flowsToAdd = new HashSet<>();
+                    HashSet<SequenceFlow> flowsToRemove = new HashSet<>();
+                    if (events.size() > 1) {
+                        ExclusiveGateway parallelSplit = new ExclusiveGateway(true, true);
+                        ExclusiveGateway parallelJoin = new ExclusiveGateway(true, true);
+                        object.getProcessRef().getGateways().add(parallelJoin);
+                        object.getProcessRef().getGateways().add(parallelSplit);
+                        for (SequenceFlow flow : object.getProcessRef().getFlows()) {
+                            if (flow.getTargetRef().getId().equals(task.getId())) {
+                                BPMNElement source = flow.getSourceRef();
+                                System.out.println("FLOW: " + flow);
+                                SequenceFlow tempOut = new SequenceFlow(source, parallelSplit);
+                                System.out.println(tempOut);
+                                flowsToAdd.add(tempOut);
+                                flowsToRemove.add(flow);
+                                for (IntermediateCatchEvent event : events) {
+                                    flowsToAdd.add(new SequenceFlow(parallelSplit, event));
+                                    flowsToAdd.add(new SequenceFlow(event, parallelJoin));
+                                    flowsToAdd.add(new SequenceFlow(parallelJoin, task));
+                                }
+                            }
+                        }
 
+                        object.getProcessRef().getFlows().addAll(flowsToAdd);
+                        object.getProcessRef().getFlows().removeAll(flowsToRemove);
+                    } else {
+                        // only one event anyway
+                        for (IntermediateCatchEvent event : events) {
+                            for (SequenceFlow flow : object.getProcessRef().getFlows()) {
+                                if (flow.getTargetRef().getId().equals(task.getId())) {
+                                    BPMNElement source = flow.getSourceRef();
+                                    SequenceFlow tempOut = new SequenceFlow(source, event);
+                                    SequenceFlow tempIn = new SequenceFlow(event, task);
+                                    flowsToAdd.add(tempIn);
+                                    flowsToAdd.add(tempOut);
+                                    flowsToRemove.add(flow);
+                                }
+                            }
+                        }
+                        object.getProcessRef().getFlows().addAll(flowsToAdd);
+                        object.getProcessRef().getFlows().removeAll(flowsToRemove);
+                        allFlows.addAll(flowsToAdd);
+                        allFlows.removeAll(flowsToRemove);
+                    }
+                }
             }
 
+            object.getProcessRef().setBeforeAndAfterElements();
         }
 
         setProcesses(definitionsElement);
-
-        // set lanes for pools
-        for (Participant object : allParticipants) {
-
-            HashSet<User> users = new HashSet<>();
-            ArrayList<Task> tasks = object.getProcessRef().getTasks();
-            HashSet<IntermediateCatchEvent> catchEvents = object.getProcessRef().getIntermediateCatchEvents();
-            HashSet<ExclusiveGateway> gateways = object.getProcessRef().getGateways();
-            ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
-
-            for (Task task : tasks) {
-                users.add(task.getUser());
-            }
-            for (IntermediateCatchEvent event : catchEvents) {
-                users.add(event.getUser());
-            }
-
-            object.getProcessRef().getStartEvent().setUser(tasks.get(0).getUser());
-            tasks.get(0).getUser().getElements().add(object.getProcessRef().getStartEvent());
-            object.getProcessRef().getEndEvent().setUser(tasks.get(tasks.size() - 1).getUser());
-            tasks.get(tasks.size() - 1).getUser().getElements().add(object.getProcessRef().getEndEvent());
-
-            for (ExclusiveGateway gateway : gateways) {
-                for (SequenceFlow flow : flows) {
-                    if (flow.getTargetRef().getId().equals(gateway.getId())) {
-                        User temp = flow.getSourceRef().getUser();
-                        if(temp != null) {
-                            gateway.setUser(temp);
-                            temp.getElements().add(gateway);
-                        }
-                    }
-                }
-            }
-
-            Element laneSet = doc.createElement("bpmn:laneSet");
-            laneSet.setAttribute("id", "LaneSet_" + RandomIdGenerator.generateRandomUniqueId(6));
-
-            HashMap<String, User> lanes = new HashMap<>();
-            for (User u : users) {
-                Element lane = doc.createElement("bpmn:lane");
-                String id = "Lane_" + RandomIdGenerator.generateRandomUniqueId(6);
-                lane.setAttribute("id", id);
-                lanes.put(id, u);
-                lane.setAttribute("name", u.getName());
-                for (BPMNElement element : u.getElements()) {
-                    Element temp = doc.createElement("bpmn:flowNodeRef");
-                    temp.setTextContent(element.getId());
-                    lane.appendChild(temp);
-                }
-                laneSet.appendChild(lane);
-            }
-
-            object.getProcessRef().getElementFlowsProcess().appendChild(laneSet);
-            object.setLanes(lanes);
-
-        }
 
         FillBPMNDI di = new FillBPMNDI();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, false);
@@ -527,10 +548,66 @@ public class StepThree {
         for (Object participant : objects) {
 
             participant.getProcessRef().setElementFlowsProcess();
+            setLane(participant);
             definitionsElement.appendChild(participant.getProcessRef().getElementFlowsProcess());
 
         }
 
     }
 
+    private void setLane(Participant object) {
+
+        HashSet<User> users = new HashSet<>();
+        ArrayList<Task> tasks = object.getProcessRef().getTasks();
+        HashSet<IntermediateCatchEvent> catchEvents = object.getProcessRef().getIntermediateCatchEvents();
+        HashSet<ExclusiveGateway> gateways = object.getProcessRef().getGateways();
+        ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
+
+        for (Task task : tasks) {
+            users.add(task.getUser());
+        }
+        for (IntermediateCatchEvent event : catchEvents) {
+            users.add(event.getUser());
+        }
+
+        object.getProcessRef().getStartEvent().setUser(tasks.get(0).getUser());
+        tasks.get(0).getUser().getElements().add(object.getProcessRef().getStartEvent());
+        object.getProcessRef().getEndEvent().setUser(tasks.get(tasks.size() - 1).getUser());
+        tasks.get(tasks.size() - 1).getUser().getElements().add(object.getProcessRef().getEndEvent());
+
+        for (ExclusiveGateway gateway : gateways) {
+            for (SequenceFlow flow : flows) {
+                if (flow.getTargetRef().getId().equals(gateway.getId())) {
+                    User temp = flow.getSourceRef().getUser();
+                    if (temp != null) {
+                        gateway.setUser(temp);
+                        temp.getElements().add(gateway);
+                    }
+                }
+            }
+        }
+
+        Element laneSet = doc.createElement("bpmn:laneSet");
+        laneSet.setAttribute("id", "LaneSet_" + RandomIdGenerator.generateRandomUniqueId(6));
+
+        HashMap<String, User> lanes = new HashMap<>();
+        for (User u : users) {
+            Element lane = doc.createElement("bpmn:lane");
+            String id = "Lane_" + RandomIdGenerator.generateRandomUniqueId(6);
+            lane.setAttribute("id", id);
+            lanes.put(id, u);
+            lane.setAttribute("name", u.getName());
+            for (BPMNElement element : u.getElements()) {
+                Element temp = doc.createElement("bpmn:flowNodeRef");
+                temp.setTextContent(element.getId());
+                lane.appendChild(temp);
+            }
+            laneSet.appendChild(lane);
+        }
+
+        object.getProcessRef().getElementFlowsProcess().appendChild(laneSet);
+        object.setLanes(lanes);
+
+    }
 }
+

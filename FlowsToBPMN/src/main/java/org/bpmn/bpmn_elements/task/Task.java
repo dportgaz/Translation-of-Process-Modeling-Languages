@@ -110,6 +110,8 @@ public class Task implements BPMNElement {
 
     User user;
 
+    boolean isRead = false;
+
     public Task(Double createdEntityId, String name, Participant participant, boolean computationStep) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
@@ -151,8 +153,17 @@ public class Task implements BPMNElement {
         if (this.permission == Permission.WRITE) {
             return "Write";
         } else {
+            this.isRead = true;
             return "Read";
         }
+    }
+
+    public String getParticipantName() {
+        return participantName;
+    }
+
+    public boolean getIsRead(){
+        return this.isRead;
     }
 
     public int getCntOtherRelations() {
