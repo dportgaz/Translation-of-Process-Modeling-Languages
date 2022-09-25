@@ -444,7 +444,7 @@ public class StepThree {
                 lane.setAttribute("name", u.getName());
                 for (BPMNElement element : u.getElements()) {
                     Element temp = doc.createElement("bpmn:flowNodeRef");
-                    temp.setTextContent(element.getName());
+                    temp.setTextContent(element.getId());
                     lane.appendChild(temp);
                 }
                 laneSet.appendChild(lane);
