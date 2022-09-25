@@ -1,13 +1,13 @@
 package org.bpmn.steps;
 
 import org.bpmn.bpmn_elements.*;
+import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
-import org.bpmn.bpmn_elements.flows.Association;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
@@ -22,6 +22,7 @@ import org.bpmn.process.FlowsProcessObject;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
+import javax.xml.crypto.Data;
 import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -190,27 +191,14 @@ public class StepThree {
                     } else {
                         Task coordinationTask = port.getIncoming().get(0).getTask();
                         messageCatch = new IntermediateCatchEvent("Receive " + coordinationTask.getName(), task.getUser());
+                        messageCatch.getDataObjects().add(coordinationTask.getDataObject());
                         collaboration.getMessageFlows().add(new MessageFlow(coordinationTask, messageCatch));
-                        DataObject d = new DataObject(coordinationTask);
-                        fp.getDataObjects().add(d);
-                        messageCatch.getDataObjects().add(d);
                     }
 
                     fp.getIntermediateCatchEvents().add(messageCatch);
 
                     SequenceFlow splitToCatch = new SequenceFlow(gateSplit, messageCatch);
                     SequenceFlow catchToJoin = new SequenceFlow(messageCatch, gateJoin);
-
-                    for (DataObject d : messageCatch.getDataObjects()) {
-                        String id = "FlowAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
-                        catchToJoin.getAssociations().add(new Association(id, d));
-                        Element associationFlow = doc.createElement("bpmn:association");
-                        associationFlow.setAttribute("associationDirection", "One");
-                        associationFlow.setAttribute("id", id);
-                        associationFlow.setAttribute("sourceRef", d.getRefId());
-                        associationFlow.setAttribute("targetRef", catchToJoin.getId());
-                        fp.getAssociationFlows().add(associationFlow);
-                    }
 
                     gateSplit.addOutgoing(splitToCatch);
                     gateJoin.addIncoming(catchToJoin);
@@ -233,9 +221,7 @@ public class StepThree {
                     if (relation.getRelationType() == RelationType.OTHER) {
                         Task coordinationTask = relation.getTask();
                         messageCatch = new IntermediateCatchEvent("Receive " + coordinationTask.getName(), task.getUser());
-                        DataObject d = new DataObject(relation.getTask());
-                        fp.getDataObjects().add(d);
-                        messageCatch.getDataObjects().add(d);
+                        messageCatch.getDataObjects().add(coordinationTask.getDataObject());
                         collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
 
                     }
@@ -246,17 +232,6 @@ public class StepThree {
                     SequenceFlow flow = fp.getFlowByTarget(task);
                     SequenceFlow beforeTaskToCatch = new SequenceFlow(task.getBeforeElement(), messageCatch);
                     SequenceFlow catchToTask = new SequenceFlow(messageCatch, task);
-
-                    for (DataObject d : messageCatch.getDataObjects()) {
-                        String id = "FlowAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
-                        catchToTask.getAssociations().add(new Association(id, d));
-                        Element associationFlow = doc.createElement("bpmn:association");
-                        associationFlow.setAttribute("associationDirection", "One");
-                        associationFlow.setAttribute("id", id);
-                        associationFlow.setAttribute("sourceRef", d.getRefId());
-                        associationFlow.setAttribute("targetRef", catchToTask.getId());
-                        fp.getAssociationFlows().add(associationFlow);
-                    }
 
                     fp.getFlows().add(beforeTaskToCatch);
                     fp.getFlows().add(catchToTask);
@@ -361,14 +336,14 @@ public class StepThree {
 
         // transforms throwing message tasks to sendTasks
 
-        HashSet<Task> tasksToTransform = new HashSet<>();
+        HashSet<Task> throwingMessageTasks = new HashSet<>();
 
         for (MessageFlow mf : collaboration.getMessageFlows()) {
 
             for (Task task : allTasks) {
 
                 if (task.getId().equals(mf.getSourceRef().getId())) {
-                    tasksToTransform.add(task);
+                    throwingMessageTasks.add(task);
                 }
 
             }
@@ -380,21 +355,61 @@ public class StepThree {
             allFlows.addAll(object.getProcessRef().getFlows());
         }
 
-        // transforms throwing message tasks to sendTasks; helping method
-        for (Task task : tasksToTransform) {
-            task.setSendTask();
-            for (MessageFlow mf : collaboration.getMessageFlows()) {
-                if (mf.getSourceRef().getId().equals(task.getId())) {
-                    mf.getElementMessageFlow().setAttribute("sourceRef", task.getId());
+        // transforms throwing message tasks to sendTasks; helping method; needs to be after "fill allFlows"
+        HashSet<Task> transformedMessages = new HashSet<>();
+        for (Task task : throwingMessageTasks) {
+            if(!task.getIsSubprocess()){
+                String id = task.getId();
+                task.setSendTask();
+                transformedMessages.add(task);
+                for(SequenceFlow sf : allFlows){
+                    if(sf.getSourceRef().getId().equals(task.getId())){
+                        sf.setSourceRef(task);
+                    }
+                    if(sf.getTargetRef().getId().equals(task.getId())){
+                        sf.setTargetRef(task);
+                    }
+                }
+                for(MessageFlow mf : collaboration.getMessageFlows()){
+                    if(mf.getSourceRef().getId().equals(task.getId())){
+                        mf.setSourceRef(task);
+                    }
                 }
             }
-            for (SequenceFlow sf : allFlows) {
-                if (sf.getSourceRef().getId().equals(task.getId())) {
-                    sf.getElementSequenceFlow().setAttribute("sourceRef", task.getId());
+        }
+        throwingMessageTasks.removeAll(transformedMessages);
+
+        // set data input associations for receiving tasks
+
+        for(Participant object : objects){
+            HashSet<IntermediateCatchEvent> events = object.getProcessRef().getIntermediateCatchEvents();
+            for(IntermediateCatchEvent event : events){
+                for(DataObject d : event.getDataObjects()){
+                    DataInputAssociation in = new DataInputAssociation();
+                    d.getDataInputAssociations().add(in);
+                    in.setAssociatedTaskId(event.getId());
+                    Element tempSource = doc.createElement("bpmn:sourceRef");
+                    Element tempTarget = doc.createElement("bpmn:targetRef");
+                    tempSource.setTextContent(d.getRefId());
+                    tempTarget.setTextContent("_property_placeholder");
+                    in.getElementDataInputAssociation().appendChild(tempSource);
+                    in.getElementDataInputAssociation().appendChild(tempTarget);
+                    event.getElement().appendChild(in.getElementDataInputAssociation());
                 }
-                if (sf.getTargetRef().getId().equals(task.getId())) {
-                    sf.getElementSequenceFlow().setAttribute("targetRef", task.getId());
-                }
+            }
+
+        }
+
+        for(Participant object : objects){
+            HashSet<IntermediateCatchEvent> events = object.getProcessRef().getIntermediateCatchEvents();
+            for(IntermediateCatchEvent event : events){
+                    System.out.println(object.getName() + " " + event.getName() + " " + event.getDataObjects());
+                    for(DataObject d : event.getDataObjects()){
+                        for(DataInputAssociation in : d.getDataInputAssociations()) {
+                            System.out.println("\t" + in);
+                        }
+                    }
+
             }
 
         }
@@ -404,18 +419,17 @@ public class StepThree {
         // set lanes for pools
         for (Participant object : allParticipants) {
 
-            HashSet<User> user = new HashSet<>();
-            HashSet<User> lanes = new HashSet<>();
+            HashSet<User> users = new HashSet<>();
             ArrayList<Task> tasks = object.getProcessRef().getTasks();
             HashSet<IntermediateCatchEvent> catchEvents = object.getProcessRef().getIntermediateCatchEvents();
             HashSet<ExclusiveGateway> gateways = object.getProcessRef().getGateways();
             ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
 
             for (Task task : tasks) {
-                user.add(task.getUser());
+                users.add(task.getUser());
             }
             for (IntermediateCatchEvent event : catchEvents) {
-                user.add(event.getUser());
+                users.add(event.getUser());
             }
 
             object.getProcessRef().getStartEvent().setUser(tasks.get(0).getUser());
@@ -438,9 +452,12 @@ public class StepThree {
             Element laneSet = doc.createElement("bpmn:laneSet");
             laneSet.setAttribute("id", "LaneSet_" + RandomIdGenerator.generateRandomUniqueId(6));
 
-            for (User u : user) {
+            HashMap<String, User> lanes = new HashMap<>();
+            for (User u : users) {
                 Element lane = doc.createElement("bpmn:lane");
-                lane.setAttribute("id", "Lane_" + RandomIdGenerator.generateRandomUniqueId(6));
+                String id = "Lane_" + RandomIdGenerator.generateRandomUniqueId(6);
+                lane.setAttribute("id", id);
+                lanes.put(id, u);
                 lane.setAttribute("name", u.getName());
                 for (BPMNElement element : u.getElements()) {
                     Element temp = doc.createElement("bpmn:flowNodeRef");
@@ -451,11 +468,12 @@ public class StepThree {
             }
 
             object.getProcessRef().getElementFlowsProcess().appendChild(laneSet);
+            object.setLanes(lanes);
 
         }
 
         FillBPMNDI di = new FillBPMNDI();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, false);
 
         createXml(file);
 
@@ -471,9 +489,7 @@ public class StepThree {
 
                 if (relation.getRelationType() == RelationType.OTHER) {
                     messageCatch = new IntermediateCatchEvent("Receive " + relation.getTask().getName(), task.getUser());
-                    DataObject d = new DataObject(relation.getTask());
-                    fp.getDataObjects().add(d);
-                    messageCatch.getDataObjects().add(d);
+                    messageCatch.getDataObjects().add(relation.getTask().getDataObject());
                     collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
                 }
 
@@ -515,15 +531,6 @@ public class StepThree {
 
         }
 
-    }
-
-    private Participant findParticipant(Double id) {
-        for (Participant object : objects) {
-            if (object.getKey().equals(id)) {
-                return object;
-            }
-        }
-        return null;
     }
 
 }

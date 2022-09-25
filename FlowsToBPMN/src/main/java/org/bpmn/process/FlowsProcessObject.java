@@ -88,6 +88,7 @@ public class FlowsProcessObject {
         this.endEvent = new EndEvent();
         this.flows = parser.parseFlows(this, objects);
         setDataObjects();
+        setAssociations();
         sortProcess();
         setEndTasks();
         addEndEventFlows();
@@ -100,7 +101,6 @@ public class FlowsProcessObject {
         addFlowsToTasks();
         setGateways();
         setBeforeAndAfterElements();
-        setAssociations();
 
     }
 
@@ -339,14 +339,13 @@ public class FlowsProcessObject {
 
          */
 
-        /*
         for (int i = 0; i < tasks.size(); i++) {
             // add data output association
             // task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
             tasks.get(i).getDataOutputAssociation().setOutputAssociationTarget(tasks.get(i).getDataObject());
         }
 
-         */
+         /*
 
         for(Task task : tasks){
             for(SequenceFlow flow : flows){
@@ -362,6 +361,8 @@ public class FlowsProcessObject {
                 }
             }
         }
+
+          */
 
 
         /*

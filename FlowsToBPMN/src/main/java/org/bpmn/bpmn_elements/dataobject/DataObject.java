@@ -1,5 +1,6 @@
 package org.bpmn.bpmn_elements.dataobject;
 
+import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.task.Task;
@@ -8,8 +9,10 @@ import org.w3c.dom.Element;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.bpmn.steps.BPMN.doc;
+import static org.bpmn.steps.StepOne.allDataObjects;
 
 public class DataObject {
 
@@ -21,9 +24,9 @@ public class DataObject {
 
     String name;
 
-    String x;
+    Double x;
 
-    String y;
+    Double y;
 
     ArrayList<String> states = new ArrayList<>();
 
@@ -31,19 +34,21 @@ public class DataObject {
 
     Object object;
 
-    public void setX(String x) {
+    HashSet<DataInputAssociation> dataInputAssociations = new HashSet<>();
+
+    public void setX(Double x) {
         this.x = x;
     }
 
-    public void setY(String y) {
+    public void setY(Double y) {
         this.y = y;
     }
 
-    public String getX() {
+    public Double getX() {
         return x;
     }
 
-    public String getY() {
+    public Double getY() {
         return y;
     }
 
@@ -52,6 +57,7 @@ public class DataObject {
         this.refId = "DataObjectReference_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.associatedTask = task;
         this.elementDataObject = doc.createElement("bpmn:dataObjectReference");
+        allDataObjects.add(this);
         setElementDataObject();
     }
 
@@ -64,6 +70,10 @@ public class DataObject {
 
     public ArrayList<String> getStates() {
         return states;
+    }
+
+    public HashSet<DataInputAssociation> getDataInputAssociations() {
+        return dataInputAssociations;
     }
 
     private void setElementDataObject(Participant participant) {

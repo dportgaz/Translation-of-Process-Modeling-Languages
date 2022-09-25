@@ -47,7 +47,7 @@ public class Collaboration {
         return this.id;
     }
 
-    public void setParticipants(HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public void setParticipants(HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects, boolean adHoc) {
 
         for (Double key : objectTypeObjects.keySet()) {
             objectTypeObjects.get(key).forEach(obj -> {
@@ -72,7 +72,7 @@ public class Collaboration {
             });
         }
         for (Object object : objects) {
-            object.setProcessRef(objectTypeObjects, true);
+            object.setProcessRef(objectTypeObjects, adHoc);
         }
     }
 

@@ -16,6 +16,7 @@ import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -127,11 +128,13 @@ public class Task implements BPMNElement {
     }
 
     public void setSendTask() {
+        Node temp = this.elementTask.getFirstChild();
         this.isSendTask = true;
-        this.id = "SendActivity" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.id = "SendActivity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementTask = doc.createElement("bpmn:sendTask");
         this.elementTask.setAttribute("id", this.id);
         this.elementTask.setAttribute("name", this.name);
+        this.elementTask.appendChild(temp);
     }
 
     private Permission permissionForStep(String name) {
@@ -150,14 +153,6 @@ public class Task implements BPMNElement {
         } else {
             return "Read";
         }
-    }
-
-    public Participant getStepParticipant() {
-        return stepParticipant;
-    }
-
-    public String getParticipantName() {
-        return participantName;
     }
 
     public int getCntOtherRelations() {
@@ -186,7 +181,6 @@ public class Task implements BPMNElement {
         this.steps = setSteps(objects);
         setElement();
         setDataOutputAssociation();
-
     }
 
     public ArrayList<Port> getPorts() {
@@ -402,7 +396,7 @@ public class Task implements BPMNElement {
     public void setDataOutputAssociation() {
 
         this.dataOutputAssociation = new DataOutputAssociation();
-        // this.elementTask.appendChild(this.dataOutputAssociation.getElementDataOutputAssociation());
+        this.elementTask.appendChild(this.dataOutputAssociation.getElementDataOutputAssociation());
 
     }
 

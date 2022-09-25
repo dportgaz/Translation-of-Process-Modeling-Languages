@@ -1,7 +1,7 @@
 package org.bpmn.steps;
 
 import org.bpmn.bpmn_elements.Loop;
-import org.bpmn.bpmn_elements.collaboration.participant.Participant;
+import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
@@ -32,6 +32,7 @@ public class StepOne implements Step{
     public static ArrayList<Object> allParticipants = new ArrayList();
     public static ArrayList<Task> allTasks = new ArrayList();
 
+    public static ArrayList<DataObject> allDataObjects = new ArrayList();
     public static ArrayList<SequenceFlow> allFlows = new ArrayList();
     public static ArrayList<ExclusiveGateway> allGateways = new ArrayList();
     public static HashSet<Loop> loops = new HashSet<>();
@@ -49,15 +50,16 @@ public class StepOne implements Step{
 
     public void execute() throws TransformerException {
 
+        boolean adHoc = true;
         this.collaboration = new Collaboration();
-        collaboration.setParticipants(objectTypeObjects);
+        collaboration.setParticipants(objectTypeObjects, adHoc);
         Element collaborationElement = collaboration.getElementCollaboration();
 
         definitionsElement.appendChild(collaborationElement);
         setProcesses(definitionsElement);
 
         FillBPMNDI di = new FillBPMNDI();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, false);
 
         createXml(file);
 

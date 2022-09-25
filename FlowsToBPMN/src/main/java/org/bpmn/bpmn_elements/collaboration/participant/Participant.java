@@ -5,6 +5,9 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.w3c.dom.Element;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 import static org.bpmn.steps.BPMN.doc;
 
 public abstract class Participant {
@@ -14,8 +17,8 @@ public abstract class Participant {
     String name;
     Element participantElement;
     Collaboration collaboration;
-
     FlowsProcessObject processRef;
+    HashMap<String, User> lanes = new HashMap<>();
 
 
     public Participant(Collaboration collaboration, Double key, String name) {
@@ -41,6 +44,14 @@ public abstract class Participant {
         multiInstance.setAttribute("minimum","2");
         this.participantElement.appendChild(multiInstance);
 
+    }
+
+    public HashMap<String, User> getLanes() {
+        return lanes;
+    }
+
+    public void setLanes(HashMap<String, User> lanes) {
+        this.lanes = lanes;
     }
 
     public Element getParticipantElement() {

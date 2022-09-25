@@ -36,8 +36,6 @@ public class IntermediateCatchEvent implements BPMNElement{
 
     BPMNElement afterElement;
 
-    ArrayList<DataInputAssociation> dataInputAssociations = new ArrayList<>();
-
     DataOutputAssociation dataOutputAssociation;
 
     boolean parallelMultiple;
@@ -47,6 +45,8 @@ public class IntermediateCatchEvent implements BPMNElement{
     String name;
 
     User user;
+
+    HashSet<DataInputAssociation> dataInputAssociations = new HashSet<>();
 
     public IntermediateCatchEvent(String name, User user) {
         this.id = "ReceiveActivity_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -65,6 +65,10 @@ public class IntermediateCatchEvent implements BPMNElement{
         this.elementCatchEvent = doc.createElement("bpmn:receiveTask");
         this.parallelMultiple = parallelMultiple;
         setElementMultiple();
+    }
+
+    public HashSet<DataInputAssociation> getDataInputAssociations() {
+        return dataInputAssociations;
     }
 
     public String getName() {

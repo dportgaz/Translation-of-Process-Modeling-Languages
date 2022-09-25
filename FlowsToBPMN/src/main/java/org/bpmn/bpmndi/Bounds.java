@@ -50,4 +50,8 @@ public class Bounds {
         return elementBounds;
     }
 
+    @Override
+    public String toString() {
+        return "(x= " + x + " , y= " + y +")";
+    }
 }

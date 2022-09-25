@@ -18,6 +18,8 @@ public class DataInputAssociation extends Association{
 
     Element elementSource;
 
+    String associatedTaskId;
+
     public DataInputAssociation() {
 
         this.id = "DataInputAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -30,6 +32,14 @@ public class DataInputAssociation extends Association{
         this.elementDataInputAssociation = doc.createElement("bpmn:dataInputAssociation");
         this.elementDataInputAssociation.setAttribute("id", this.id);
 
+    }
+
+    public void setAssociatedTaskId(String associatedTaskId) {
+        this.associatedTaskId = associatedTaskId;
+    }
+
+    public String getAssociatedTaskId() {
+        return associatedTaskId;
     }
 
     public void setInputAssociationSource(DataObject dataObject) {
@@ -64,5 +74,10 @@ public class DataInputAssociation extends Association{
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return this.id;
     }
 }
