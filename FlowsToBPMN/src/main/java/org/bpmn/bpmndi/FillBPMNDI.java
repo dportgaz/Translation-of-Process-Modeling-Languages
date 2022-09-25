@@ -23,8 +23,8 @@ import static org.bpmn.steps.StepOne.allDataObjects;
 
 public class FillBPMNDI {
     final double participantX = 70.0;
-    final double participantWidth = 2700.0;
-    final double participantHeight = 900.0;
+    final double participantWidth = 3000.0;
+    final double participantHeight = 1500.0;
     final double participantYInc = participantHeight + 50.0;
 
     final double startEventYInc = 200.0;
@@ -285,7 +285,6 @@ public class FillBPMNDI {
         poolHeight = shape.getBounds().getY();
         rootElement.appendChild(shape.getBpmnElement());
 
-        /*
         Double yOff=0d;
         // add Lanes
         for(String id : p.getLanes().keySet()){
@@ -301,17 +300,15 @@ public class FillBPMNDI {
             String height = String.valueOf(this.participantHeight/p.getLanes().size());
 
             bnd.setAttribute("x", x);
-            bnd.setAttribute("y", String.valueOf(participantY+yOff));
+            bnd.setAttribute("y", String.valueOf(participantY+(this.participantHeight/p.getLanes().size())*yOff));
             bnd.setAttribute("width", width);
             bnd.setAttribute("height", height);
 
             temp.appendChild(bnd);
             rootElement.appendChild(temp);
 
-            yOff += 120;
+            yOff++;
         }
-
-         */
 
     }
 
