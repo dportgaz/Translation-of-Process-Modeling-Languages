@@ -1,5 +1,6 @@
 package org.bpmn.bpmndi;
 
+import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.task.Task;
 import org.w3c.dom.Element;
 
@@ -15,6 +16,8 @@ public class Shape {
     private Bounds bounds;
     private Element bpmnElement;
     private boolean isSubprocess = false;
+
+    BPMNElement associatedBPMNElement;
 
 
     public Shape(String elementId, String isHorizontal, Bounds bounds) {

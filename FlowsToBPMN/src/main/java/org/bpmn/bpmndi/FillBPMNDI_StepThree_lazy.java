@@ -2,32 +2,31 @@ package org.bpmn.bpmndi;
 
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
-import org.bpmn.bpmn_elements.collaboration.participant.Object;
+import org.bpmn.bpmn_elements.collaboration.Collaboration;
+import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Task;
+import org.bpmn.process.FlowsProcessObject;
 import org.bpmn.process.Lane;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.bpmn_elements.collaboration.Collaboration;
-import org.bpmn.process.FlowsProcessObject;
-import org.bpmn.bpmn_elements.collaboration.participant.Participant;
-import org.bpmn.steps.BPMN;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.steps.BPMN.doc;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
+import static org.bpmn.steps.BPMN.doc;
 import static org.bpmn.steps.StepOne.allDataObjects;
 
-public class FillBPMNDI {
+public class FillBPMNDI_StepThree_lazy {
     final double participantX = 70.0;
     final double participantWidth = 3000.0;
     final double participantHeight = 1500.0;
@@ -74,6 +73,8 @@ public class FillBPMNDI {
 
     HashSet<Shape> allShapes = new HashSet<>();
 
+    HashMap<Shape, BPMNElement> shapeBPMNElementHashMap = new HashMap<>();
+
     public void f(Element rootElement, double x, double y, String e, Participant object, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous) {
 
         ArrayList<String> list = new ArrayList<>();
@@ -106,6 +107,7 @@ public class FillBPMNDI {
             String target = targetElement.getId();
 
             if (e.equals(source)) {
+
                 if (!printMark.contains(e)) {
 
                     if (previous != null) {
@@ -146,10 +148,9 @@ public class FillBPMNDI {
                     Shape tempShape = new Shape(e, tempBounds, tasks);
 
                     tempShape.setShapeParticipant();
-                    tempShape.setBounds();
-                    rootElement.appendChild(tempShape.getBpmnElement());
 
                     shapes.add(tempShape);
+                    shapeBPMNElementHashMap.put(tempShape, sourceElement);
                     printMark.add(e);
                 }
 
@@ -187,8 +188,7 @@ public class FillBPMNDI {
             Shape tempShape = new Shape(e, tempBounds);
             shapes.add(tempShape);
             tempShape.setShapeParticipant();
-            tempShape.setBounds();
-            rootElement.appendChild(tempShape.getBpmnElement());
+            shapeBPMNElementHashMap.put(tempShape, fp.getEndEvent());
         }
 
     }
@@ -205,12 +205,40 @@ public class FillBPMNDI {
         printMark.clear();
         targetMark.clear();
 
+
         f(rootElement, x, y, start, object, tasks, flows, null);
+        q(object);
+        for(Shape shape : shapes){
+            shape.setBounds();
+            rootElement.appendChild(shape.getBpmnElement());
+        }
+        System.out.println(shapeBPMNElementHashMap);
         addFlowsEdge(rootElement, flows);
         //addDataObjects(rootElement, flows);
         addDataObjectsOutput(rootElement, tasks);
         allShapes.addAll(shapes);
         shapes.clear();
+
+    }
+
+    private void q(Participant object) {
+
+        for (Map.Entry<Shape, BPMNElement> entry : shapeBPMNElementHashMap.entrySet()) {
+
+            Shape tempShape = entry.getKey();
+            User tempUser = entry.getValue().getUser();
+
+            for (Map.Entry<User, Lane> laneMap : object.getLanes().entrySet()) {
+
+                Lane entryLane = laneMap.getValue();
+
+                if (tempUser.getId().equals(laneMap.getKey().getId())) {
+                    Double yOffSet = tempShape.getBounds().getY() - (entryLane.getMiddleY() - tempShape.getBounds().getY());
+                    tempShape.getBounds().setY(yOffSet);
+                }
+            }
+
+        }
 
     }
 
@@ -244,7 +272,7 @@ public class FillBPMNDI {
             setMessageFlows(bpmnLane, collaboration);
         }
 
-        if(visibleDataObjectFlows) {
+        if (visibleDataObjectFlows) {
             for (Participant object : objects) {
                 addDataObjectsInput(bpmnLane, object.getProcessRef().getIntermediateCatchEvents());
             }
@@ -266,7 +294,7 @@ public class FillBPMNDI {
             // JSON BUG FINDING :
             // System.out.println(((Task)mf.getSourceRef()).getName());
             double xStart = bsSource.getBounds().getX() + bsSource.getBounds().getWidth() - activityWidth / 2;
-            double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2+ activityHeight/2;
+            double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2 + activityHeight / 2;
 
             double xEnd = bsTarget.getBounds().getX() + activityWidth / 2;
             double yEnd = bsTarget.getBounds().getY();
@@ -295,9 +323,9 @@ public class FillBPMNDI {
         poolHeight = shape.getBounds().getY();
         rootElement.appendChild(shape.getBpmnElement());
 
-        int yOff=0;
+        int yOff = 0;
         // add Lanes
-        for(Map.Entry<User, Lane> lane : p.getLanes().entrySet()){
+        for (Map.Entry<User, Lane> lane : p.getLanes().entrySet()) {
 
             Lane laneEntry = lane.getValue();
 
@@ -307,17 +335,17 @@ public class FillBPMNDI {
 
             Element bnd = doc.createElement("dc:Bounds");
 
-            Double x = this.participantX+30;
-            Double width = this.participantWidth-30;
-            Double height = this.participantHeight/p.getLanes().size();
-            Double y = participantY+(this.participantHeight/p.getLanes().size())*yOff;
+            Double x = this.participantX + 30;
+            Double width = this.participantWidth - 30;
+            Double height = this.participantHeight / p.getLanes().size();
+            Double y = participantY + (this.participantHeight / p.getLanes().size()) * yOff;
 
             laneEntry.setX(x);
             laneEntry.setY(y);
             laneEntry.setHeight(height);
             laneEntry.setWidth(width);
-            laneEntry.setMiddleX(x+30);
-            laneEntry.setMiddleY(y+height/2);
+            laneEntry.setMiddleX(x + 30);
+            laneEntry.setMiddleY(y + height / 2);
 
             bnd.setAttribute("x", String.valueOf(x));
             bnd.setAttribute("y", String.valueOf(y));
@@ -465,8 +493,6 @@ public class FillBPMNDI {
         }
 
     }
-
-
 
 
     public void addFlowsEdge(Element rootElement, ArrayList<SequenceFlow> flows) {

@@ -15,10 +15,12 @@ import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.bpmndi.FillBPMNDI;
+import org.bpmn.bpmndi.FillBPMNDI_StepThree_lazy;
 import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.flows_objects.AbstractRelation;
 import org.bpmn.parse_json.Parser;
 import org.bpmn.process.FlowsProcessObject;
+import org.bpmn.process.Lane;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
@@ -359,7 +361,6 @@ public class StepThree {
         HashSet<Task> transformedMessages = new HashSet<>();
         for (Task task : throwingMessageTasks) {
             if (!task.getIsSubprocess()) {
-                String id = task.getId();
                 task.setSendTask();
                 transformedMessages.add(task);
                 for (SequenceFlow sf : allFlows) {
@@ -493,7 +494,25 @@ public class StepThree {
 
         setProcesses(definitionsElement);
 
-        FillBPMNDI di = new FillBPMNDI();
+        for(Participant object : objects){
+            System.out.println(object + "\n");
+            System.out.println("\t" + object.getProcessRef().getStartEvent() + " , " + object.getProcessRef().getStartEvent().getUser());
+            System.out.println("\t" + object.getProcessRef().getEndEvent() + " , " + object.getProcessRef().getEndEvent().getUser());
+            for(Task task : object.getProcessRef().getTasks()){
+                System.out.println("\t" + task.getName() + " , " + task.getUser());
+            }
+            for(IntermediateCatchEvent event : object.getProcessRef().getIntermediateCatchEvents()){
+                System.out.println("\t" + event + " , " + event.getUser());
+            }
+            for(ExclusiveGateway gateway : object.getProcessRef().getGateways()){
+                System.out.println("\t" + gateway + " , " + gateway.getUser());
+            }
+            System.out.println();
+
+            System.out.println(object.getLanes());
+        }
+
+        FillBPMNDI_StepThree_lazy di = new FillBPMNDI_StepThree_lazy();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, false);
 
         createXml(file);
@@ -577,8 +596,8 @@ public class StepThree {
 
         for (ExclusiveGateway gateway : gateways) {
             for (SequenceFlow flow : flows) {
-                if (flow.getTargetRef().getId().equals(gateway.getId())) {
-                    User temp = flow.getSourceRef().getUser();
+                if (flow.getSourceRef().getId().equals(gateway.getId())) {
+                    User temp = flow.getTargetRef().getUser();
                     if (temp != null) {
                         gateway.setUser(temp);
                         temp.getElements().add(gateway);
@@ -590,19 +609,15 @@ public class StepThree {
         Element laneSet = doc.createElement("bpmn:laneSet");
         laneSet.setAttribute("id", "LaneSet_" + RandomIdGenerator.generateRandomUniqueId(6));
 
-        HashMap<String, User> lanes = new HashMap<>();
+        HashMap<User, Lane> lanes = new HashMap<>();
         for (User u : users) {
-            Element lane = doc.createElement("bpmn:lane");
-            String id = "Lane_" + RandomIdGenerator.generateRandomUniqueId(6);
-            lane.setAttribute("id", id);
-            lanes.put(id, u);
-            lane.setAttribute("name", u.getName());
+            Lane lane = new Lane(u);
+            lanes.put(u, lane);
+
             for (BPMNElement element : u.getElements()) {
-                Element temp = doc.createElement("bpmn:flowNodeRef");
-                temp.setTextContent(element.getId());
-                lane.appendChild(temp);
+                lane.addBPMNElement(element);
             }
-            laneSet.appendChild(lane);
+            laneSet.appendChild(lane.getLaneElement());
         }
 
         object.getProcessRef().getElementFlowsProcess().appendChild(laneSet);

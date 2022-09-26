@@ -1,6 +1,7 @@
 package org.bpmn.bpmn_elements.collaboration.participant;
 
 import org.bpmn.process.FlowsProcessObject;
+import org.bpmn.process.Lane;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.w3c.dom.Element;
@@ -18,7 +19,7 @@ public abstract class Participant {
     Element participantElement;
     Collaboration collaboration;
     FlowsProcessObject processRef;
-    HashMap<String, User> lanes = new HashMap<>();
+    HashMap<User, Lane> lanes = new HashMap<>();
 
 
     public Participant(Collaboration collaboration, Double key, String name) {
@@ -46,11 +47,11 @@ public abstract class Participant {
 
     }
 
-    public HashMap<String, User> getLanes() {
+    public HashMap<User, Lane> getLanes() {
         return lanes;
     }
 
-    public void setLanes(HashMap<String, User> lanes) {
+    public void setLanes(HashMap<User, Lane> lanes) {
         this.lanes = lanes;
     }
 
