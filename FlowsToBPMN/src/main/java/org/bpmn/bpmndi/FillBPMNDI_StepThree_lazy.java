@@ -212,10 +212,12 @@ public class FillBPMNDI_StepThree_lazy {
             shape.setBounds();
             rootElement.appendChild(shape.getBpmnElement());
         }
-        System.out.println(shapeBPMNElementHashMap);
+
         addFlowsEdge(rootElement, flows);
+
         //addDataObjects(rootElement, flows);
         addDataObjectsOutput(rootElement, tasks);
+
         allShapes.addAll(shapes);
         shapes.clear();
 
@@ -232,9 +234,10 @@ public class FillBPMNDI_StepThree_lazy {
 
                 Lane entryLane = laneMap.getValue();
 
-                if (tempUser.getId().equals(laneMap.getKey().getId())) {
+                if (tempUser.getId().equals(laneMap.getKey().getId()) && !tempShape.getMarked()) {
                     Double yOffSet = tempShape.getBounds().getY() - (entryLane.getMiddleY() - tempShape.getBounds().getY());
                     tempShape.getBounds().setY(yOffSet);
+                    tempShape.setMarked();
                 }
             }
 
@@ -292,11 +295,11 @@ public class FillBPMNDI_StepThree_lazy {
             Shape bsTarget = getBPMNShapeByFlowAllShapes(mf.getTargetRef().getId());
 
             // JSON BUG FINDING :
-            // System.out.println(((Task)mf.getSourceRef()).getName());
-            double xStart = bsSource.getBounds().getX() + bsSource.getBounds().getWidth() - activityWidth / 2;
-            double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2 + activityHeight / 2;
+            // System.out.println((mf.getSourceRef()).getName() + " , " + bsSource + " , " + bsSource.getBounds());
+            double xStart = bsSource.getBounds().getX() + activityHeight/2;
+            double yStart = bsSource.getBounds().getY();
 
-            double xEnd = bsTarget.getBounds().getX() + activityWidth / 2;
+            double xEnd = bsTarget.getBounds().getX() + activityWidth/2;
             double yEnd = bsTarget.getBounds().getY();
 
             Element waypointStart = doc.createElement("di:waypoint");

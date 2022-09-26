@@ -17,12 +17,15 @@ public class Shape {
     private Element bpmnElement;
     private boolean isSubprocess = false;
 
+    boolean marked;
+
     BPMNElement associatedBPMNElement;
 
 
     public Shape(String elementId, String isHorizontal, Bounds bounds) {
 
         this.elementId = elementId;
+        this.marked = false;
         this.elementIdDi = elementId + "_di";
         this.isHorizontal = isHorizontal;
         this.bounds = bounds;
@@ -36,9 +39,18 @@ public class Shape {
         bpmnElement.appendChild(bounds.getElementBounds());
     }
 
+    public void setMarked() {
+        this.marked = true;
+    }
+
+    public boolean getMarked(){
+        return this.marked;
+    }
+
     public Shape(String elementId, Bounds bounds) {
 
         this.elementId = elementId;
+        this.marked = false;
         this.elementIdDi = elementId + "_di";
         this.bounds = bounds;
         this.bpmnElement = doc.createElement("bpmndi:BPMNShape");
@@ -57,6 +69,7 @@ public class Shape {
     public Shape(String elementId, Bounds bounds, boolean isSubprocess) {
 
         this.elementId = elementId;
+        this.marked = false;
         this.elementIdDi = elementId + "_di";
         this.bounds = bounds;
         this.bpmnElement = doc.createElement("bpmndi:BPMNShape");
@@ -68,6 +81,7 @@ public class Shape {
     public Shape(String elementId, Bounds bounds, ArrayList<Task> tasks) {
 
         this.elementId = elementId;
+        this.marked = false;
         this.elementIdDi = elementId + "_di";
         this.bounds = bounds;
         this.bpmnElement = doc.createElement("bpmndi:BPMNShape");

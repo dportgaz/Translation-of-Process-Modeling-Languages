@@ -421,13 +421,10 @@ public class StepThree {
                                         }
                                     }
                                     if(!takeCareOf){
-                                        System.out.println(step.getParticipantName());
                                         IntermediateCatchEvent messageCatch = new IntermediateCatchEvent("Receive " + step.getName(), task.getUser());
                                         messageCatch.getDataObjects().add(task.getDataObject());
                                         events.add(messageCatch);
                                         object.getProcessRef().getIntermediateCatchEvents().add(messageCatch);
-                                        System.out.println(task + " , " + messageCatch);
-                                        System.out.println(events);
                                         //collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
                                     }
                                 }
@@ -437,8 +434,6 @@ public class StepThree {
                                 messageCatch.getDataObjects().add(task.getDataObject());
                                 events.add(messageCatch);
                                 object.getProcessRef().getIntermediateCatchEvents().add(messageCatch);
-                                System.out.println(task + " , " + messageCatch);
-                                System.out.println(events);
                             }
                         }
                     }
@@ -452,9 +447,7 @@ public class StepThree {
                         for (SequenceFlow flow : object.getProcessRef().getFlows()) {
                             if (flow.getTargetRef().getId().equals(task.getId())) {
                                 BPMNElement source = flow.getSourceRef();
-                                System.out.println("FLOW: " + flow);
                                 SequenceFlow tempOut = new SequenceFlow(source, parallelSplit);
-                                System.out.println(tempOut);
                                 flowsToAdd.add(tempOut);
                                 flowsToRemove.add(flow);
                                 for (IntermediateCatchEvent event : events) {
@@ -494,26 +487,8 @@ public class StepThree {
 
         setProcesses(definitionsElement);
 
-        for(Participant object : objects){
-            System.out.println(object + "\n");
-            System.out.println("\t" + object.getProcessRef().getStartEvent() + " , " + object.getProcessRef().getStartEvent().getUser());
-            System.out.println("\t" + object.getProcessRef().getEndEvent() + " , " + object.getProcessRef().getEndEvent().getUser());
-            for(Task task : object.getProcessRef().getTasks()){
-                System.out.println("\t" + task.getName() + " , " + task.getUser());
-            }
-            for(IntermediateCatchEvent event : object.getProcessRef().getIntermediateCatchEvents()){
-                System.out.println("\t" + event + " , " + event.getUser());
-            }
-            for(ExclusiveGateway gateway : object.getProcessRef().getGateways()){
-                System.out.println("\t" + gateway + " , " + gateway.getUser());
-            }
-            System.out.println();
-
-            System.out.println(object.getLanes());
-        }
-
         FillBPMNDI_StepThree_lazy di = new FillBPMNDI_StepThree_lazy();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, false);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, true, false);
 
         createXml(file);
 
@@ -554,7 +529,6 @@ public class StepThree {
         }
         return messageCatch;
     }
-
 
     public void setProcesses(Element definitionsElement) {
 
