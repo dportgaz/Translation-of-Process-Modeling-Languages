@@ -208,7 +208,7 @@ public class FillBPMNDI_StepThree_lazy {
 
         f(rootElement, x, y, start, object, tasks, flows, null);
         q(object);
-        for(Shape shape : shapes){
+        for (Shape shape : shapes) {
             shape.setBounds();
             rootElement.appendChild(shape.getBpmnElement());
         }
@@ -296,10 +296,10 @@ public class FillBPMNDI_StepThree_lazy {
 
             // JSON BUG FINDING :
             // System.out.println((mf.getSourceRef()).getName() + " , " + bsSource + " , " + bsSource.getBounds());
-            double xStart = bsSource.getBounds().getX() + activityHeight/2;
+            double xStart = bsSource.getBounds().getX() + activityHeight / 2;
             double yStart = bsSource.getBounds().getY();
 
-            double xEnd = bsTarget.getBounds().getX() + activityWidth/2;
+            double xEnd = bsTarget.getBounds().getX() + activityWidth / 2;
             double yEnd = bsTarget.getBounds().getY();
 
             Element waypointStart = doc.createElement("di:waypoint");
@@ -348,7 +348,7 @@ public class FillBPMNDI_StepThree_lazy {
             laneEntry.setHeight(height);
             laneEntry.setWidth(width);
             laneEntry.setMiddleX(x + 30);
-            laneEntry.setMiddleY(y + height / 4);
+            laneEntry.setMiddleY(y + height / 3);
 
             bnd.setAttribute("x", String.valueOf(x));
             bnd.setAttribute("y", String.valueOf(y));
@@ -421,7 +421,7 @@ public class FillBPMNDI_StepThree_lazy {
                 dataObject.setAttribute("bpmnElement", d.getRefId());
 
                 Double xBound = bs.getBounds().getX() + xBoundOffset;
-                Double yBound = bs.getBounds().getY() - 200;
+                Double yBound = bs.getBounds().getY() - 150;
 
                 Element dataObjectBounds = doc.createElement("dc:Bounds");
                 dataObjectBounds.setAttribute("x", String.valueOf(xBound));
@@ -465,6 +465,7 @@ public class FillBPMNDI_StepThree_lazy {
 
     public void addDataObjectsInput(Element rootElement, HashSet<IntermediateCatchEvent> events) {
 
+        /*
         for (DataObject d : allDataObjects) {
             for (DataInputAssociation in : d.getDataInputAssociations()) {
                 Shape bs = getBPMNShapeByFlowAllShapes(in.getAssociatedTaskId());
@@ -493,6 +494,61 @@ public class FillBPMNDI_StepThree_lazy {
             }
 
 
+        }
+
+         */
+
+        for (IntermediateCatchEvent event : events) {
+            System.out.println("Event: " + event + " , " + event.getDataObjects() + " , " + event.getDataInputAssociations());
+            Shape shapeEvent = getBPMNShapeByFlowAllShapes(event.getId());
+            System.out.println("\t" + shapeEvent);
+
+            for (DataObject d : event.getDataObjects()) {
+
+                Element dataObject = doc.createElement("bpmndi:BPMNShape");
+                dataObject.setAttribute("id", d.getRefId() + "_di");
+                dataObject.setAttribute("bpmnElement", d.getRefId());
+
+                Double xBound = shapeEvent.getBounds().getX();
+                Double yBound = shapeEvent.getBounds().getY() + 150;
+
+                Element dataObjectBounds = doc.createElement("dc:Bounds");
+                dataObjectBounds.setAttribute("x", String.valueOf(xBound));
+                dataObjectBounds.setAttribute("y", String.valueOf(yBound));
+
+                d.setX(xBound + dataObjectWidth / 2);
+                d.setY(yBound + dataObjectHeight);
+
+                dataObjectBounds.setAttribute("width", String.valueOf(dataObjectWidth));
+                dataObjectBounds.setAttribute("height", String.valueOf(dataObjectHeight));
+                dataObject.appendChild(dataObjectBounds);
+                rootElement.appendChild(dataObject);
+
+                for (DataInputAssociation in : d.getDataInputAssociations()) {
+
+                    Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
+                    //TODO: POTENZIELL BUGGY
+                    dataObjectFlowOutput.setAttribute("id", in.getId() + "_di");
+                    dataObjectFlowOutput.setAttribute("bpmnElement", in.getId());
+
+                    Element waypointOutStart = doc.createElement("di:waypoint");
+                    Element waypointOutEnd = doc.createElement("di:waypoint");
+
+                    String waypointOutStartX = String.valueOf(d.getX());
+                    String waypointOutStartY = String.valueOf(d.getY()-dataObjectHeight);
+                    String waypointOutEndX = String.valueOf(shapeEvent.getBounds().getX() + activityWidth/2);
+                    String waypointOutEndY = String.valueOf(shapeEvent.getBounds().getY() + activityHeight);
+
+                    waypointOutStart.setAttribute("x", waypointOutStartX);
+                    waypointOutStart.setAttribute("y", waypointOutStartY);
+                    waypointOutEnd.setAttribute("x", waypointOutEndX);
+                    waypointOutEnd.setAttribute("y", waypointOutEndY);
+
+                    dataObjectFlowOutput.appendChild(waypointOutStart);
+                    dataObjectFlowOutput.appendChild(waypointOutEnd);
+                    rootElement.appendChild(dataObjectFlowOutput);
+                }
+            }
         }
 
     }

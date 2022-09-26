@@ -82,7 +82,7 @@ public class FlowsProcessObject {
 
         this.tasks = parser.parseTasks(this.participant, objects, adHoc);
         this.loops = parser.parseLoops(this, objects);
-        predicates = parser.parsePredicates(objects);
+        //predicates = parser.parsePredicates(objects);
 
         this.startEvent = new StartEvent();
         this.endEvent = new EndEvent();

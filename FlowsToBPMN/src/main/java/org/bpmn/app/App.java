@@ -15,7 +15,7 @@ public class App {
 
 
         BPMN bpmn = new BPMN();
-        String filePHoodle = "FlowsToBPMN/src/resources/flows/newR.json";
+        String filePHoodle = "FlowsToBPMN/src/resources/flows/insurance.json";
         bpmn.create(filePHoodle, "PHoodle_RENEW.xml");
 
     }

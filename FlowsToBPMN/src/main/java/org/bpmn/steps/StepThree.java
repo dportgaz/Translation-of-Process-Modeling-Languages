@@ -193,7 +193,9 @@ public class StepThree {
                     } else {
                         Task coordinationTask = port.getIncoming().get(0).getTask();
                         messageCatch = new IntermediateCatchEvent("Receive " + coordinationTask.getName(), task.getUser());
-                        messageCatch.getDataObjects().add(coordinationTask.getDataObject());
+                        DataObject d = new DataObject(coordinationTask);
+                        fp.getDataObjects().add(d);
+                        messageCatch.getDataObjects().add(d);
                         collaboration.getMessageFlows().add(new MessageFlow(coordinationTask, messageCatch));
                     }
 
@@ -223,7 +225,9 @@ public class StepThree {
                     if (relation.getRelationType() == RelationType.OTHER) {
                         Task coordinationTask = relation.getTask();
                         messageCatch = new IntermediateCatchEvent("Receive " + coordinationTask.getName(), task.getUser());
-                        messageCatch.getDataObjects().add(coordinationTask.getDataObject());
+                        DataObject d = new DataObject(coordinationTask);
+                        fp.getDataObjects().add(d);
+                        messageCatch.getDataObjects().add(d);
                         collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
 
                     }
@@ -389,6 +393,7 @@ public class StepThree {
                     DataInputAssociation in = new DataInputAssociation();
                     d.getDataInputAssociations().add(in);
                     in.setAssociatedTaskId(event.getId());
+                    event.getDataInputAssociations().add(in);
                     Element tempSource = doc.createElement("bpmn:sourceRef");
                     Element tempTarget = doc.createElement("bpmn:targetRef");
                     tempSource.setTextContent(d.getRefId());
@@ -488,7 +493,7 @@ public class StepThree {
         setProcesses(definitionsElement);
 
         FillBPMNDI_StepThree_lazy di = new FillBPMNDI_StepThree_lazy();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, true, false);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, true);
 
         createXml(file);
 
@@ -504,7 +509,9 @@ public class StepThree {
 
                 if (relation.getRelationType() == RelationType.OTHER) {
                     messageCatch = new IntermediateCatchEvent("Receive " + relation.getTask().getName(), task.getUser());
-                    messageCatch.getDataObjects().add(relation.getTask().getDataObject());
+                    DataObject d = new DataObject(relation.getTask());
+                    messageCatch.getDataObjects().add(d);
+                    fp.getDataObjects().add(d);
                     collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
                 }
 
