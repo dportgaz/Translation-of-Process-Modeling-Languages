@@ -29,7 +29,7 @@ import static org.bpmn.steps.StepOne.allDataObjects;
 public class FillBPMNDI_StepThree_lazy {
     final double participantX = 70.0;
     final double participantWidth = 3000.0;
-    final double participantHeight = 1500.0;
+    final double participantHeight = 2000.0;
     final double participantYInc = participantHeight + 50.0;
 
     final double startEventYInc = 200.0;
@@ -167,7 +167,7 @@ public class FillBPMNDI_StepThree_lazy {
         if (cntElements > 1) {
             for (int t = cntElements - 1; t >= 0; t--) {
                 f(rootElement, x, y, list.get(t), object, tasks, flows, e);
-                y -= 100;
+                y -= 50;
             }
         } else if (cntElements == 1) {
             f(rootElement, x, y, list.get(0), object, tasks, flows, e);
@@ -345,7 +345,7 @@ public class FillBPMNDI_StepThree_lazy {
             laneEntry.setHeight(height);
             laneEntry.setWidth(width);
             laneEntry.setMiddleX(x + 30);
-            laneEntry.setMiddleY(y + height / 2);
+            laneEntry.setMiddleY(y + height / 4);
 
             bnd.setAttribute("x", String.valueOf(x));
             bnd.setAttribute("y", String.valueOf(y));
