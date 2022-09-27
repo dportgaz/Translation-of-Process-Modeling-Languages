@@ -215,7 +215,6 @@ public class StepThree {
 
                 }
 
-                fp.setBeforeAndAfterElements();
             } else if (cntPorts == 1) {
                 Port port = task.getPorts().get(0);
                 if (port.getIncoming().size() >= 2) {
@@ -245,7 +244,73 @@ public class StepThree {
                     fp.setBeforeAndAfterElements();
                 }
             }
+            fp.setBeforeAndAfterElements();
+        }
 
+        for (Participant object : allParticipants) {
+
+            HashSet<IntermediateCatchEvent> events = object.getProcessRef().getIntermediateCatchEvents();
+            HashSet<IntermediateCatchEvent> eventsToRemove = new HashSet<>();
+            HashSet<DataObject> dataObjectsToRemove = new HashSet<>();
+            FlowsProcessObject fp = object.getProcessRef();
+
+            for (IntermediateCatchEvent event : events) {
+                if (event.getParallelMultiple()) {
+
+                    eventsToRemove.add(event);
+                    dataObjectsToRemove.addAll(event.getDataObjects());
+
+                    ExclusiveGateway parallelGatewaySplit = new ExclusiveGateway(true, true);
+                    ExclusiveGateway parallelGatewayJoin = new ExclusiveGateway(true, true);
+
+                    fp.getGateways().add(parallelGatewaySplit);
+                    fp.getGateways().add(parallelGatewayJoin);
+
+                    SequenceFlow flowIn = fp.getFlowByTarget(event);
+                    SequenceFlow flowOut = fp.getFlowBySource(event);
+
+                    SequenceFlow flowInToParallel = new SequenceFlow(flowIn.getSourceRef(), parallelGatewaySplit);
+                    SequenceFlow parallelToFlowOut = new SequenceFlow(parallelGatewayJoin, flowOut.getTargetRef());
+
+                    parallelGatewaySplit.addIncoming(flowInToParallel);
+                    parallelGatewayJoin.addOutgoing(parallelToFlowOut);
+
+                    fp.getFlows().add(flowInToParallel);
+                    fp.getFlows().add(parallelToFlowOut);
+                    fp.getFlows().remove(flowIn);
+                    fp.getFlows().remove(flowOut);
+
+                    //TODO: write parallel Gateway class
+                    for (Map.Entry<Task, DataObject> entry : event.getAssociatedTasks().entrySet()) {
+                        Task task = entry.getKey();
+                        DataObject dataObject = entry.getValue();
+                        IntermediateCatchEvent messageCatch = new IntermediateCatchEvent("Receive " + task.getName(), task.getUser());
+                        fp.getDataObjects().add(dataObject);
+                        fp.getIntermediateCatchEvents().add(messageCatch);
+                        messageCatch.getDataObjects().add(dataObject);
+
+                        SequenceFlow parallelToEvent = new SequenceFlow(parallelGatewaySplit, messageCatch);
+                        SequenceFlow eventToParallel = new SequenceFlow(messageCatch, parallelGatewayJoin);
+
+                        parallelGatewaySplit.addOutgoing(parallelToEvent);
+                        parallelGatewayJoin.addIncoming(eventToParallel);
+                        messageCatch.setIncoming(parallelToEvent);
+                        messageCatch.setOutgoing(eventToParallel);
+
+                        fp.getFlows().add(parallelToEvent);
+                        fp.getFlows().add(eventToParallel);
+
+                        collaboration.getMessageFlows().remove(collaboration.getMessageFlowByTarget(event));
+                        collaboration.getMessageFlows().add(new MessageFlow(task, messageCatch));
+                    }
+                    fp.setBeforeAndAfterElements();
+                }
+            }
+
+            fp.getIntermediateCatchEvents().removeAll(eventsToRemove);
+            fp.getDataObjects().removeAll(dataObjectsToRemove);
+
+            fp.setBeforeAndAfterElements();
         }
 
         // prints coordination process and data relations
@@ -275,7 +340,7 @@ public class StepThree {
                 Pattern p2 = Pattern.compile("(^ReceiveActivity_+|^EventGateway_+)");
                 Matcher m2 = p2.matcher(flow.getTargetRef().getId());
 
-                if (m.find() && m2.find()) {
+                if (m.find() && m2.find() && !((ExclusiveGateway) flow.getSourceRef()).isParallelGate()) {
                     for (int j = i + 1; j < flows.size(); j++) {
 
                         SequenceFlow flowInner = flows.get(j);
@@ -425,7 +490,7 @@ public class StepThree {
                                             }
                                         }
                                     }
-                                    if(!takeCareOf){
+                                    if (!takeCareOf) {
                                         IntermediateCatchEvent messageCatch = new IntermediateCatchEvent("Receive " + step.getName(), task.getUser());
                                         messageCatch.getDataObjects().add(task.getDataObject());
                                         events.add(messageCatch);
@@ -493,7 +558,7 @@ public class StepThree {
         setProcesses(definitionsElement);
 
         FillBPMNDI_StepThree_lazy di = new FillBPMNDI_StepThree_lazy();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, true);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, true, true);
 
         createXml(file);
 
@@ -524,13 +589,12 @@ public class StepThree {
             for (Relation relation : port.getIncoming()) {
 
                 if (relation.getRelationType() == RelationType.OTHER) {
-                    messageCatch.setName(messageCatch.getName() + " " + relation.getTask().getName() + ", ");
                     DataObject d = new DataObject(relation.getTask());
+                    messageCatch.getAssociatedTasks().put(relation.getTask(), d);
                     fp.getDataObjects().add(d);
                     messageCatch.getDataObjects().add(d);
                     collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
                 }
-                messageCatch.setName(messageCatch.getName().substring(0, messageCatch.getName().length() - 1));
 
             }
         }

@@ -30,6 +30,8 @@ public class ExclusiveGateway implements BPMNElement {
 
     boolean eventBased;
 
+    boolean parallelGate = false;
+
     User user;
 
     public ExclusiveGateway() {
@@ -39,9 +41,14 @@ public class ExclusiveGateway implements BPMNElement {
     }
 
     public ExclusiveGateway(boolean parallel, boolean p) {
+        this.parallelGate = true;
         this.id = "Gateway_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementExclusiveGateway = doc.createElement("bpmn:parallelGateway");
         setElementExclusiveGateway();
+    }
+
+    public boolean isParallelGate(){
+        return this.parallelGate;
     }
 
     // TODO: create event based class?

@@ -6,10 +6,12 @@ import org.bpmn.bpmn_elements.association.DataOutputAssociation;
 import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import static org.bpmn.steps.BPMN.doc;
@@ -38,7 +40,7 @@ public class IntermediateCatchEvent implements BPMNElement{
 
     DataOutputAssociation dataOutputAssociation;
 
-    boolean parallelMultiple;
+    boolean parallelMultiple = false;
 
     HashSet<DataObject> dataObjects = new HashSet<>();
 
@@ -47,6 +49,8 @@ public class IntermediateCatchEvent implements BPMNElement{
     User user;
 
     HashSet<DataInputAssociation> dataInputAssociations = new HashSet<>();
+
+    HashMap<Task, DataObject> associatedTasks = new HashMap<Task, DataObject>();
 
     public IntermediateCatchEvent(String name, User user) {
         this.id = "ReceiveActivity_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -63,8 +67,16 @@ public class IntermediateCatchEvent implements BPMNElement{
         this.user = user;
         user.getElements().add(this);
         this.elementCatchEvent = doc.createElement("bpmn:receiveTask");
-        this.parallelMultiple = parallelMultiple;
+        this.parallelMultiple = true;
         setElementMultiple();
+    }
+
+    public boolean getParallelMultiple(){
+        return this.parallelMultiple;
+    }
+
+    public HashMap<Task, DataObject> getAssociatedTasks() {
+        return associatedTasks;
     }
 
     public HashSet<DataInputAssociation> getDataInputAssociations() {

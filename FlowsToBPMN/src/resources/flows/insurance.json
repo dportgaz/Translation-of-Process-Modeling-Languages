@@ -3777,15 +3777,6 @@
       },
       {
         "__type": "EntityUpdatedLog:#Shared.Data.History",
-        "Id": 9012206801704352716,
-        "MethodName": "UpdateName",
-        "Parameters": [
-          "Expert Assessment"
-        ],
-        "UpdatedEntityId": null
-      },
-      {
-        "__type": "EntityUpdatedLog:#Shared.Data.History",
         "Id": 5561185534986893040,
         "MethodName": "UpdateLabelAttributeTypeIds",
         "Parameters": [

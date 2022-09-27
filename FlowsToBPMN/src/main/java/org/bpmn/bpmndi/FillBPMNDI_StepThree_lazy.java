@@ -81,9 +81,9 @@ public class FillBPMNDI_StepThree_lazy {
         FlowsProcessObject fp = object.getProcessRef();
 
         // extract in method to recognize if activity, event or gateway
-        Pattern activityPattern = Pattern.compile("(Activity_+|ReceiveActivity_+|SendActivity_+)");
+        Pattern activityPattern = Pattern.compile("Activity_+");
         Pattern eventPattern = Pattern.compile("Event_+");
-        Pattern gatewayPattern = Pattern.compile("(Gateway_+|EventGateway_+)");
+        Pattern gatewayPattern = Pattern.compile("Gateway_+");
         Matcher activityMatcher = activityPattern.matcher(e);
         Matcher eventMatcher = eventPattern.matcher(e);
         Matcher gatewayMatcher = gatewayPattern.matcher(e);
@@ -116,10 +116,10 @@ public class FillBPMNDI_StepThree_lazy {
                             x += 145;
                             if (eventMatcherPrev.find()) {
                                 x -= 67;
-                                y -= 22;
+                                y -= 11;
                             } else if (gatewayMatcherPrev.find()) {
                                 x -= 55;
-                                y -= 15;
+                                y -= 7.5;
                             }
                             tempBounds = new Bounds(x, y, activityWidth, activityHeight);
                         } else if (eventMatcher.find()) {
@@ -128,10 +128,10 @@ public class FillBPMNDI_StepThree_lazy {
                             x += 160;
                             if (activityMatcherPrev.find()) {
                                 x -= 20;
-                                y += 15;
+                                y += 7.5;
                             } else if (eventMatcherPrev.find()) {
                                 x -= 87;
-                                y -= 7;
+                                y -= 3;
                             }
                             tempBounds = new Bounds(x, y, gatewayWidth, gatewayHeight);
                         }
@@ -179,10 +179,10 @@ public class FillBPMNDI_StepThree_lazy {
 
             if (gatewayMatcherPrev.find()) {
                 x += 86;
-                y += 7;
+                y += 3.5;
             } else if (activityMatcherPrev.find()) {
                 x += 141;
-                y += 22;
+                y += 11;
             }
             tempBounds = new Bounds(x, y, eventWidth, eventHeight);
             Shape tempShape = new Shape(e, tempBounds);
@@ -271,14 +271,14 @@ public class FillBPMNDI_StepThree_lazy {
 
         }
 
-        if (visibleMessageFlows) {
-            setMessageFlows(bpmnLane, collaboration);
-        }
-
         if (visibleDataObjectFlows) {
             for (Participant object : objects) {
                 addDataObjectsInput(bpmnLane, object.getProcessRef().getIntermediateCatchEvents());
             }
+        }
+
+        if (visibleMessageFlows) {
+            setMessageFlows(bpmnLane, collaboration);
         }
     }
 
@@ -499,7 +499,7 @@ public class FillBPMNDI_StepThree_lazy {
          */
 
         for (IntermediateCatchEvent event : events) {
-            System.out.println("Event: " + event + " , " + event.getDataObjects() + " , " + event.getDataInputAssociations());
+            System.out.println("Event: " + event + " , " + event.getName() + " , " + event.getDataObjects() + " , " + event.getDataInputAssociations());
             Shape shapeEvent = getBPMNShapeByFlowAllShapes(event.getId());
             System.out.println("\t" + shapeEvent);
 

@@ -200,6 +200,15 @@ public class FlowsProcessObject {
         return null;
     }
 
+    public SequenceFlow getFlowBySource(BPMNElement source) {
+        for (SequenceFlow flow : flows) {
+            if(flow.getSourceRef().getId() != null && flow.getSourceRef().getId().equals(source.getId())) {
+                return flow;
+            }
+        }
+        return null;
+    }
+
     public SequenceFlow getFlowByTarget(BPMNElement target) {
         for (SequenceFlow flow : flows) {
             if (flow.getTargetRef().getId() != null && flow.getTargetRef().getId().equals(target.getId())) {

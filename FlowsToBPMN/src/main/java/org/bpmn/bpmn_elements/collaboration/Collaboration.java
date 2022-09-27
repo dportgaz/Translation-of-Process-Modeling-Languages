@@ -1,5 +1,6 @@
 package org.bpmn.bpmn_elements.collaboration;
 
+import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.flows_objects.AbstractObjectType;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
@@ -45,6 +46,15 @@ public class Collaboration {
 
     public String getId() {
         return this.id;
+    }
+
+    public MessageFlow getMessageFlowByTarget(BPMNElement element){
+        for(MessageFlow mf : messageFlows){
+            if(element.getId().equals(mf.getTargetRef().getId())){
+                return mf;
+            }
+        }
+        return null;
     }
 
     public void setParticipants(HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects, boolean adHoc) {
