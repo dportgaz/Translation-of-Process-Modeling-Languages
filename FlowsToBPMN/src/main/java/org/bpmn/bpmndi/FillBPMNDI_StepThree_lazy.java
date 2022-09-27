@@ -234,6 +234,7 @@ public class FillBPMNDI_StepThree_lazy {
 
                 Lane entryLane = laneMap.getValue();
 
+                System.out.println(entry.getValue() + " ASDASD " + tempUser);
                 if (tempUser.getId().equals(laneMap.getKey().getId()) && !tempShape.getMarked()) {
                     Double yOffSet = tempShape.getBounds().getY() - (entryLane.getMiddleY() - tempShape.getBounds().getY());
                     tempShape.getBounds().setY(yOffSet);

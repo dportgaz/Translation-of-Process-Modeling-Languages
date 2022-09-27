@@ -266,6 +266,9 @@ public class StepThree {
                     fp.getGateways().add(parallelGatewaySplit);
                     fp.getGateways().add(parallelGatewayJoin);
 
+                    fp.getGateways().add(parallelGatewayJoin);
+                    fp.getGateways().add(parallelGatewayJoin);
+
                     SequenceFlow flowIn = fp.getFlowByTarget(event);
                     SequenceFlow flowOut = fp.getFlowBySource(event);
 
@@ -471,6 +474,7 @@ public class StepThree {
 
         }
 
+        /*
         for (Participant object : allParticipants) {
             ArrayList<Task> tasks = object.getProcessRef().getTasks();
             for (Task task : tasks) {
@@ -554,6 +558,8 @@ public class StepThree {
 
             object.getProcessRef().setBeforeAndAfterElements();
         }
+
+         */
 
         setProcesses(definitionsElement);
 
@@ -640,9 +646,17 @@ public class StepThree {
         tasks.get(tasks.size() - 1).getUser().getElements().add(object.getProcessRef().getEndEvent());
 
         for (ExclusiveGateway gateway : gateways) {
+
             for (SequenceFlow flow : flows) {
                 if (flow.getSourceRef().getId().equals(gateway.getId())) {
-                    User temp = flow.getTargetRef().getUser();
+                    BPMNElement target = flow.getTargetRef();
+                    User temp = target.getUser();
+                    BPMNElement targetFromTarget = target;
+                    while(temp == null){
+                        SequenceFlow tempFlow = object.getProcessRef().getFlowBySource(targetFromTarget);
+                        targetFromTarget = tempFlow.getTargetRef();
+                        temp = targetFromTarget.getUser();
+                    }
                     if (temp != null) {
                         gateway.setUser(temp);
                         temp.getElements().add(gateway);
