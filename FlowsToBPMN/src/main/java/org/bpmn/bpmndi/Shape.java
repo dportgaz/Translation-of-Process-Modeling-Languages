@@ -57,40 +57,24 @@ public class Shape {
 
     }
 
-    private void setElement(boolean isSubprocess) {
+    private void setElement(boolean expandedSubprocess) {
         bpmnElement.setAttribute("bpmnElement", elementId);
         bpmnElement.setAttribute("id", elementIdDi);
-        if (isSubprocess) {
-            bpmnElement.setAttribute("isExpanded", "false");
+        if (expandedSubprocess) {
+            bpmnElement.setAttribute("isExpanded", "true");
         }
         bpmnElement.appendChild(bounds.getElementBounds());
     }
 
-    public Shape(String elementId, Bounds bounds, boolean isSubprocess) {
+    public Shape(String elementId, Bounds bounds, boolean expandedSubprocess) {
 
         this.elementId = elementId;
         this.marked = false;
         this.elementIdDi = elementId + "_di";
         this.bounds = bounds;
         this.bpmnElement = doc.createElement("bpmndi:BPMNShape");
-        setElement(isSubprocess);
+        setElement(expandedSubprocess);
 
-    }
-
-
-    public Shape(String elementId, Bounds bounds, ArrayList<Task> tasks) {
-
-        this.elementId = elementId;
-        this.marked = false;
-        this.elementIdDi = elementId + "_di";
-        this.bounds = bounds;
-        this.bpmnElement = doc.createElement("bpmndi:BPMNShape");
-
-        for (Task task : tasks) {
-            if (task.getId().equals(elementId) && task.getIsSubprocess()) {
-                this.isSubprocess = true;
-            }
-        }
     }
 
     public void setShapeParticipant() {

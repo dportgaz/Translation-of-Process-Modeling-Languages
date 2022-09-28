@@ -2,19 +2,18 @@ package org.bpmn.bpmndi;
 
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
-import org.bpmn.bpmn_elements.collaboration.participant.Object;
 import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.process.Lane;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.process.FlowsProcessObject;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
-import org.bpmn.steps.BPMN;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -56,11 +55,17 @@ public class FillBPMNDI {
 
     final double dataObjectHeight = 97.0;
 
+    final double subProcessHeight = 200.0;
+
+    final double subProcessWidthOffset = 130.0;
+
     double poolHeight;
 
     final double poolHeightOffset = 20;
 
     final double xTaskOffset = 160;
+
+    final double subProcessOffsetY = 60.0;
 
     double poolWidth;
 
@@ -74,13 +79,13 @@ public class FillBPMNDI {
 
     HashSet<Shape> allShapes = new HashSet<>();
 
-    public void f(Element rootElement, double x, double y, String e, Participant object, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous) {
+    public void f(Element rootElement, double x, double y, String e, Participant object, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous, boolean expandedSubprocess) {
 
         ArrayList<String> list = new ArrayList<>();
         FlowsProcessObject fp = object.getProcessRef();
 
         // extract in method to recognize if activity, event or gateway
-        Pattern activityPattern = Pattern.compile("(Activity_+|ReceiveActivity_+|SendActivity_+)");
+        Pattern activityPattern = Pattern.compile("Activity_+");
         Pattern eventPattern = Pattern.compile("Event_+");
         Pattern gatewayPattern = Pattern.compile("(Gateway_+|EventGateway_+)");
         Matcher activityMatcher = activityPattern.matcher(e);
@@ -111,7 +116,11 @@ public class FillBPMNDI {
                     if (previous != null) {
 
                         if (activityMatcher.find()) {
-                            x += 145;
+                            if (expandedSubprocess && fp.getTaskById(previous) != null && fp.getTaskById(previous).getIsSubprocess()) {
+                                x += 145 + fp.getTaskById(previous).getSteps().size() * subProcessWidthOffset - activityWidth;
+                            } else {
+                                x += 145;
+                            }
                             if (eventMatcherPrev.find()) {
                                 x -= 67;
                                 y -= 22;
@@ -125,8 +134,13 @@ public class FillBPMNDI {
                         } else if (gatewayMatcher.find()) {
                             x += 160;
                             if (activityMatcherPrev.find()) {
-                                x -= 20;
-                                y += 15;
+                                if (expandedSubprocess && fp.getTaskById(previous) != null && fp.getTaskById(previous).getIsSubprocess()) {
+                                    x -= 20 - fp.getTaskById(previous).getSteps().size() * subProcessWidthOffset + activityWidth;
+                                    y += 15;
+                                } else {
+                                    x -= 20;
+                                    y += 15;
+                                }
                             } else if (eventMatcherPrev.find()) {
                                 x -= 87;
                                 y -= 7;
@@ -143,10 +157,28 @@ public class FillBPMNDI {
                         }
                     }
 
-                    Shape tempShape = new Shape(e, tempBounds, tasks);
+                    Shape tempShape = null;
+                    if (expandedSubprocess && fp.getTaskById(e) != null && fp.getTaskById(e).getIsSubprocess()) {
+                        ArrayList<Step> steps = fp.getTaskById(e).getSteps();
+                        Double subProcessWidth = steps.size() * subProcessWidthOffset;
+                        tempBounds = new Bounds(x, y - subProcessOffsetY, subProcessWidth, subProcessHeight);
+                        //TODO: Steps ohne XOR print
+                        Double stepOffset = (subProcessWidth - steps.size()*activityWidth) / (steps.size()+1);
+                        for(int i = 0; i < steps.size(); i++){
+                            Step step = steps.get(i);
+                            Bounds stepBounds = new Bounds(x + stepOffset + (stepOffset + activityWidth)*i, y - subProcessOffsetY + subProcessHeight/4, activityWidth, activityHeight);
+                            Shape stepShape = new Shape(step.getId(), stepBounds);
+                            stepShape.setBounds();
+                            stepShape.setShapeParticipant();
+                            rootElement.appendChild(stepShape.getBpmnElement());
+                        }
+                        tempShape = new Shape(e, tempBounds, true);
+                    } else {
+                        tempShape = new Shape(e, tempBounds);
+                    }
 
-                    tempShape.setShapeParticipant();
                     tempShape.setBounds();
+                    tempShape.setShapeParticipant();
                     rootElement.appendChild(tempShape.getBpmnElement());
 
                     shapes.add(tempShape);
@@ -165,11 +197,11 @@ public class FillBPMNDI {
         int cntElements = list.size();
         if (cntElements > 1) {
             for (int t = cntElements - 1; t >= 0; t--) {
-                f(rootElement, x, y, list.get(t), object, tasks, flows, e);
+                f(rootElement, x, y, list.get(t), object, tasks, flows, e, expandedSubprocess);
                 y -= 100;
             }
         } else if (cntElements == 1) {
-            f(rootElement, x, y, list.get(0), object, tasks, flows, e);
+            f(rootElement, x, y, list.get(0), object, tasks, flows, e, expandedSubprocess);
         } else if (!printMark.contains(e)) {
             //double tempX = x - flowsLength;
             //TODO: MAYBE BUGGY
@@ -186,15 +218,15 @@ public class FillBPMNDI {
             tempBounds = new Bounds(x, y, eventWidth, eventHeight);
             Shape tempShape = new Shape(e, tempBounds);
             shapes.add(tempShape);
-            tempShape.setShapeParticipant();
             tempShape.setBounds();
+            tempShape.setShapeParticipant();
             rootElement.appendChild(tempShape.getBpmnElement());
         }
 
     }
 
 
-    public void parseFlows(Element rootElement, Participant object, double x, double y) {
+    public void parseFlows(Element rootElement, Participant object, double x, double y, boolean expandedSubprocess) {
 
         //bring elements of pool in order according to flows
 
@@ -205,7 +237,7 @@ public class FillBPMNDI {
         printMark.clear();
         targetMark.clear();
 
-        f(rootElement, x, y, start, object, tasks, flows, null);
+        f(rootElement, x, y, start, object, tasks, flows, null, expandedSubprocess);
         addFlowsEdge(rootElement, flows);
         //addDataObjects(rootElement, flows);
         addDataObjectsOutput(rootElement, tasks);
@@ -214,7 +246,7 @@ public class FillBPMNDI {
 
     }
 
-    public void fillBPMNDI(String id, Element rootElement, Collaboration collaboration, boolean visibleMessageFlows, boolean visibleDataObjectFlows) {
+    public void fillBPMNDI(String id, Element rootElement, Collaboration collaboration, boolean visibleMessageFlows, boolean visibleDataObjectFlows, boolean expandedSubprocess) {
 
         Element bpmnDiagram = doc.createElement("bpmndi:BPMNDiagram");
         bpmnDiagram.setAttribute("id", id);
@@ -232,7 +264,7 @@ public class FillBPMNDI {
             // add pools
             addParticipantsShape(bpmnLane, object, participantStartY);
 
-            parseFlows(bpmnLane, object, startEventX, startEventY);
+            parseFlows(bpmnLane, object, startEventX, startEventY, expandedSubprocess);
 
             // adapt positions for next participant/pool
             participantStartY += participantYInc;
@@ -244,7 +276,7 @@ public class FillBPMNDI {
             setMessageFlows(bpmnLane, collaboration);
         }
 
-        if(visibleDataObjectFlows) {
+        if (visibleDataObjectFlows) {
             for (Participant object : objects) {
                 addDataObjectsInput(bpmnLane, object.getProcessRef().getIntermediateCatchEvents());
             }
@@ -266,7 +298,7 @@ public class FillBPMNDI {
             // JSON BUG FINDING :
             // System.out.println(((Task)mf.getSourceRef()).getName());
             double xStart = bsSource.getBounds().getX() + bsSource.getBounds().getWidth() - activityWidth / 2;
-            double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2+ activityHeight/2;
+            double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2 + activityHeight / 2;
 
             double xEnd = bsTarget.getBounds().getX() + activityWidth / 2;
             double yEnd = bsTarget.getBounds().getY();
@@ -295,9 +327,9 @@ public class FillBPMNDI {
         poolHeight = shape.getBounds().getY();
         rootElement.appendChild(shape.getBpmnElement());
 
-        int yOff=0;
+        int yOff = 0;
         // add Lanes
-        for(Map.Entry<User, Lane> lane : p.getLanes().entrySet()){
+        for (Map.Entry<User, Lane> lane : p.getLanes().entrySet()) {
 
             Lane laneEntry = lane.getValue();
 
@@ -307,17 +339,17 @@ public class FillBPMNDI {
 
             Element bnd = doc.createElement("dc:Bounds");
 
-            Double x = this.participantX+30;
-            Double width = this.participantWidth-30;
-            Double height = this.participantHeight/p.getLanes().size();
-            Double y = participantY+(this.participantHeight/p.getLanes().size())*yOff;
+            Double x = this.participantX + 30;
+            Double width = this.participantWidth - 30;
+            Double height = this.participantHeight / p.getLanes().size();
+            Double y = participantY + (this.participantHeight / p.getLanes().size()) * yOff;
 
             laneEntry.setX(x);
             laneEntry.setY(y);
             laneEntry.setHeight(height);
             laneEntry.setWidth(width);
-            laneEntry.setMiddleX(x+30);
-            laneEntry.setMiddleY(y+height/2);
+            laneEntry.setMiddleX(x + 30);
+            laneEntry.setMiddleY(y + height / 2);
 
             bnd.setAttribute("x", String.valueOf(x));
             bnd.setAttribute("y", String.valueOf(y));
@@ -465,8 +497,6 @@ public class FillBPMNDI {
         }
 
     }
-
-
 
 
     public void addFlowsEdge(Element rootElement, ArrayList<SequenceFlow> flows) {

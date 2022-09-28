@@ -59,7 +59,7 @@ public class StepOne implements Step{
         setProcesses(definitionsElement);
 
         FillBPMNDI di = new FillBPMNDI();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, false);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, false, true);
 
         createXml(file);
 

@@ -329,6 +329,15 @@ public class FlowsProcessObject {
 
     }
 
+    public Task getTaskById(String id){
+        for(Task task : tasks){
+            if(task.getId().equals(id)){
+                return task;
+            }
+        }
+        return null;
+    }
+
     private void setEndTasks() {
 
         for (Task task : tasks) {

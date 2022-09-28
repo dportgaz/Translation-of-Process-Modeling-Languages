@@ -145,7 +145,7 @@ public class FillBPMNDI_StepThree_lazy {
                         }
                     }
 
-                    Shape tempShape = new Shape(e, tempBounds, tasks);
+                    Shape tempShape = new Shape(e, tempBounds);
 
                     tempShape.setShapeParticipant();
 
@@ -192,7 +192,6 @@ public class FillBPMNDI_StepThree_lazy {
         }
 
     }
-
 
     public void parseFlows(Element rootElement, Participant object, double x, double y) {
 
