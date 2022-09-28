@@ -51,6 +51,7 @@ public class Loop {
 
     public void setFirstGate(ExclusiveGateway firstGate) {
         this.firstGate = firstGate;
+        this.gateways.add(firstGate);
     }
 
     public void setTarget(Task target) {
@@ -59,6 +60,7 @@ public class Loop {
 
     public void setSecondGate(ExclusiveGateway secondGate) {
         this.secondGate = secondGate;
+        this.gateways.add(secondGate);
     }
 
     public Task getSource() {
@@ -83,6 +85,6 @@ public class Loop {
 
     @Override
     public String toString() {
-        return "Tasks: " + tasks + "\nGateways: " + gateways + "\nFlows: " + flows;
+        return "Gateways: " + gateways;
     }
 }

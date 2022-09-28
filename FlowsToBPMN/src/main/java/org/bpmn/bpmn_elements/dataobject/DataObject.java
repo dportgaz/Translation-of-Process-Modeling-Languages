@@ -84,6 +84,15 @@ public class DataObject {
 
     }
 
+    public DataObject(Task task, String name) {
+        this.id = "DataObject_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.refId = "DataObjectReference_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.elementDataObject = doc.createElement("bpmn:dataObjectReference");
+        this.associatedTask = task;
+        allDataObjects.add(this);
+        setElementDataObjectForStep(name);
+    }
+
     private void setElementDataObject() {
 
         this.elementDataObject.setAttribute("dataObjectRef", this.id);
@@ -94,6 +103,14 @@ public class DataObject {
         String state = temp.substring(0, temp.length()-1);
 
         this.elementDataObject.setAttribute("name", obj + " " + "[" + state + "]");
+
+    }
+
+    private void setElementDataObjectForStep(String name) {
+
+        this.elementDataObject.setAttribute("dataObjectRef", this.id);
+        this.elementDataObject.setAttribute("id", this.refId);
+        this.elementDataObject.setAttribute("name", name);
 
     }
 

@@ -1,10 +1,10 @@
 package org.bpmn.bpmndi;
 
 import org.bpmn.bpmn_elements.BPMNElement;
+import org.bpmn.bpmn_elements.Loop;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
-import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Step;
@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import static org.bpmn.steps.BPMN.doc;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 import static org.bpmn.steps.StepOne.allDataObjects;
+import static org.bpmn.steps.StepOne.allLoops;
 
 public class FillBPMNDI {
     final double participantX = 70.0;
@@ -33,6 +34,10 @@ public class FillBPMNDI {
     final double participantYInc = participantHeight + 50.0;
 
     final double startEventYInc = 200.0;
+
+    final double loopOffset = 180.0;
+
+    final double multipleLoopOffset = 10.0;
     final double startEventX = 200.0;
 
     final double eventWidth = 36.0;
@@ -55,7 +60,7 @@ public class FillBPMNDI {
 
     final double dataObjectHeight = 97.0;
 
-    final double subProcessHeight = 200.0;
+    final double subProcessHeight = 300.0;
 
     final double subProcessWidthOffset = 130.0;
 
@@ -65,7 +70,7 @@ public class FillBPMNDI {
 
     final double xTaskOffset = 160;
 
-    final double subProcessOffsetY = 60.0;
+    final double subProcessOffsetY = 110.0;
 
     double poolWidth;
 
@@ -76,6 +81,8 @@ public class FillBPMNDI {
     HashSet<String> targetMark = new HashSet<>();
 
     HashSet<Shape> shapes = new HashSet<>();
+
+    HashSet<Shape> stepShapes = new HashSet<>();
 
     HashSet<Shape> allShapes = new HashSet<>();
 
@@ -157,19 +164,20 @@ public class FillBPMNDI {
                         }
                     }
 
-                    Shape tempShape = null;
+                    Shape tempShape;
                     if (expandedSubprocess && fp.getTaskById(e) != null && fp.getTaskById(e).getIsSubprocess()) {
                         ArrayList<Step> steps = fp.getTaskById(e).getSteps();
                         Double subProcessWidth = steps.size() * subProcessWidthOffset;
                         tempBounds = new Bounds(x, y - subProcessOffsetY, subProcessWidth, subProcessHeight);
                         //TODO: Steps ohne XOR print
-                        Double stepOffset = (subProcessWidth - steps.size()*activityWidth) / (steps.size()+1);
-                        for(int i = 0; i < steps.size(); i++){
+                        Double stepOffset = (subProcessWidth - steps.size() * activityWidth) / (steps.size() + 1);
+                        for (int i = 0; i < steps.size(); i++) {
                             Step step = steps.get(i);
-                            Bounds stepBounds = new Bounds(x + stepOffset + (stepOffset + activityWidth)*i, y - subProcessOffsetY + subProcessHeight/4, activityWidth, activityHeight);
+                            Bounds stepBounds = new Bounds(x + stepOffset + (stepOffset + activityWidth) * i, y - subProcessOffsetY + subProcessHeight / 4, activityWidth, activityHeight);
                             Shape stepShape = new Shape(step.getId(), stepBounds);
                             stepShape.setBounds();
                             stepShape.setShapeParticipant();
+                            stepShapes.add(stepShape);
                             rootElement.appendChild(stepShape.getBpmnElement());
                         }
                         tempShape = new Shape(e, tempBounds, true);
@@ -238,11 +246,12 @@ public class FillBPMNDI {
         targetMark.clear();
 
         f(rootElement, x, y, start, object, tasks, flows, null, expandedSubprocess);
-        addFlowsEdge(rootElement, flows);
+        addFlowsEdge(rootElement, flows, fp);
         //addDataObjects(rootElement, flows);
         addDataObjectsOutput(rootElement, tasks);
         allShapes.addAll(shapes);
         shapes.clear();
+        stepShapes.clear();
 
     }
 
@@ -278,7 +287,7 @@ public class FillBPMNDI {
 
         if (visibleDataObjectFlows) {
             for (Participant object : objects) {
-                addDataObjectsInput(bpmnLane, object.getProcessRef().getIntermediateCatchEvents());
+                addDataObjectsInputEdges(bpmnLane);
             }
         }
     }
@@ -406,6 +415,20 @@ public class FillBPMNDI {
 
     }
 
+    private Shape getStepShapeByTask(String taskId) {
+
+        for (Shape bs : stepShapes) {
+
+            if (bs.getElementId().equals(taskId)) {
+                return bs;
+            }
+
+        }
+
+        return null;
+
+    }
+
     public void addDataObjectsOutput(Element rootElement, ArrayList<Task> tasks) {
 
         Double xBoundOffset = 0d;
@@ -461,10 +484,88 @@ public class FillBPMNDI {
 
             }
 
+            if (task.getIsSubprocess()) {
+                ArrayList<Step> steps = task.getSteps();
+                for (Step step : steps) {
+
+                    Shape bsStep = getStepShapeByTask(step.getId());
+                    DataObject dStep = step.getDataObject();
+
+                    Element dataObject = doc.createElement("bpmndi:BPMNShape");
+                    dataObject.setAttribute("id", dStep.getRefId() + "_di");
+                    dataObject.setAttribute("bpmnElement", dStep.getRefId());
+
+                    Double xBound = bsStep.getBounds().getX();
+                    Double yBound = bsStep.getBounds().getY() + 100;
+
+                    Element dataObjectBounds = doc.createElement("dc:Bounds");
+                    dataObjectBounds.setAttribute("x", String.valueOf(xBound));
+                    dataObjectBounds.setAttribute("y", String.valueOf(yBound));
+
+                    dStep.setX(xBound + dataObjectWidth / 2);
+                    dStep.setY(yBound + dataObjectHeight);
+
+                    dataObjectBounds.setAttribute("width", String.valueOf(dataObjectWidth));
+                    dataObjectBounds.setAttribute("height", String.valueOf(dataObjectHeight));
+                    dataObject.appendChild(dataObjectBounds);
+
+                    if (step.getDataOutputAssociation() != null) {
+                        Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
+                        //TODO: POTENZIELL BUGGY
+                        dataObjectFlowOutput.setAttribute("id", step.getDataOutputAssociation().getId() + "_di");
+                        dataObjectFlowOutput.setAttribute("bpmnElement", step.getDataOutputAssociation().getId());
+
+                        Element waypointOutStart = doc.createElement("di:waypoint");
+                        Element waypointOutEnd = doc.createElement("di:waypoint");
+
+                        String waypointOutStartX = String.valueOf(xBound + activityWidth / 2);
+                        String waypointOutStartY = String.valueOf(yBound - 100 + activityHeight);
+                        String waypointOutEndX = String.valueOf(xBound + activityWidth / 2);
+                        String waypointOutEndY = String.valueOf(yBound);
+
+                        waypointOutStart.setAttribute("x", waypointOutStartX);
+                        waypointOutStart.setAttribute("y", waypointOutStartY);
+                        waypointOutEnd.setAttribute("x", waypointOutEndX);
+                        waypointOutEnd.setAttribute("y", waypointOutEndY);
+
+                        dataObjectFlowOutput.appendChild(waypointOutStart);
+                        dataObjectFlowOutput.appendChild(waypointOutEnd);
+
+                        rootElement.appendChild(dataObjectFlowOutput);
+                    } else {
+
+                        for (DataInputAssociation in : step.getDataInputAssociations()) {
+                            Element dataObjectFlowInput = doc.createElement("bpmndi:BPMNEdge");
+                            //TODO: POTENZIELL BUGGY
+                            dataObjectFlowInput.setAttribute("id", in.getId() + "_di");
+                            dataObjectFlowInput.setAttribute("bpmnElement", in.getId());
+
+                            Element waypointOutStart = doc.createElement("di:waypoint");
+                            Element waypointOutEnd = doc.createElement("di:waypoint");
+
+                            String waypointOutStartX = String.valueOf(step.getDataObject().getX());
+                            String waypointOutStartY = String.valueOf(step.getDataObject().getY() - dataObjectHeight);
+                            String waypointOutEndX = String.valueOf(step.getDataObject().getX());
+                            String waypointOutEndY = String.valueOf(yBound - 100 + activityHeight);
+
+                            waypointOutStart.setAttribute("x", waypointOutStartX);
+                            waypointOutStart.setAttribute("y", waypointOutStartY);
+                            waypointOutEnd.setAttribute("x", waypointOutEndX);
+                            waypointOutEnd.setAttribute("y", waypointOutEndY);
+
+                            dataObjectFlowInput.appendChild(waypointOutStart);
+                            dataObjectFlowInput.appendChild(waypointOutEnd);
+                            rootElement.appendChild(dataObjectFlowInput);
+                        }
+                    }
+                    rootElement.appendChild(dataObject);
+                }
+            }
+
         }
     }
 
-    public void addDataObjectsInput(Element rootElement, HashSet<IntermediateCatchEvent> events) {
+    public void addDataObjectsInputEdges(Element rootElement) {
 
         for (DataObject d : allDataObjects) {
             for (DataInputAssociation in : d.getDataInputAssociations()) {
@@ -499,12 +600,25 @@ public class FillBPMNDI {
     }
 
 
-    public void addFlowsEdge(Element rootElement, ArrayList<SequenceFlow> flows) {
+    public void addFlowsEdge(Element rootElement, ArrayList<SequenceFlow> flows, FlowsProcessObject fp) {
 
+        int cntLoops = 0;
         for (SequenceFlow sf : flows) {
 
-            Shape bsSource = getBPMNShapeByFlow(sf.getSourceRef().getId());
-            Shape bsTarget = getBPMNShapeByFlow(sf.getTargetRef().getId());
+            boolean elementsAreLoop = false;
+            BPMNElement source = sf.getSourceRef();
+            BPMNElement target = sf.getTargetRef();
+
+            for (Loop loop : fp.getLoops()) {
+                if (loop.getFirstGate().getId().equals(source.getId()) && loop.getSecondGate().getId().equals(target.getId())
+                        || loop.getFirstGate().getId().equals(target.getId()) && loop.getSecondGate().getId().equals(source.getId())) {
+                    cntLoops++;
+                    elementsAreLoop = true;
+                }
+            }
+
+            Shape bsSource = getBPMNShapeByFlow(source.getId());
+            Shape bsTarget = getBPMNShapeByFlow(target.getId());
 
             Element flow = doc.createElement("bpmndi:BPMNEdge");
             flow.setAttribute("id", sf.getId() + "_di");
@@ -533,6 +647,28 @@ public class FillBPMNDI {
 
             flow.appendChild(waypointStart);
             flow.appendChild(waypointEnd);
+
+            Element waypointAngleStart;
+            Element waypointAngleEnd;
+            if (elementsAreLoop) {
+                waypointAngleStart = doc.createElement("di:waypoint");
+                waypointAngleStart.setAttribute("x", String.valueOf(xStart));
+                waypointAngleStart.setAttribute("y", String.valueOf(yStart + loopOffset + (multipleLoopOffset * (cntLoops-1))));
+
+                waypointAngleEnd = doc.createElement("di:waypoint");
+                waypointAngleEnd.setAttribute("x", String.valueOf(xEnd));
+                waypointAngleEnd.setAttribute("y", String.valueOf(yEnd + loopOffset + (multipleLoopOffset * (cntLoops-1))));
+
+                flow.appendChild(waypointStart);
+                flow.appendChild(waypointAngleStart);
+                flow.appendChild(waypointAngleEnd);
+                flow.appendChild(waypointEnd);
+
+            } else{
+                flow.appendChild(waypointStart);
+                flow.appendChild(waypointEnd);
+            }
+
             rootElement.appendChild(flow);
 
         }

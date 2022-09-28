@@ -465,39 +465,6 @@ public class FillBPMNDI_StepThree_lazy {
 
     public void addDataObjectsInput(Element rootElement, HashSet<IntermediateCatchEvent> events) {
 
-        /*
-        for (DataObject d : allDataObjects) {
-            for (DataInputAssociation in : d.getDataInputAssociations()) {
-                Shape bs = getBPMNShapeByFlowAllShapes(in.getAssociatedTaskId());
-
-                Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
-                //TODO: POTENZIELL BUGGY
-                dataObjectFlowOutput.setAttribute("id", in.getId() + "_di");
-                dataObjectFlowOutput.setAttribute("bpmnElement", in.getId());
-
-                Element waypointOutStart = doc.createElement("di:waypoint");
-                Element waypointOutEnd = doc.createElement("di:waypoint");
-
-                String waypointOutStartX = String.valueOf(d.getX());
-                String waypointOutStartY = String.valueOf(d.getY());
-                String waypointOutEndX = String.valueOf(bs.getBounds().getX() + activityWidth / 2);
-                String waypointOutEndY = String.valueOf(bs.getBounds().getY());
-
-                waypointOutStart.setAttribute("x", waypointOutStartX);
-                waypointOutStart.setAttribute("y", waypointOutStartY);
-                waypointOutEnd.setAttribute("x", waypointOutEndX);
-                waypointOutEnd.setAttribute("y", waypointOutEndY);
-
-                dataObjectFlowOutput.appendChild(waypointOutStart);
-                dataObjectFlowOutput.appendChild(waypointOutEnd);
-                rootElement.appendChild(dataObjectFlowOutput);
-            }
-
-
-        }
-
-         */
-
         for (IntermediateCatchEvent event : events) {
             System.out.println("Event: " + event + " , " + event.getName() + " , " + event.getDataObjects() + " , " + event.getDataInputAssociations());
             Shape shapeEvent = getBPMNShapeByFlowAllShapes(event.getId());

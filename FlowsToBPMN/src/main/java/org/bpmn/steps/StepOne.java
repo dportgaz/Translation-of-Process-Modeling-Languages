@@ -35,7 +35,7 @@ public class StepOne implements Step{
     public static ArrayList<DataObject> allDataObjects = new ArrayList();
     public static ArrayList<SequenceFlow> allFlows = new ArrayList();
     public static ArrayList<ExclusiveGateway> allGateways = new ArrayList();
-    public static HashSet<Loop> loops = new HashSet<>();
+    public static HashSet<Loop> allLoops = new HashSet<>();
     public static ArrayList<Predicate> predicates = new ArrayList<>();
     static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
 

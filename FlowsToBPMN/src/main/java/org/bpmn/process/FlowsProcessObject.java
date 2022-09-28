@@ -2,6 +2,8 @@ package org.bpmn.process;
 
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.Loop;
+import org.bpmn.bpmn_elements.association.DataInputAssociation;
+import org.bpmn.bpmn_elements.association.DataOutputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
@@ -9,6 +11,7 @@ import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.Association;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
+import org.bpmn.bpmn_elements.task.Permission;
 import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flows_objects.AbstractObjectType;
@@ -178,8 +181,14 @@ public class FlowsProcessObject {
 
             afterTarget.setBeforeElement(afterGateway);
 
+            allLoops.add(loop);
+
         }
 
+    }
+
+    public ArrayList<Loop> getLoops() {
+        return loops;
     }
 
     private SequenceFlow getFlowBySourceAndTarget(BPMNElement source, BPMNElement target) {
@@ -202,7 +211,7 @@ public class FlowsProcessObject {
 
     public SequenceFlow getFlowBySource(BPMNElement source) {
         for (SequenceFlow flow : flows) {
-            if(flow.getSourceRef().getId() != null && flow.getSourceRef().getId().equals(source.getId())) {
+            if (flow.getSourceRef().getId() != null && flow.getSourceRef().getId().equals(source.getId())) {
                 return flow;
             }
         }
@@ -329,9 +338,9 @@ public class FlowsProcessObject {
 
     }
 
-    public Task getTaskById(String id){
-        for(Task task : tasks){
-            if(task.getId().equals(id)){
+    public Task getTaskById(String id) {
+        for (Task task : tasks) {
+            if (task.getId().equals(id)) {
                 return task;
             }
         }
@@ -349,7 +358,7 @@ public class FlowsProcessObject {
 
     }
 
-    private void setAssociations() {
+    private void  setAssociations() {
 
         /*
         startEvent.setDataOutputAssociation();
@@ -357,10 +366,28 @@ public class FlowsProcessObject {
 
          */
 
-        for (int i = 0; i < tasks.size(); i++) {
+        for (Task task : tasks) {
             // add data output association
             // task.setDataOutputAssociation(); erledigt im Konstruktor, maybe buggy
-            tasks.get(i).getDataOutputAssociation().setOutputAssociationTarget(tasks.get(i).getDataObject());
+            if (task.getIsSubprocess()) {
+                for (Step step : task.getSteps()) {
+                    if (step.getPermission() == Permission.READ) {
+                        DataInputAssociation in = new DataInputAssociation();
+                        Element tempSource = doc.createElement("bpmn:sourceRef");
+                        Element tempTarget = doc.createElement("bpmn:targetRef");
+                        tempSource.setTextContent(step.getDataObject().getRefId());
+                        tempTarget.setTextContent("_property_placeholder");
+                        in.getElementDataInputAssociation().appendChild(tempSource);
+                        in.getElementDataInputAssociation().appendChild(tempTarget);
+                        step.getDataInputAssociations().add(in);
+                        step.getElement().appendChild(in.getElementDataInputAssociation());
+                    } else {
+                        step.setDataOutputAssociation();
+                        step.getDataOutputAssociation().setOutputAssociationTarget(step.getDataObject());
+                    }
+                }
+            }
+            task.getDataOutputAssociation().setOutputAssociationTarget(task.getDataObject());
         }
 
          /*
@@ -415,6 +442,11 @@ public class FlowsProcessObject {
     private void setDataObjects() {
 
         for (Task task : tasks) {
+            if (task.getIsSubprocess()) {
+                for (Step step : task.getSteps()) {
+                    dataObjects.add(step.getDataObject());
+                }
+            }
             dataObjects.add(task.getDataObject());
         }
     }
@@ -437,7 +469,7 @@ public class FlowsProcessObject {
 
         }
 
-        for(Element associationFlow : associationFlows){
+        for (Element associationFlow : associationFlows) {
             this.elementFlowsProcess.appendChild(associationFlow);
         }
 
