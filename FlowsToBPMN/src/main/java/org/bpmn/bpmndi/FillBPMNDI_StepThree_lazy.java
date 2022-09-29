@@ -1,6 +1,7 @@
 package org.bpmn.bpmndi;
 
 import org.bpmn.bpmn_elements.BPMNElement;
+import org.bpmn.bpmn_elements.Loop;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
@@ -9,6 +10,7 @@ import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.process.FlowsProcessObject;
 import org.bpmn.process.Lane;
@@ -29,10 +31,14 @@ import static org.bpmn.steps.StepOne.allDataObjects;
 public class FillBPMNDI_StepThree_lazy {
     final double participantX = 70.0;
     final double participantWidth = 3000.0;
-    final double participantHeight = 2000.0;
+    final double participantHeight = 1500.0;
     final double participantYInc = participantHeight + 50.0;
 
     final double startEventYInc = 200.0;
+
+    final double loopOffset = 180.0;
+
+    final double multipleLoopOffset = 10.0;
     final double startEventX = 200.0;
 
     final double eventWidth = 36.0;
@@ -55,11 +61,17 @@ public class FillBPMNDI_StepThree_lazy {
 
     final double dataObjectHeight = 97.0;
 
+    final double subProcessHeight = 300.0;
+
+    final double subProcessWidthOffset = 130.0;
+
     double poolHeight;
 
     final double poolHeightOffset = 20;
 
     final double xTaskOffset = 160;
+
+    final double subProcessOffsetY = 110.0;
 
     double poolWidth;
 
@@ -71,11 +83,13 @@ public class FillBPMNDI_StepThree_lazy {
 
     HashSet<Shape> shapes = new HashSet<>();
 
+    HashSet<Shape> stepShapes = new HashSet<>();
+
     HashSet<Shape> allShapes = new HashSet<>();
 
     HashMap<Shape, BPMNElement> shapeBPMNElementHashMap = new HashMap<>();
 
-    public void f(Element rootElement, double x, double y, String e, Participant object, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous) {
+    public void f(Element rootElement, double x, double y, String e, Participant object, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous, boolean expandedSubprocess) {
 
         ArrayList<String> list = new ArrayList<>();
         FlowsProcessObject fp = object.getProcessRef();
@@ -113,13 +127,17 @@ public class FillBPMNDI_StepThree_lazy {
                     if (previous != null) {
 
                         if (activityMatcher.find()) {
-                            x += 145;
+                            if (expandedSubprocess && fp.getTaskById(previous) != null && fp.getTaskById(previous).getIsSubprocess()) {
+                                x += 145 + fp.getTaskById(previous).getSteps().size() * subProcessWidthOffset - activityWidth;
+                            } else {
+                                x += 145;
+                            }
                             if (eventMatcherPrev.find()) {
                                 x -= 67;
-                                y -= 11;
+                                y -= 22;
                             } else if (gatewayMatcherPrev.find()) {
                                 x -= 55;
-                                y -= 7.5;
+                                y -= 15;
                             }
                             tempBounds = new Bounds(x, y, activityWidth, activityHeight);
                         } else if (eventMatcher.find()) {
@@ -127,11 +145,15 @@ public class FillBPMNDI_StepThree_lazy {
                         } else if (gatewayMatcher.find()) {
                             x += 160;
                             if (activityMatcherPrev.find()) {
-                                x -= 20;
-                                y += 7.5;
+                                if (expandedSubprocess && fp.getTaskById(previous) != null && fp.getTaskById(previous).getIsSubprocess()) {
+                                    x -= 20 - fp.getTaskById(previous).getSteps().size() * subProcessWidthOffset + activityWidth;
+                                } else {
+                                    x -= 20;
+                                }
+                                y += 15;
                             } else if (eventMatcherPrev.find()) {
                                 x -= 87;
-                                y -= 3;
+                                y -= 7;
                             }
                             tempBounds = new Bounds(x, y, gatewayWidth, gatewayHeight);
                         }
@@ -145,7 +167,17 @@ public class FillBPMNDI_StepThree_lazy {
                         }
                     }
 
-                    Shape tempShape = new Shape(e, tempBounds);
+                    Shape tempShape;
+                    if (expandedSubprocess && fp.getTaskById(e) != null && fp.getTaskById(e).getIsSubprocess()) {
+                        ArrayList<Step> steps = fp.getTaskById(e).getSteps();
+                        Double subProcessWidth = steps.size() * subProcessWidthOffset;
+                        tempBounds = new Bounds(x, y - subProcessOffsetY, subProcessWidth, subProcessHeight);
+                        tempShape = new Shape(e, tempBounds, true);
+                    } else {
+                        tempShape = new Shape(e, tempBounds);
+                    }
+
+                    tempShape.setBounds();
 
                     tempShape.setShapeParticipant();
 
@@ -166,11 +198,11 @@ public class FillBPMNDI_StepThree_lazy {
         int cntElements = list.size();
         if (cntElements > 1) {
             for (int t = cntElements - 1; t >= 0; t--) {
-                f(rootElement, x, y, list.get(t), object, tasks, flows, e);
-                y -= 50;
+                f(rootElement, x, y, list.get(t), object, tasks, flows, e, expandedSubprocess);
+                y -= 100;
             }
         } else if (cntElements == 1) {
-            f(rootElement, x, y, list.get(0), object, tasks, flows, e);
+            f(rootElement, x, y, list.get(0), object, tasks, flows, e, expandedSubprocess);
         } else if (!printMark.contains(e)) {
             //double tempX = x - flowsLength;
             //TODO: MAYBE BUGGY
@@ -179,7 +211,7 @@ public class FillBPMNDI_StepThree_lazy {
 
             if (gatewayMatcherPrev.find()) {
                 x += 86;
-                y += 3.5;
+                y += 6;
             } else if (activityMatcherPrev.find()) {
                 x += 141;
                 y += 11;
@@ -193,7 +225,7 @@ public class FillBPMNDI_StepThree_lazy {
 
     }
 
-    public void parseFlows(Element rootElement, Participant object, double x, double y) {
+    public void parseFlows(Element rootElement, Participant object, double x, double y, boolean expandedSubprocess) {
 
         //bring elements of pool in order according to flows
 
@@ -205,14 +237,14 @@ public class FillBPMNDI_StepThree_lazy {
         targetMark.clear();
 
 
-        f(rootElement, x, y, start, object, tasks, flows, null);
-        q(object);
+        f(rootElement, x, y, start, object, tasks, flows, null, expandedSubprocess);
+        q(object, rootElement);
         for (Shape shape : shapes) {
             shape.setBounds();
             rootElement.appendChild(shape.getBpmnElement());
         }
 
-        addFlowsEdge(rootElement, flows);
+        addFlowsEdge(rootElement, flows, fp);
 
         //addDataObjects(rootElement, flows);
         addDataObjectsOutput(rootElement, tasks);
@@ -222,30 +254,53 @@ public class FillBPMNDI_StepThree_lazy {
 
     }
 
-    private void q(Participant object) {
+    private void q(Participant object, Element rootElement) {
 
         for (Map.Entry<Shape, BPMNElement> entry : shapeBPMNElementHashMap.entrySet()) {
 
-            Shape tempShape = entry.getKey();
-            User tempUser = entry.getValue().getUser();
+            Shape shape = entry.getKey();
+            BPMNElement bpmnElement = entry.getValue();
+            User user = bpmnElement.getUser();
 
             for (Map.Entry<User, Lane> laneMap : object.getLanes().entrySet()) {
 
                 Lane entryLane = laneMap.getValue();
 
-                System.out.println(entry.getValue() + " ASDASD " + tempUser);
-                if (tempUser.getId().equals(laneMap.getKey().getId()) && !tempShape.getMarked()) {
-                    Double yOffSet = tempShape.getBounds().getY() - (entryLane.getMiddleY() - tempShape.getBounds().getY());
-                    tempShape.getBounds().setY(yOffSet);
-                    tempShape.setMarked();
+                if (user.getId().equals(laneMap.getKey().getId()) && !shape.getMarked()) {
+                    Double yOffSet;
+                    if (bpmnElement.getClass().equals(Task.class) && ((Task) bpmnElement).getIsSubprocess() && !shape.getMarked()) {
+                        yOffSet = shape.getBounds().getY() - entryLane.getParticipantMiddleY() + entryLane.getMiddleY() - subProcessHeight / 4 + activityHeight*0.96;
+                    } else {
+                        yOffSet = shape.getBounds().getY() - entryLane.getParticipantMiddleY() + entryLane.getMiddleY();
+                    }
+                    shape.getBounds().setY(yOffSet);
+                    //TODO: Steps ohne XOR print
+                    if (bpmnElement.getClass().equals(Task.class) && ((Task) bpmnElement).getIsSubprocess() && !shape.getMarked()) {
+
+                        Task subprocess = (Task) bpmnElement;
+                        ArrayList<Step> steps = subprocess.getSteps();
+                        Double subProcessWidth = steps.size() * subProcessWidthOffset;
+
+                        Double stepOffset = (subProcessWidth - steps.size() * activityWidth) / (steps.size() + 1);
+                        for (int i = 0; i < steps.size(); i++) {
+                            Step step = steps.get(i);
+                            Bounds stepBounds = new Bounds(shape.getBounds().getX() + stepOffset + (stepOffset + activityWidth) * i, shape.getBounds().getY() - subProcessOffsetY + subProcessHeight / 2, activityWidth, activityHeight);
+                            Shape stepShape = new Shape(step.getId(), stepBounds);
+                            stepShape.setBounds();
+                            stepShape.setShapeParticipant();
+                            stepShapes.add(stepShape);
+                            rootElement.appendChild(stepShape.getBpmnElement());
+
+                        }
+                    }
+                    shape.setMarked();
                 }
             }
-
         }
-
     }
 
-    public void fillBPMNDI(String id, Element rootElement, Collaboration collaboration, boolean visibleMessageFlows, boolean visibleDataObjectFlows) {
+    public void fillBPMNDI(String id, Element rootElement, Collaboration collaboration, boolean visibleMessageFlows,
+                           boolean visibleDataObjectFlows, boolean expandedSubprocess) {
 
         Element bpmnDiagram = doc.createElement("bpmndi:BPMNDiagram");
         bpmnDiagram.setAttribute("id", id);
@@ -263,7 +318,7 @@ public class FillBPMNDI_StepThree_lazy {
             // add pools
             addParticipantsShape(bpmnLane, object, participantStartY);
 
-            parseFlows(bpmnLane, object, startEventX, startEventY);
+            parseFlows(bpmnLane, object, startEventX, startEventY, expandedSubprocess);
 
             // adapt positions for next participant/pool
             participantStartY += participantYInc;
@@ -343,12 +398,13 @@ public class FillBPMNDI_StepThree_lazy {
             Double height = this.participantHeight / p.getLanes().size();
             Double y = participantY + (this.participantHeight / p.getLanes().size()) * yOff;
 
+            laneEntry.setParticipantMiddleY(participantY + (this.participantHeight / 2));
             laneEntry.setX(x);
             laneEntry.setY(y);
             laneEntry.setHeight(height);
             laneEntry.setWidth(width);
             laneEntry.setMiddleX(x + 30);
-            laneEntry.setMiddleY(y + height / 3);
+            laneEntry.setMiddleY(y + height / 2);
 
             bnd.setAttribute("x", String.valueOf(x));
             bnd.setAttribute("y", String.valueOf(y));
@@ -460,15 +516,106 @@ public class FillBPMNDI_StepThree_lazy {
 
             }
 
+            if (task.getIsSubprocess()) {
+                ArrayList<Step> steps = task.getSteps();
+                for (Step step : steps) {
+
+                    Shape bsStep = getStepShapeByTask(step.getId());
+                    DataObject dStep = step.getDataObject();
+
+                    Element dataObject = doc.createElement("bpmndi:BPMNShape");
+                    dataObject.setAttribute("id", dStep.getRefId() + "_di");
+                    dataObject.setAttribute("bpmnElement", dStep.getRefId());
+
+                    Double xBound = bsStep.getBounds().getX();
+                    Double yBound = bsStep.getBounds().getY() + 100;
+
+                    Element dataObjectBounds = doc.createElement("dc:Bounds");
+                    dataObjectBounds.setAttribute("x", String.valueOf(xBound));
+                    dataObjectBounds.setAttribute("y", String.valueOf(yBound));
+
+                    dStep.setX(xBound + dataObjectWidth / 2);
+                    dStep.setY(yBound + dataObjectHeight);
+
+                    dataObjectBounds.setAttribute("width", String.valueOf(dataObjectWidth));
+                    dataObjectBounds.setAttribute("height", String.valueOf(dataObjectHeight));
+                    dataObject.appendChild(dataObjectBounds);
+
+                    if (step.getDataOutputAssociation() != null) {
+                        Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
+                        //TODO: POTENZIELL BUGGY
+                        dataObjectFlowOutput.setAttribute("id", step.getDataOutputAssociation().getId() + "_di");
+                        dataObjectFlowOutput.setAttribute("bpmnElement", step.getDataOutputAssociation().getId());
+
+                        Element waypointOutStart = doc.createElement("di:waypoint");
+                        Element waypointOutEnd = doc.createElement("di:waypoint");
+
+                        String waypointOutStartX = String.valueOf(xBound + activityWidth / 2);
+                        String waypointOutStartY = String.valueOf(yBound - 100 + activityHeight);
+                        String waypointOutEndX = String.valueOf(xBound + activityWidth / 2);
+                        String waypointOutEndY = String.valueOf(yBound);
+
+                        waypointOutStart.setAttribute("x", waypointOutStartX);
+                        waypointOutStart.setAttribute("y", waypointOutStartY);
+                        waypointOutEnd.setAttribute("x", waypointOutEndX);
+                        waypointOutEnd.setAttribute("y", waypointOutEndY);
+
+                        dataObjectFlowOutput.appendChild(waypointOutStart);
+                        dataObjectFlowOutput.appendChild(waypointOutEnd);
+
+                        rootElement.appendChild(dataObjectFlowOutput);
+                    } else {
+
+                        for (DataInputAssociation in : step.getDataInputAssociations()) {
+                            Element dataObjectFlowInput = doc.createElement("bpmndi:BPMNEdge");
+                            //TODO: POTENZIELL BUGGY
+                            dataObjectFlowInput.setAttribute("id", in.getId() + "_di");
+                            dataObjectFlowInput.setAttribute("bpmnElement", in.getId());
+
+                            Element waypointOutStart = doc.createElement("di:waypoint");
+                            Element waypointOutEnd = doc.createElement("di:waypoint");
+
+                            String waypointOutStartX = String.valueOf(step.getDataObject().getX());
+                            String waypointOutStartY = String.valueOf(step.getDataObject().getY() - dataObjectHeight);
+                            String waypointOutEndX = String.valueOf(step.getDataObject().getX());
+                            String waypointOutEndY = String.valueOf(yBound - 100 + activityHeight);
+
+                            waypointOutStart.setAttribute("x", waypointOutStartX);
+                            waypointOutStart.setAttribute("y", waypointOutStartY);
+                            waypointOutEnd.setAttribute("x", waypointOutEndX);
+                            waypointOutEnd.setAttribute("y", waypointOutEndY);
+
+                            dataObjectFlowInput.appendChild(waypointOutStart);
+                            dataObjectFlowInput.appendChild(waypointOutEnd);
+                            rootElement.appendChild(dataObjectFlowInput);
+                        }
+                    }
+                    rootElement.appendChild(dataObject);
+                }
+            }
+
         }
+    }
+
+    private Shape getStepShapeByTask(String taskId) {
+
+        for (Shape bs : stepShapes) {
+
+            if (bs.getElementId().equals(taskId)) {
+                return bs;
+            }
+
+        }
+
+        return null;
+
     }
 
     public void addDataObjectsInput(Element rootElement, HashSet<IntermediateCatchEvent> events) {
 
         for (IntermediateCatchEvent event : events) {
-            System.out.println("Event: " + event + " , " + event.getName() + " , " + event.getDataObjects() + " , " + event.getDataInputAssociations());
+
             Shape shapeEvent = getBPMNShapeByFlowAllShapes(event.getId());
-            System.out.println("\t" + shapeEvent);
 
             for (DataObject d : event.getDataObjects()) {
 
@@ -502,8 +649,8 @@ public class FillBPMNDI_StepThree_lazy {
                     Element waypointOutEnd = doc.createElement("di:waypoint");
 
                     String waypointOutStartX = String.valueOf(d.getX());
-                    String waypointOutStartY = String.valueOf(d.getY()-dataObjectHeight);
-                    String waypointOutEndX = String.valueOf(shapeEvent.getBounds().getX() + activityWidth/2);
+                    String waypointOutStartY = String.valueOf(d.getY() - dataObjectHeight);
+                    String waypointOutEndX = String.valueOf(shapeEvent.getBounds().getX() + activityWidth / 2);
                     String waypointOutEndY = String.valueOf(shapeEvent.getBounds().getY() + activityHeight);
 
                     waypointOutStart.setAttribute("x", waypointOutStartX);
@@ -521,12 +668,25 @@ public class FillBPMNDI_StepThree_lazy {
     }
 
 
-    public void addFlowsEdge(Element rootElement, ArrayList<SequenceFlow> flows) {
+    public void addFlowsEdge(Element rootElement, ArrayList<SequenceFlow> flows, FlowsProcessObject fp) {
 
+        int cntLoops = 0;
         for (SequenceFlow sf : flows) {
 
-            Shape bsSource = getBPMNShapeByFlow(sf.getSourceRef().getId());
-            Shape bsTarget = getBPMNShapeByFlow(sf.getTargetRef().getId());
+            boolean elementsAreLoop = false;
+            BPMNElement source = sf.getSourceRef();
+            BPMNElement target = sf.getTargetRef();
+
+            for (Loop loop : fp.getLoops()) {
+                if (loop.getFirstGate().getId().equals(source.getId()) && loop.getSecondGate().getId().equals(target.getId())
+                        || loop.getFirstGate().getId().equals(target.getId()) && loop.getSecondGate().getId().equals(source.getId())) {
+                    cntLoops++;
+                    elementsAreLoop = true;
+                }
+            }
+
+            Shape bsSource = getBPMNShapeByFlow(source.getId());
+            Shape bsTarget = getBPMNShapeByFlow(target.getId());
 
             Element flow = doc.createElement("bpmndi:BPMNEdge");
             flow.setAttribute("id", sf.getId() + "_di");
@@ -555,6 +715,28 @@ public class FillBPMNDI_StepThree_lazy {
 
             flow.appendChild(waypointStart);
             flow.appendChild(waypointEnd);
+
+            Element waypointAngleStart;
+            Element waypointAngleEnd;
+            if (elementsAreLoop) {
+                waypointAngleStart = doc.createElement("di:waypoint");
+                waypointAngleStart.setAttribute("x", String.valueOf(xStart));
+                waypointAngleStart.setAttribute("y", String.valueOf(yStart + loopOffset + (multipleLoopOffset * (cntLoops - 1))));
+
+                waypointAngleEnd = doc.createElement("di:waypoint");
+                waypointAngleEnd.setAttribute("x", String.valueOf(xEnd));
+                waypointAngleEnd.setAttribute("y", String.valueOf(yEnd + loopOffset + (multipleLoopOffset * (cntLoops - 1))));
+
+                flow.appendChild(waypointStart);
+                flow.appendChild(waypointAngleStart);
+                flow.appendChild(waypointAngleEnd);
+                flow.appendChild(waypointEnd);
+
+            } else {
+                flow.appendChild(waypointStart);
+                flow.appendChild(waypointEnd);
+            }
+
             rootElement.appendChild(flow);
 
         }

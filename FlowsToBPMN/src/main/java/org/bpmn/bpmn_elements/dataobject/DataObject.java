@@ -32,6 +32,8 @@ public class DataObject {
 
     Element elementDataObject;
 
+    Element elementDataObjectSingle;
+
     Object object;
 
     HashSet<DataInputAssociation> dataInputAssociations = new HashSet<>();
@@ -59,6 +61,7 @@ public class DataObject {
         this.elementDataObject = doc.createElement("bpmn:dataObjectReference");
         allDataObjects.add(this);
         setElementDataObject();
+        setElementDataObjectSingle();
     }
 
     public DataObject(Participant participant) {
@@ -91,6 +94,7 @@ public class DataObject {
         this.associatedTask = task;
         allDataObjects.add(this);
         setElementDataObjectForStep(name);
+        setElementDataObjectForStepSingle();
     }
 
     private void setElementDataObject() {
@@ -104,6 +108,24 @@ public class DataObject {
 
         this.elementDataObject.setAttribute("name", obj + " " + "[" + state + "]");
 
+    }
+
+    private void setElementDataObjectSingle() {
+
+        this.elementDataObjectSingle = doc.createElement("bpmn:dataObject");
+        this.elementDataObjectSingle.setAttribute("id", this.id);
+
+    }
+
+    private void setElementDataObjectForStepSingle() {
+
+        this.elementDataObjectSingle = doc.createElement("bpmn:dataObject");
+        this.elementDataObjectSingle.setAttribute("id", this.id);
+
+    }
+
+    public Element getElementDataObjectSingle() {
+        return elementDataObjectSingle;
     }
 
     private void setElementDataObjectForStep(String name) {

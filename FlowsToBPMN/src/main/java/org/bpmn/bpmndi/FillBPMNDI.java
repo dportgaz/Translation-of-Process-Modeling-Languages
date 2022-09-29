@@ -143,11 +143,10 @@ public class FillBPMNDI {
                             if (activityMatcherPrev.find()) {
                                 if (expandedSubprocess && fp.getTaskById(previous) != null && fp.getTaskById(previous).getIsSubprocess()) {
                                     x -= 20 - fp.getTaskById(previous).getSteps().size() * subProcessWidthOffset + activityWidth;
-                                    y += 15;
                                 } else {
                                     x -= 20;
-                                    y += 15;
                                 }
+                                y += 15;
                             } else if (eventMatcherPrev.find()) {
                                 x -= 87;
                                 y -= 7;

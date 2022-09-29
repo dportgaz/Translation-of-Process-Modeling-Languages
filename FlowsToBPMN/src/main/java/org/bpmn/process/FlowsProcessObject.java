@@ -358,7 +358,7 @@ public class FlowsProcessObject {
 
     }
 
-    private void  setAssociations() {
+    private void setAssociations() {
 
         /*
         startEvent.setDataOutputAssociation();
@@ -461,16 +461,19 @@ public class FlowsProcessObject {
 
         for (DataObject dObj : dataObjects) {
 
-            this.elementFlowsProcess.appendChild(dObj.getElementDataObject());
+            if (dObj.getAssociatedTask().getClass().equals(Step.class)) {
 
-            Element tempObj = doc.createElement("bpmn:dataObject");
-            tempObj.setAttribute("id", dObj.getId());
-            this.elementFlowsProcess.appendChild(tempObj);
+                Step step = (Step) dObj.getAssociatedTask();
+                Task subprocess = step.getAssociatedTask();
+                subprocess.getElement().appendChild(step.getDataObject().getElementDataObject());
+                subprocess.getElement().appendChild(step.getDataObject().getElementDataObjectSingle());
 
-        }
+            } else {
 
-        for (Element associationFlow : associationFlows) {
-            this.elementFlowsProcess.appendChild(associationFlow);
+                this.elementFlowsProcess.appendChild(dObj.getElementDataObject());
+                this.elementFlowsProcess.appendChild(dObj.getElementDataObjectSingle());
+            }
+
         }
 
     }

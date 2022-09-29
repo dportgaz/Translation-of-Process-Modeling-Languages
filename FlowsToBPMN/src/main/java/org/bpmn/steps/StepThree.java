@@ -316,6 +316,7 @@ public class StepThree {
             fp.setBeforeAndAfterElements();
         }
 
+        /*
         // prints coordination process and data relations
         System.out.println(relations + "\n");
         for (Task task : coordinationProcess) {
@@ -328,6 +329,8 @@ public class StepThree {
             }
             System.out.println();
         }
+        t
+         */
 
         // TODO: Very ugly, needs refactor; replaces XOR to event when appropriate
         for (Participant object : allParticipants) {
@@ -564,7 +567,7 @@ public class StepThree {
         setProcesses(definitionsElement);
 
         FillBPMNDI_StepThree_lazy di = new FillBPMNDI_StepThree_lazy();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, true, true);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, true, true);
 
         createXml(file);
 
@@ -662,6 +665,12 @@ public class StepThree {
                         temp.getElements().add(gateway);
                     }
                 }
+            }
+        }
+
+        for (SequenceFlow flow : flows) {
+            if (flow.getTargetRef().getId().equals(object.getProcessRef().getEndEvent().getId())) {
+                object.getProcessRef().getEndEvent().setUser(flow.getSourceRef().getUser());
             }
         }
 

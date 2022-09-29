@@ -19,6 +19,7 @@ import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Scanner;
 
 import static org.bpmn.steps.BPMN.*;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;

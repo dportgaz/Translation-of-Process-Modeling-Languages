@@ -6,6 +6,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Executable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -44,7 +45,7 @@ public class BPMN {
 
     public static Document doc;
 
-    public void create(String jsonFlowsPath, String file)
+    public void create(String flowsFile, String targetFile)
             throws ParserConfigurationException, FileNotFoundException, TransformerException {
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -55,15 +56,14 @@ public class BPMN {
         doc.appendChild(definitionsElement1);
         setHeader(definitionsElement1);
 
-        ConcreteObjectType objects = new ConcreteObjectType(jsonFlowsPath);
+        ConcreteObjectType objects = new ConcreteObjectType(flowsFile);
         HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects = objects.getObjectTypeObjects();
         HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects = objects.getUserTypeObjects();
 
         HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects = objects.getCoordinationProcessTypeActionLogs();
-        Parser parse = new Parser();
         ArrayList<AbstractRelation> relationsDataModel = objects.getRelations().getList();
 
-        String fileTempOne = "Recruitment_Step1.xml";
+        String fileTempOne = targetFile + "_Step1.xml";
         StepOne s1 = new StepOne(fileTempOne, definitionsElement1, objectTypeObjects);
         s1.execute();
 
@@ -76,7 +76,7 @@ public class BPMN {
         setHeader(definitionsElement2);
 
 
-        String fileTempThree = "Recruitment_Step3.xml";
+        String fileTempThree = targetFile + "_Step3.xml";
         StepThree s3 = new StepThree(s1, fileTempThree, definitionsElement2, objectTypeObjects, userTypeObjects, coordinationProcessObjects, relationsDataModel);
         s3.execute();
 
@@ -101,8 +101,10 @@ public class BPMN {
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         DOMSource domSource = new DOMSource(doc);
-        StreamResult streamResult = new StreamResult(new File("FlowsToBPMN/src/resources/bpmn/" + file));
+        File writeFile = new File("FlowsToBPMN/src/resources/bpmn/" + file);
+        StreamResult streamResult = new StreamResult(writeFile);
         transformer.transform(domSource, streamResult);
+
 
     }
 }

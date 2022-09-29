@@ -1,6 +1,7 @@
 package org.bpmn.process;
 
 import org.bpmn.bpmn_elements.BPMNElement;
+import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.steps.BPMN;
@@ -31,6 +32,8 @@ public class Lane {
 
     HashSet<BPMNElement> elements = new HashSet<>();
 
+    Double participantMiddleY;
+
     public Lane(User user){
         this.user = user;
         this.id = "Lane_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -48,6 +51,14 @@ public class Lane {
         Element temp = doc.createElement("bpmn:flowNodeRef");
         temp.setTextContent(element.getId());
         laneElement.appendChild(temp);
+    }
+
+    public void setParticipantMiddleY(Double participantMiddleY) {
+        this.participantMiddleY = participantMiddleY;
+    }
+
+    public Double getParticipantMiddleY() {
+        return participantMiddleY;
     }
 
     public HashSet<BPMNElement> getElements() {

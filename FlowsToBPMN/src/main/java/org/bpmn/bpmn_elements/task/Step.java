@@ -13,4 +13,7 @@ public class Step extends Task {
 
     }
 
+    public Task getAssociatedTask() {
+        return associatedTask;
+    }
 }
