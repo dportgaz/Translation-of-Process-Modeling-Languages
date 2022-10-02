@@ -30,5 +30,6 @@ public interface BPMNElement {
 
     String getName();
 
+    Double getCreateId();
 
 }

@@ -11,6 +11,7 @@ import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.Association;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
+import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Permission;
 import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
@@ -85,7 +86,7 @@ public class FlowsProcessObject {
 
         this.tasks = parser.parseTasks(this.participant, objects, adHoc);
         this.loops = parser.parseLoops(this, objects);
-        //predicates = parser.parsePredicates(objects);
+        predicates = parser.parsePredicates(objects);
 
         this.startEvent = new StartEvent();
         this.endEvent = new EndEvent();
@@ -593,10 +594,45 @@ public class FlowsProcessObject {
             allGateways.add(gate);
             for (SequenceFlow sf : flows) {
                 if (sf.getSourceRef().getId().equals(gate.getId())) {
-                    Element out = doc.createElement("bpmn:outgoing");
-                    out.setTextContent(sf.getId());
-                    gate.getElementExclusiveGateway().appendChild(out);
+
+                    //set predicate
+                    BPMNElement target = sf.getTargetRef();
+                    Double stateCreatedEntityId = target.getCreateId();
+                    for(AbstractObjectType transitionObj : objects){
+                        if(transitionObj != null
+                                && transitionObj.getMethodName().equals("AddTransitionType")
+                                && transitionObj.getParameters().get(1).equals(stateCreatedEntityId)){
+
+                                Double predicateId = (Double) transitionObj.getParameters().get(0);
+
+                            for(Predicate predicate : predicates){
+                                    if(predicate.getCreatedEntityId().equals(predicateId)){
+                                        // edge case, if excl --> excl --> condition (Insurance example)
+                                        Pattern p = Pattern.compile("Gateway_*");
+                                        Matcher m;
+                                        boolean edgeCase = false;
+                                        for(SequenceFlow flow : flows){
+                                            m = p.matcher(flow.getSourceRef().getId());
+                                            if(m.find() && flow.getTargetRef().getId().equals(sf.getSourceRef().getId())){
+                                                flow.setName(predicate.getCondition());
+                                                flow.getElementSequenceFlow().setAttribute("name", flow.getName());
+                                                edgeCase = true;
+                                            }
+                                        }
+                                        if(!edgeCase) {
+                                            sf.setName(predicate.getCondition());
+                                            sf.getElementSequenceFlow().setAttribute("name", sf.getName());
+                                        }
+                                    }
+                                }
+
+                        }
+                    }
                 }
+
+                Element out = doc.createElement("bpmn:outgoing");
+                out.setTextContent(sf.getId());
+                gate.getElementExclusiveGateway().appendChild(out);
                 if (sf.getTargetRef().getId().equals(gate.getId())) {
                     Element inc = doc.createElement("bpmn:incoming");
                     inc.setTextContent(sf.getId());
@@ -604,6 +640,7 @@ public class FlowsProcessObject {
                 }
             }
         }
+
     }
 
     private void setGatewaysElement() {

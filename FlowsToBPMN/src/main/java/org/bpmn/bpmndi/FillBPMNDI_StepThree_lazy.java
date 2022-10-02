@@ -214,7 +214,7 @@ public class FillBPMNDI_StepThree_lazy {
                 y += 6;
             } else if (activityMatcherPrev.find()) {
                 x += 141;
-                y += 11;
+                y += 21;
             }
             tempBounds = new Bounds(x, y, eventWidth, eventHeight);
             Shape tempShape = new Shape(e, tempBounds);

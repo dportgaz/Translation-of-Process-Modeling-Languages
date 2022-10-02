@@ -44,9 +44,22 @@ public class Parser {
             if (obj != null && obj.getMethodName().equals("UpdateStateType")) {
 
                 String taskName = obj.getParameters().get(1) + " " + participant.getName();
-                Double createdEntityId = (Double) obj.getParameters().get(0);
+                Double updateEntityId = (Double) obj.getParameters().get(0);
+                Double stepEntityId = null;
 
-                Task task = new Task(createdEntityId, taskName, participant, objects, adHoc);
+                for (AbstractObjectType stateObj : objects) {
+
+                    if (stateObj != null
+                            && stateObj.getMethodName().equals("AddStepType")
+                            && stateObj.getParameters().get(0).equals(updateEntityId)) {
+
+                        stepEntityId = stateObj.getCreatedEntityId();
+
+                    }
+
+                }
+
+                Task task = new Task(stepEntityId, updateEntityId, taskName, participant, objects, adHoc);
                 tasks.add(task);
                 allTasks.add(task);
 

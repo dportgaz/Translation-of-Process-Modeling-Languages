@@ -28,6 +28,7 @@ import static org.bpmn.steps.BPMN.doc;
 
 public class Task implements BPMNElement {
 
+    private Double createId;
     String id;
 
     String name;
@@ -157,6 +158,10 @@ public class Task implements BPMNElement {
         }
     }
 
+    public Double getCreateId() {
+        return createId;
+    }
+
     public Permission getPermission() {
         return permission;
     }
@@ -181,7 +186,8 @@ public class Task implements BPMNElement {
         return user;
     }
 
-    public Task(Double createdEntityId, String name, Participant participant, ArrayList<AbstractObjectType> objects, boolean adHoc) {
+    public Task(Double createId, Double createdEntityId, String name, Participant participant, ArrayList<AbstractObjectType> objects, boolean adHoc) {
+        this.createId = createId;
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
         this.name = name;

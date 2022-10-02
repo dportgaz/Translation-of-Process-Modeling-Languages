@@ -87,6 +87,11 @@ public class IntermediateCatchEvent implements BPMNElement{
         return name;
     }
 
+    @Override
+    public Double getCreateId() {
+        return null;
+    }
+
     public void setName(String name) {
         this.name = name;
         this.elementCatchEvent.setAttribute("name", this.name);

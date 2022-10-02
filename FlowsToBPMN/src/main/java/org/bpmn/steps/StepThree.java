@@ -258,7 +258,6 @@ public class StepThree {
                 if (event.getParallelMultiple()) {
 
                     eventsToRemove.add(event);
-                    dataObjectsToRemove.addAll(event.getDataObjects());
 
                     ExclusiveGateway parallelGatewaySplit = new ExclusiveGateway(true, true);
                     ExclusiveGateway parallelGatewayJoin = new ExclusiveGateway(true, true);

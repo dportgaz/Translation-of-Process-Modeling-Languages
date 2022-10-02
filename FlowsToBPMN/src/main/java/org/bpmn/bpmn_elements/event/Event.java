@@ -65,6 +65,11 @@ public class Event implements BPMNElement {
         return this.id;
     }
 
+    @Override
+    public Double getCreateId() {
+        return null;
+    }
+
     public ArrayList<BPMNElement> getBefore() {
         return before;
     }

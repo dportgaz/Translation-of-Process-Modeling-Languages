@@ -80,6 +80,11 @@ public class ExclusiveGateway implements BPMNElement {
         return this.id;
     }
 
+    @Override
+    public Double getCreateId() {
+        return null;
+    }
+
     public void setEventBased(String id) {
         this.eventBased = true;
         this.id = id;
