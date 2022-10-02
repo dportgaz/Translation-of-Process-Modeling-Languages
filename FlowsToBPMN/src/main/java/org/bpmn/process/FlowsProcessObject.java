@@ -628,11 +628,11 @@ public class FlowsProcessObject {
 
                         }
                     }
+                    Element out = doc.createElement("bpmn:outgoing");
+                    out.setTextContent(sf.getId());
+                    gate.getElementExclusiveGateway().appendChild(out);
                 }
 
-                Element out = doc.createElement("bpmn:outgoing");
-                out.setTextContent(sf.getId());
-                gate.getElementExclusiveGateway().appendChild(out);
                 if (sf.getTargetRef().getId().equals(gate.getId())) {
                     Element inc = doc.createElement("bpmn:incoming");
                     inc.setTextContent(sf.getId());

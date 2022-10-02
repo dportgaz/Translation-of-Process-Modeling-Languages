@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 import static org.bpmn.steps.BPMN.doc;
-import static org.bpmn.steps.StepOne.allDataObjects;
 
 public class FillBPMNDI_StepThree_lazy {
     final double participantX = 70.0;
@@ -89,7 +88,7 @@ public class FillBPMNDI_StepThree_lazy {
 
     HashMap<Shape, BPMNElement> shapeBPMNElementHashMap = new HashMap<>();
 
-    public void f(Element rootElement, double x, double y, String e, Participant object, ArrayList<Task> tasks, ArrayList<SequenceFlow> flows, String previous, boolean expandedSubprocess) {
+    public void f(double x, double y, String e, Participant object, ArrayList<SequenceFlow> flows, String previous, boolean expandedSubprocess) {
 
         ArrayList<String> list = new ArrayList<>();
         FlowsProcessObject fp = object.getProcessRef();
@@ -198,11 +197,11 @@ public class FillBPMNDI_StepThree_lazy {
         int cntElements = list.size();
         if (cntElements > 1) {
             for (int t = cntElements - 1; t >= 0; t--) {
-                f(rootElement, x, y, list.get(t), object, tasks, flows, e, expandedSubprocess);
+                f(x, y, list.get(t), object, flows, e, expandedSubprocess);
                 y -= 100;
             }
         } else if (cntElements == 1) {
-            f(rootElement, x, y, list.get(0), object, tasks, flows, e, expandedSubprocess);
+            f(x, y, list.get(0), object, flows, e, expandedSubprocess);
         } else if (!printMark.contains(e)) {
             //double tempX = x - flowsLength;
             //TODO: MAYBE BUGGY
@@ -237,8 +236,8 @@ public class FillBPMNDI_StepThree_lazy {
         targetMark.clear();
 
 
-        f(rootElement, x, y, start, object, tasks, flows, null, expandedSubprocess);
-        q(object, rootElement);
+        f(x, y, start, object, flows, null, expandedSubprocess);
+        q(object, rootElement, expandedSubprocess);
         for (Shape shape : shapes) {
             shape.setBounds();
             rootElement.appendChild(shape.getBpmnElement());
@@ -247,14 +246,14 @@ public class FillBPMNDI_StepThree_lazy {
         addFlowsEdge(rootElement, flows, fp);
 
         //addDataObjects(rootElement, flows);
-        addDataObjectsOutput(rootElement, tasks);
+        addDataObjectsOutput(rootElement, tasks, expandedSubprocess);
 
         allShapes.addAll(shapes);
         shapes.clear();
 
     }
 
-    private void q(Participant object, Element rootElement) {
+    private void q(Participant object, Element rootElement, boolean expandedSubprocess) {
 
         for (Map.Entry<Shape, BPMNElement> entry : shapeBPMNElementHashMap.entrySet()) {
 
@@ -268,14 +267,14 @@ public class FillBPMNDI_StepThree_lazy {
 
                 if (user.getId().equals(laneMap.getKey().getId()) && !shape.getMarked()) {
                     Double yOffSet;
-                    if (bpmnElement.getClass().equals(Task.class) && ((Task) bpmnElement).getIsSubprocess() && !shape.getMarked()) {
-                        yOffSet = shape.getBounds().getY() - entryLane.getParticipantMiddleY() + entryLane.getMiddleY() - subProcessHeight / 4 + activityHeight*0.96;
+                    if (expandedSubprocess && bpmnElement.getClass().equals(Task.class) && ((Task) bpmnElement).getIsSubprocess() && !shape.getMarked()) {
+                        yOffSet = shape.getBounds().getY() - entryLane.getParticipantMiddleY() + entryLane.getMiddleY() - subProcessHeight / 4 + activityHeight * 0.96;
                     } else {
                         yOffSet = shape.getBounds().getY() - entryLane.getParticipantMiddleY() + entryLane.getMiddleY();
                     }
                     shape.getBounds().setY(yOffSet);
                     //TODO: Steps ohne XOR print
-                    if (bpmnElement.getClass().equals(Task.class) && ((Task) bpmnElement).getIsSubprocess() && !shape.getMarked()) {
+                    if (expandedSubprocess && bpmnElement.getClass().equals(Task.class) && ((Task) bpmnElement).getIsSubprocess() && !shape.getMarked()) {
 
                         Task subprocess = (Task) bpmnElement;
                         ArrayList<Step> steps = subprocess.getSteps();
@@ -300,7 +299,7 @@ public class FillBPMNDI_StepThree_lazy {
     }
 
     public void fillBPMNDI(String id, Element rootElement, Collaboration collaboration, boolean visibleMessageFlows,
-                           boolean visibleDataObjectFlows, boolean expandedSubprocess) {
+                           boolean expandedSubprocess) {
 
         Element bpmnDiagram = doc.createElement("bpmndi:BPMNDiagram");
         bpmnDiagram.setAttribute("id", id);
@@ -326,11 +325,11 @@ public class FillBPMNDI_StepThree_lazy {
 
         }
 
-        if (visibleDataObjectFlows) {
-            for (Participant object : objects) {
-                addDataObjectsInput(bpmnLane, object.getProcessRef().getIntermediateCatchEvents());
-            }
+
+        for (Participant object : objects) {
+            addDataObjectsInput(bpmnLane, object.getProcessRef().getIntermediateCatchEvents());
         }
+
 
         if (visibleMessageFlows) {
             setMessageFlows(bpmnLane, collaboration);
@@ -461,7 +460,7 @@ public class FillBPMNDI_StepThree_lazy {
 
     }
 
-    public void addDataObjectsOutput(Element rootElement, ArrayList<Task> tasks) {
+    public void addDataObjectsOutput(Element rootElement, ArrayList<Task> tasks, boolean expandedSubprocess) {
 
         Double xBoundOffset = 0d;
         for (int i = 0; i < tasks.size(); i++) {
@@ -516,7 +515,7 @@ public class FillBPMNDI_StepThree_lazy {
 
             }
 
-            if (task.getIsSubprocess()) {
+            if (expandedSubprocess && task.getIsSubprocess()) {
                 ArrayList<Step> steps = task.getSteps();
                 for (Step step : steps) {
 
