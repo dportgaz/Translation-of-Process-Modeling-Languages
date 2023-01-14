@@ -247,7 +247,9 @@ public class FillBPMNDI {
         f(rootElement, x, y, start, object, tasks, flows, null, expandedSubprocess);
         addFlowsEdge(rootElement, flows, fp);
         //addDataObjects(rootElement, flows);
-        addDataObjectsOutput(rootElement, tasks);
+        if(expandedSubprocess){
+            addDataObjectsOutput(rootElement, tasks);
+        }
         allShapes.addAll(shapes);
         shapes.clear();
         stepShapes.clear();

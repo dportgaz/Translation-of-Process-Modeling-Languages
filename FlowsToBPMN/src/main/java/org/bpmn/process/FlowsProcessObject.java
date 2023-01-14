@@ -3,25 +3,22 @@ package org.bpmn.process;
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.Loop;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
-import org.bpmn.bpmn_elements.association.DataOutputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
-import org.bpmn.bpmn_elements.flows.Association;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Permission;
 import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
-import org.bpmn.flows_objects.AbstractObjectType;
+import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.parse_json.Parser;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
 import org.w3c.dom.Element;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,7 +53,7 @@ public class FlowsProcessObject {
 
     ArrayList<Task> subprocesses = new ArrayList<>();
 
-    ArrayList<AbstractObjectType> objects;
+    ArrayList<AbstractFlowsEntity> objects;
 
     ArrayList<Loop> loops = new ArrayList<>();
 
@@ -68,13 +65,16 @@ public class FlowsProcessObject {
 
     boolean adHoc;
 
+    boolean expandedSubprocess;
 
-    public FlowsProcessObject(Object participant, HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects, boolean adHoc) {
+
+    public FlowsProcessObject(Object participant, HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects, boolean adHoc, boolean expandedSubprocess) {
 
         this.id = "Process_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.participant = participant;
         this.objects = objectTypeObjects.get(participant.getKey());
         this.adHoc = adHoc;
+        this.expandedSubprocess = expandedSubprocess;
         setFlowsProcess();
         //setElementFlowsProcess();
 
@@ -84,7 +84,7 @@ public class FlowsProcessObject {
 
         Parser parser = new Parser();
 
-        this.tasks = parser.parseTasks(this.participant, objects, adHoc);
+        this.tasks = parser.parseTasks(this.participant, objects, adHoc, expandedSubprocess);
         this.loops = parser.parseLoops(this, objects);
         predicates = parser.parsePredicates(objects);
 
@@ -492,7 +492,7 @@ public class FlowsProcessObject {
 
     }
 
-    public AbstractObjectType findObjectById(Double id, ArrayList<AbstractObjectType> objectTypeObjects) {
+    public AbstractFlowsEntity findObjectById(Double id, ArrayList<AbstractFlowsEntity> objectTypeObjects) {
 
         return objectTypeObjects.stream().filter(obj -> obj != null && obj.getCreatedEntityId() != null && obj.getCreatedEntityId().equals(id)).collect(Collectors.toList()).get(0);
     }
@@ -598,7 +598,7 @@ public class FlowsProcessObject {
                     //set predicate
                     BPMNElement target = sf.getTargetRef();
                     Double stateCreatedEntityId = target.getCreateId();
-                    for(AbstractObjectType transitionObj : objects){
+                    for(AbstractFlowsEntity transitionObj : objects){
                         if(transitionObj != null
                                 && transitionObj.getMethodName().equals("AddTransitionType")
                                 && transitionObj.getParameters().get(1).equals(stateCreatedEntityId)){

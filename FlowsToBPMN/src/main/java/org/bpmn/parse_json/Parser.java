@@ -5,18 +5,13 @@ import org.bpmn.bpmn_elements.Port;
 import org.bpmn.bpmn_elements.Relation;
 import org.bpmn.bpmn_elements.RelationType;
 import org.bpmn.bpmn_elements.collaboration.participant.User;
-import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
-import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;
-import org.bpmn.flows_objects.AbstractObjectType;
-import org.bpmn.bpmn_elements.collaboration.Collaboration;
+import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.process.FlowsProcessObject;
-import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,11 +30,11 @@ public class Parser {
     public ArrayList<Port> coordinationPorts = new ArrayList<>();
 
 
-    public ArrayList<Task> parseTasks(Participant participant, ArrayList<AbstractObjectType> objects, boolean adHoc) {
+    public ArrayList<Task> parseTasks(Participant participant, ArrayList<AbstractFlowsEntity> objects, boolean adHoc, boolean expandedSubprocess) {
 
         ArrayList<Task> tasks = new ArrayList<>();
 
-        for (AbstractObjectType obj : objects) {
+        for (AbstractFlowsEntity obj : objects) {
 
             if (obj != null && obj.getMethodName().equals("UpdateStateType")) {
 
@@ -47,16 +42,18 @@ public class Parser {
                 Double updateEntityId = (Double) obj.getParameters().get(0);
                 Double stepEntityId = null;
 
-                for (AbstractObjectType stateObj : objects) {
+                if (expandedSubprocess) {
+                    for (AbstractFlowsEntity stateObj : objects) {
 
-                    if (stateObj != null
-                            && stateObj.getMethodName().equals("AddStepType")
-                            && stateObj.getParameters().get(0).equals(updateEntityId)) {
+                        if (stateObj != null
+                                && stateObj.getMethodName().equals("AddStepType")
+                                && stateObj.getParameters().get(0).equals(updateEntityId)) {
 
-                        stepEntityId = stateObj.getCreatedEntityId();
+                            stepEntityId = stateObj.getCreatedEntityId();
+
+                        }
 
                     }
-
                 }
 
                 Task task = new Task(stepEntityId, updateEntityId, taskName, participant, objects, adHoc);
@@ -69,7 +66,7 @@ public class Parser {
         return tasks;
     }
 
-    public ArrayList<SequenceFlow> parseFlows(FlowsProcessObject object, ArrayList<AbstractObjectType> objects) {
+    public ArrayList<SequenceFlow> parseFlows(FlowsProcessObject object, ArrayList<AbstractFlowsEntity> objects) {
 
         ArrayList<Task> tasks = object.getTasks();
         ArrayList<SequenceFlow> flows = new ArrayList<>();
@@ -81,15 +78,15 @@ public class Parser {
         flows.add(startFlow);
         start.setOutgoing(startFlow);
 
-        for (AbstractObjectType obj : objects) {
+        for (AbstractFlowsEntity obj : objects) {
 
             if (obj != null && obj.getMethodName().equals("AddTransitionType")) {
 
                 Double source = (Double) obj.getParameters().get(0);
                 Double target = (Double) obj.getParameters().get(1);
 
-                AbstractObjectType sourceTemp = getPredicate(source, objects);
-                AbstractObjectType targetTemp = getPredicate(target, objects);
+                AbstractFlowsEntity sourceTemp = getPredicate(source, objects);
+                AbstractFlowsEntity targetTemp = getPredicate(target, objects);
 
                 if (sourceTemp != null) {
                     source = (Double) sourceTemp.getParameters().get(0);
@@ -117,7 +114,7 @@ public class Parser {
         return flows;
     }
 
-    public ArrayList<Loop> parseLoops(FlowsProcessObject object, ArrayList<AbstractObjectType> objects) {
+    public ArrayList<Loop> parseLoops(FlowsProcessObject object, ArrayList<AbstractFlowsEntity> objects) {
 
         ArrayList<Loop> loops = new ArrayList<>();
         // gateways in case of loop
@@ -141,11 +138,11 @@ public class Parser {
     }
 
 
-    public ArrayList<Predicate> parsePredicates(ArrayList<AbstractObjectType> objects) {
+    public ArrayList<Predicate> parsePredicates(ArrayList<AbstractFlowsEntity> objects) {
 
         ArrayList<Predicate> predicates = new ArrayList<>();
 
-        for (AbstractObjectType obj : objects) {
+        for (AbstractFlowsEntity obj : objects) {
             if (obj != null && obj.getMethodName().equals("AddPredicateStepType")) {
 
                 Predicate predicate = parsePredicate(obj.getCreatedEntityId(), objects);
@@ -158,7 +155,7 @@ public class Parser {
         return predicates;
     }
 
-    public HashSet<User> parsePermissions(HashMap<Double, ArrayList<AbstractObjectType>> users) {
+    public HashSet<User> parsePermissions(HashMap<Double, ArrayList<AbstractFlowsEntity>> users) {
         HashSet<User> user = new HashSet<>();
         for (Double key : users.keySet()) {
             users.get(key).forEach(obj -> {
@@ -176,7 +173,7 @@ public class Parser {
     }
 
 
-    public void parseCoordinationSteps(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects) {
+    public void parseCoordinationSteps(HashMap<Double, ArrayList<AbstractFlowsEntity>> coordinationProcessObjects) {
 
         for (Double key : coordinationProcessObjects.keySet()) {
             coordinationProcessObjects.get(key).forEach(obj -> {
@@ -196,7 +193,7 @@ public class Parser {
         }
     }
 
-    public void parseCoordinationPorts(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects) {
+    public void parseCoordinationPorts(HashMap<Double, ArrayList<AbstractFlowsEntity>> coordinationProcessObjects) {
 
         for (Double key : coordinationProcessObjects.keySet()) {
             coordinationProcessObjects.get(key).forEach(obj -> {
@@ -208,7 +205,7 @@ public class Parser {
         }
     }
 
-    public void parseCoordinationTransitions(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects) {
+    public void parseCoordinationTransitions(HashMap<Double, ArrayList<AbstractFlowsEntity>> coordinationProcessObjects) {
 
         for (Double key : coordinationProcessObjects.keySet()) {
             coordinationProcessObjects.get(key).forEach(obj -> {
@@ -232,7 +229,7 @@ public class Parser {
         }
     }
 
-    public ArrayList<Task> appendPortsToTasks(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects) {
+    public ArrayList<Task> appendPortsToTasks(HashMap<Double, ArrayList<AbstractFlowsEntity>> coordinationProcessObjects) {
 
         parseCoordinationSteps(coordinationProcessObjects);
         parseCoordinationPorts(coordinationProcessObjects);
@@ -257,7 +254,7 @@ public class Parser {
         return coordinationTasks;
     }
 
-    public ArrayList<Task> getCoordinationTasks(HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects) {
+    public ArrayList<Task> getCoordinationTasks(HashMap<Double, ArrayList<AbstractFlowsEntity>> coordinationProcessObjects) {
         return appendPortsToTasks(coordinationProcessObjects);
     }
 

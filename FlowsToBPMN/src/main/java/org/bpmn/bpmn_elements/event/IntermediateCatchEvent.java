@@ -56,7 +56,9 @@ public class IntermediateCatchEvent implements BPMNElement{
         this.id = "ReceiveActivity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.name = name;
         this.user = user;
-        user.getElements().add(this);
+        if(this.user != null) {
+            user.getElements().add(this);
+        }
         this.elementCatchEvent = doc.createElement("bpmn:receiveTask");
         setElement();
     }

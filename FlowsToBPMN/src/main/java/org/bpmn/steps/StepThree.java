@@ -11,20 +11,16 @@ import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
-import org.bpmn.bpmn_elements.gateway.Predicate;
-import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
-import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.bpmndi.FillBPMNDI_StepThree_lazy;
-import org.bpmn.flows_objects.AbstractObjectType;
-import org.bpmn.flows_objects.AbstractRelation;
+import org.bpmn.flows_entities.AbstractFlowsEntity;
+import org.bpmn.flows_entities.AbstractRelationship;
 import org.bpmn.parse_json.Parser;
 import org.bpmn.process.FlowsProcessObject;
 import org.bpmn.process.Lane;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
-import javax.xml.crypto.Data;
 import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,11 +39,11 @@ public class StepThree {
     ExecStep step;
     String file;
     Element definitionsElement;
-    HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects;
+    HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects;
 
-    HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects;
+    HashMap<Double, ArrayList<AbstractFlowsEntity>> coordinationProcessObjects;
 
-    ArrayList<AbstractRelation> relationsDataModel;
+    ArrayList<AbstractRelationship> relationsDataModel;
 
     ArrayList<Task> coordinationProcess = new ArrayList<>();
 
@@ -59,10 +55,10 @@ public class StepThree {
 
     private Collaboration collaboration;
 
-    HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects = new HashMap<>();
+    HashMap<Double, ArrayList<AbstractFlowsEntity>> userTypeObjects = new HashMap<>();
 
-    public StepThree(StepOne stepOne, String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects, HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects,
-                     HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects, ArrayList<AbstractRelation> relationsDataModel) {
+    public StepThree(StepOne stepOne, String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects, HashMap<Double, ArrayList<AbstractFlowsEntity>> userTypeObjects,
+                     HashMap<Double, ArrayList<AbstractFlowsEntity>> coordinationProcessObjects, ArrayList<AbstractRelationship> relationsDataModel) {
         this.stepOne = stepOne;
         this.file = file;
         this.definitionsElement = definitionsElement;
@@ -84,7 +80,7 @@ public class StepThree {
         coordinationProcess = parser.getCoordinationTasks(coordinationProcessObjects);
 
         // fill Data Model
-        for (AbstractRelation relation : relationsDataModel) {
+        for (AbstractRelationship relation : relationsDataModel) {
 
             Double sourceId = (Double) relation.getParameters().get(0);
             Double targetId = (Double) relation.getParameters().get(1);
@@ -152,7 +148,6 @@ public class StepThree {
         }
 
         // TODO: complement coordination process with data model relation
-
 
         // _______________________________
 
@@ -328,7 +323,6 @@ public class StepThree {
             }
             System.out.println();
         }
-        t
          */
 
         // TODO: Very ugly, needs refactor; replaces XOR to event when appropriate
@@ -479,7 +473,7 @@ public class StepThree {
         setProcesses(definitionsElement);
 
         FillBPMNDI_StepThree_lazy di = new FillBPMNDI_StepThree_lazy();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, true, true);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, true, false);
 
         createXml(file);
 

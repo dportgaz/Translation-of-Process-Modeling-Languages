@@ -8,7 +8,7 @@ import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;
 //import org.bpmn.bpmndi.FillBPMNDI;
 import org.bpmn.bpmndi.FillBPMNDI;
-import org.bpmn.flows_objects.AbstractObjectType;
+import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.process.FlowsProcessObject;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
@@ -19,7 +19,6 @@ import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Scanner;
 
 import static org.bpmn.steps.BPMN.*;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
@@ -28,11 +27,9 @@ public class StepOne implements Step{
     ExecStep step;
     String file;
     Element definitionsElement;
-    HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects;
-
+    HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects;
     public static ArrayList<Object> allParticipants = new ArrayList();
     public static ArrayList<Task> allTasks = new ArrayList();
-
     public static ArrayList<DataObject> allDataObjects = new ArrayList();
     public static ArrayList<SequenceFlow> allFlows = new ArrayList();
     public static ArrayList<ExclusiveGateway> allGateways = new ArrayList();
@@ -42,7 +39,7 @@ public class StepOne implements Step{
 
     private Collaboration collaboration;
 
-    public StepOne(String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects) {
+    public StepOne(String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects) {
         this.file = file;
         this.definitionsElement = definitionsElement;
         this.objectTypeObjects = objectTypeObjects;
@@ -52,15 +49,16 @@ public class StepOne implements Step{
     public void execute() throws TransformerException {
 
         boolean adHoc = true;
+        boolean expandedSubprocess = true;
         this.collaboration = new Collaboration();
-        collaboration.setParticipants(objectTypeObjects, adHoc);
+        collaboration.setParticipants(objectTypeObjects, adHoc, expandedSubprocess);
         Element collaborationElement = collaboration.getElementCollaboration();
 
         definitionsElement.appendChild(collaborationElement);
         setProcesses(definitionsElement);
 
         FillBPMNDI di = new FillBPMNDI();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, false, true);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, true, expandedSubprocess);
 
         createXml(file);
 

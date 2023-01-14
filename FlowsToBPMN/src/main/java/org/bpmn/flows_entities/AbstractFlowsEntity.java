@@ -1,12 +1,14 @@
-package org.bpmn.flows_objects;
+package org.bpmn.flows_entities;
 
 import java.util.ArrayList;
 
-public abstract class AbstractObjectType {
+public abstract class AbstractFlowsEntity {
 
     // protected String __type;
     // protected String Id;
+
     protected String MethodName;
+
     protected ArrayList<Object> Parameters;
     protected Double CreatedEntityId;
     protected Double UpdatedEntityId;
@@ -19,16 +21,8 @@ public abstract class AbstractObjectType {
         return this.Parameters;
     }
 
-    public Object getObjectName() {
-        return this.Parameters.get(0);
-    }
-
     public Double getCreatedEntityId() {
         return this.CreatedEntityId;
-    }
-
-    public Double getUpdatedEntityId() {
-        return this.UpdatedEntityId;
     }
 
 }

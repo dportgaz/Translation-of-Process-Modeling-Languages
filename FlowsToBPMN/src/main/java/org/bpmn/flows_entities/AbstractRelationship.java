@@ -1,8 +1,8 @@
-package org.bpmn.flows_objects;
+package org.bpmn.flows_entities;
 
 import java.util.ArrayList;
 
-public abstract class AbstractRelation {
+public abstract class AbstractRelationship {
 
     protected String MethodName;
     protected ArrayList<Object> Parameters;

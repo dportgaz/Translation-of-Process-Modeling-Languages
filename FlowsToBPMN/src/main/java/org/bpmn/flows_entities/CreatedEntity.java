@@ -1,8 +1,8 @@
-package org.bpmn.flows_objects;
+package org.bpmn.flows_entities;
 
 import java.util.ArrayList;
 
-public class CreatedEntity extends AbstractObjectType {
+public class CreatedEntity extends AbstractFlowsEntity {
 
     public CreatedEntity(String type, String id_, String methodname_, ArrayList<Object> parameters_, Double createdEntityId_) {
 

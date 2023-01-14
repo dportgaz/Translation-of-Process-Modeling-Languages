@@ -1,4 +1,4 @@
-package org.bpmn.flows_objects;
+package org.bpmn.flows_entities;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -8,11 +8,11 @@ import com.google.gson.JsonParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FlowsObjectTypeJsonDeserializer implements JsonDeserializer<AbstractObjectType> {
+public class FlowsEntitiesJsonDeserializer implements JsonDeserializer<AbstractFlowsEntity> {
 
     @Override
-    public AbstractObjectType deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
-                                          JsonDeserializationContext context) throws JsonParseException {
+    public AbstractFlowsEntity deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
+                                           JsonDeserializationContext context) throws JsonParseException {
 
         String methodName = json.getAsJsonObject().get("MethodName").getAsString();
 

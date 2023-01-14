@@ -1,7 +1,7 @@
 package org.bpmn.bpmn_elements.collaboration.participant;
 
 import org.bpmn.bpmn_elements.dataobject.DataObject;
-import org.bpmn.flows_objects.AbstractObjectType;
+import org.bpmn.flows_entities.AbstractFlowsEntity;
 
 import org.bpmn.process.FlowsProcessObject;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
@@ -43,8 +43,8 @@ public class Object extends Participant {
 
     }
 
-    public void setProcessRef(HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects, boolean adHoc) {
-        this.processRef = new FlowsProcessObject(this, objectTypeObjects, adHoc);
+    public void setProcessRef(HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects, boolean adHoc, boolean expandedSubprocess) {
+        this.processRef = new FlowsProcessObject(this, objectTypeObjects, adHoc, expandedSubprocess);
         this.participantElement.setAttribute("processRef", this.processRef.getId());
     }
 

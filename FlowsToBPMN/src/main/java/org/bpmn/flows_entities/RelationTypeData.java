@@ -1,8 +1,8 @@
-package org.bpmn.flows_objects;
+package org.bpmn.flows_entities;
 
 import java.util.ArrayList;
 
-public class RelationTypeData extends AbstractRelation{
+public class RelationTypeData extends AbstractRelationship {
 
     public RelationTypeData(String type, String id_, String methodname_, ArrayList<Object> parameters_, Double createdActorId_) {
 

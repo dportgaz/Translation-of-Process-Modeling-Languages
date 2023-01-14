@@ -2,7 +2,7 @@ package org.bpmn.bpmn_elements.collaboration;
 
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
-import org.bpmn.flows_objects.AbstractObjectType;
+import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
 
@@ -57,7 +57,7 @@ public class Collaboration {
         return null;
     }
 
-    public void setParticipants(HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects, boolean adHoc) {
+    public void setParticipants(HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects, boolean adHoc, boolean expandedSubprocess) {
 
         for (Double key : objectTypeObjects.keySet()) {
             objectTypeObjects.get(key).forEach(obj -> {
@@ -82,7 +82,7 @@ public class Collaboration {
             });
         }
         for (Object object : objects) {
-            object.setProcessRef(objectTypeObjects, adHoc);
+            object.setProcessRef(objectTypeObjects, adHoc, expandedSubprocess);
         }
     }
 

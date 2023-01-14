@@ -1,4 +1,4 @@
-package org.bpmn.flows_objects.flowsobject;
+package org.bpmn.flows_entities.flows_entity;
 
 public class FlowsObject extends AbstractFlowsObject {
 

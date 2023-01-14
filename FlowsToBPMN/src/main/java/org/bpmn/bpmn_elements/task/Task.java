@@ -3,7 +3,6 @@ package org.bpmn.bpmn_elements.task;
 import com.google.gson.internal.LinkedTreeMap;
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.Port;
-import org.bpmn.bpmn_elements.RelationType;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.association.DataOutputAssociation;
 import org.bpmn.bpmn_elements.collaboration.participant.Object;
@@ -12,7 +11,7 @@ import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
-import org.bpmn.flows_objects.AbstractObjectType;
+import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.w3c.dom.Element;
@@ -186,7 +185,7 @@ public class Task implements BPMNElement {
         return user;
     }
 
-    public Task(Double createId, Double createdEntityId, String name, Participant participant, ArrayList<AbstractObjectType> objects, boolean adHoc) {
+    public Task(Double createId, Double createdEntityId, String name, Participant participant, ArrayList<AbstractFlowsEntity> objects, boolean adHoc) {
         this.createId = createId;
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
@@ -509,8 +508,8 @@ public class Task implements BPMNElement {
         return this.name;
     }
 
-    private boolean stepIsPredicate(ArrayList<AbstractObjectType> objects, Double id) {
-        for (AbstractObjectType obj : objects) {
+    private boolean stepIsPredicate(ArrayList<AbstractFlowsEntity> objects, Double id) {
+        for (AbstractFlowsEntity obj : objects) {
             if (obj != null && obj.getMethodName().equals("UpdatePredicateStepTypeExpression")) {
                 LinkedTreeMap link = (LinkedTreeMap) obj.getParameters().get(1);
                 LinkedTreeMap innerLink = (LinkedTreeMap) link.get("Left");
@@ -523,7 +522,7 @@ public class Task implements BPMNElement {
     }
 
     // TODO: GEHT BESSER SETSTEPS()
-    public ArrayList<Step> setSteps(ArrayList<AbstractObjectType> objects) {
+    public ArrayList<Step> setSteps(ArrayList<AbstractFlowsEntity> objects) {
 
         HashSet<String> stepNames = new HashSet<>();
         objects.forEach(obj -> {
@@ -548,14 +547,14 @@ public class Task implements BPMNElement {
         return steps;
     }
 
-    private Step getStep(ArrayList<AbstractObjectType> objects, AbstractObjectType absObj, boolean computationStep) {
+    private Step getStep(ArrayList<AbstractFlowsEntity> objects, AbstractFlowsEntity absObj, boolean computationStep) {
 
         Double id = absObj.getCreatedEntityId();
 
-        for (AbstractObjectType obj : objects) {
+        for (AbstractFlowsEntity obj : objects) {
             if (obj != null && obj.getMethodName().equals("UpdateStepAttributeType") && obj.getParameters().get(0).equals(id)) {
                 Double tempId = (Double) obj.getParameters().get(1);
-                for (AbstractObjectType obj2 : objects) {
+                for (AbstractFlowsEntity obj2 : objects) {
                     if (obj2 != null) {
 
                         Pattern p = Pattern.compile("^Update.*AttributeType$");

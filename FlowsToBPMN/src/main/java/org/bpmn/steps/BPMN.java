@@ -2,11 +2,8 @@ package org.bpmn.steps;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Executable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -18,28 +15,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.bpmn.bpmn_elements.BPMNElement;
-import org.bpmn.bpmn_elements.Port;
-import org.bpmn.bpmn_elements.Relation;
-import org.bpmn.bpmn_elements.RelationType;
-import org.bpmn.bpmn_elements.collaboration.participant.Participant;
-import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
-import org.bpmn.bpmn_elements.event.IntermediateThrowEvent;
-import org.bpmn.bpmn_elements.flows.SequenceFlow;
-import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
-import org.bpmn.bpmn_elements.task.Task;
-import org.bpmn.flows_objects.AbstractObjectType;
-import org.bpmn.flows_objects.AbstractRelation;
-import org.bpmn.flows_objects.ConcreteObjectType;
+import org.bpmn.flows_entities.AbstractFlowsEntity;
+import org.bpmn.flows_entities.AbstractRelationship;
+import org.bpmn.flows_entities.DeserializeFlowsEntity;
 
-import org.bpmn.flows_objects.RelationList;
-import org.bpmn.parse_json.Parser;
-import org.bpmn.process.FlowsProcessObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import static org.bpmn.steps.StepOne.allParticipants;
-import static org.bpmn.steps.StepOne.allTasks;
 
 public class BPMN {
 
@@ -56,12 +37,12 @@ public class BPMN {
         doc.appendChild(definitionsElement1);
         setHeader(definitionsElement1);
 
-        ConcreteObjectType objects = new ConcreteObjectType(flowsFile);
-        HashMap<Double, ArrayList<AbstractObjectType>> objectTypeObjects = objects.getObjectTypeObjects();
-        HashMap<Double, ArrayList<AbstractObjectType>> userTypeObjects = objects.getUserTypeObjects();
+        DeserializeFlowsEntity objects = new DeserializeFlowsEntity(flowsFile);
+        HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects = objects.getObjectTypes();
+        HashMap<Double, ArrayList<AbstractFlowsEntity>> userTypeObjects = objects.getUserTypes();
 
-        HashMap<Double, ArrayList<AbstractObjectType>> coordinationProcessObjects = objects.getCoordinationProcessTypeActionLogs();
-        ArrayList<AbstractRelation> relationsDataModel = objects.getRelations().getList();
+        HashMap<Double, ArrayList<AbstractFlowsEntity>> coordinationProcessObjects = objects.getCoordinationProcessTypeActionLogs();
+        ArrayList<AbstractRelationship> relationsDataModel = objects.getRelationships().getList();
 
         String fileTempOne = targetFile + "_Step1.xml";
         StepOne s1 = new StepOne(fileTempOne, definitionsElement1, objectTypeObjects);

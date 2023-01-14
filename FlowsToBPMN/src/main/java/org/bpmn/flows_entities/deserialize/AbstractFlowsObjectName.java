@@ -1,4 +1,4 @@
-package org.bpmn.flows_objects.flowsobjectname;
+package org.bpmn.flows_entities.deserialize;
 
 import java.util.ArrayList;
 

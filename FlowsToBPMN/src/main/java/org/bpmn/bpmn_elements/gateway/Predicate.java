@@ -1,7 +1,7 @@
 package org.bpmn.bpmn_elements.gateway;
 
 import com.google.gson.internal.LinkedTreeMap;
-import org.bpmn.flows_objects.AbstractObjectType;
+import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 
 import java.util.ArrayList;
@@ -44,9 +44,9 @@ public class Predicate {
         return "Id= " + this.createdEntityId + "Value= " + this.getCondition();
     }
 
-    public static Predicate parsePredicate(Double id, ArrayList<AbstractObjectType> objectTypeObjects) {
+    public static Predicate parsePredicate(Double id, ArrayList<AbstractFlowsEntity> objectTypeObjects) {
 
-        for (AbstractObjectType obj : objectTypeObjects) {
+        for (AbstractFlowsEntity obj : objectTypeObjects) {
             if (obj != null) {
                 if (obj.getMethodName().equals("UpdatePredicateStepTypeExpression")) {
                     Double stepId = (Double) obj.getParameters().get(0);
@@ -78,9 +78,9 @@ public class Predicate {
         return null;
     }
 
-    public static AbstractObjectType getPredicate(Double source, ArrayList<AbstractObjectType> objectTypeObjects) {
+    public static AbstractFlowsEntity getPredicate(Double source, ArrayList<AbstractFlowsEntity> objectTypeObjects) {
 
-        for (AbstractObjectType obj : objectTypeObjects) {
+        for (AbstractFlowsEntity obj : objectTypeObjects) {
 
             if (obj != null && obj.getCreatedEntityId() != null && obj.getCreatedEntityId().equals(source)) {
                 if (obj.getMethodName().equals("AddPredicateStepType")) {
@@ -91,9 +91,9 @@ public class Predicate {
         return null;
     }
 
-    private static String findAttributeOfPredicate(Double id, ArrayList<AbstractObjectType> objectTypeObjects) {
+    private static String findAttributeOfPredicate(Double id, ArrayList<AbstractFlowsEntity> objectTypeObjects) {
 
-        for (AbstractObjectType obj : objectTypeObjects) {
+        for (AbstractFlowsEntity obj : objectTypeObjects) {
             if (obj != null) {
 
                 Pattern p = Pattern.compile("^Update.*AttributeType$");
