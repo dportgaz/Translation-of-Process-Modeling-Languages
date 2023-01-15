@@ -21,7 +21,7 @@ import static org.bpmn.bpmn_elements.flows.SequenceFlow.getFlowBySource;
 import static org.bpmn.bpmn_elements.flows.SequenceFlow.getFlowByTarget;
 import static org.bpmn.bpmn_elements.gateway.Predicate.getPredicate;
 import static org.bpmn.bpmn_elements.gateway.Predicate.parsePredicate;
-import static org.bpmn.steps.StepOne.allTasks;
+import static org.bpmn.steps.LifecycleTransformation.allTasks;
 
 public class Parser {
 
@@ -42,21 +42,19 @@ public class Parser {
                 Double updateEntityId = (Double) obj.getParameters().get(0);
                 Double stepEntityId = null;
 
-                if (expandedSubprocess) {
-                    for (AbstractFlowsEntity stateObj : objects) {
+                for (AbstractFlowsEntity stateObj : objects) {
 
-                        if (stateObj != null
-                                && stateObj.getMethodName().equals("AddStepType")
-                                && stateObj.getParameters().get(0).equals(updateEntityId)) {
+                    if (stateObj != null
+                            && stateObj.getMethodName().equals("AddStepType")
+                            && stateObj.getParameters().get(0).equals(updateEntityId)) {
 
-                            stepEntityId = stateObj.getCreatedEntityId();
-
-                        }
+                        stepEntityId = stateObj.getCreatedEntityId();
 
                     }
+
                 }
 
-                Task task = new Task(stepEntityId, updateEntityId, taskName, participant, objects, adHoc);
+                Task task = new Task(stepEntityId, updateEntityId, taskName, participant, objects, adHoc, expandedSubprocess);
                 tasks.add(task);
                 allTasks.add(task);
 

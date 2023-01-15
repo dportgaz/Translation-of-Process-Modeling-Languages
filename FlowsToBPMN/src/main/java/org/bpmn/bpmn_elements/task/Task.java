@@ -185,7 +185,7 @@ public class Task implements BPMNElement {
         return user;
     }
 
-    public Task(Double createId, Double createdEntityId, String name, Participant participant, ArrayList<AbstractFlowsEntity> objects, boolean adHoc) {
+    public Task(Double createId, Double createdEntityId, String name, Participant participant, ArrayList<AbstractFlowsEntity> objects, boolean adHoc, boolean expandedSubprocess) {
         this.createId = createId;
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;

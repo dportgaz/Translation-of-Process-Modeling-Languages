@@ -7,7 +7,7 @@ import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;
 //import org.bpmn.bpmndi.FillBPMNDI;
-import org.bpmn.bpmndi.FillBPMNDI;
+import org.bpmn.bpmndi.BPMNDiagram;
 import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.process.FlowsProcessObject;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
@@ -23,7 +23,7 @@ import java.util.HashSet;
 import static org.bpmn.steps.BPMN.*;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 
-public class StepOne implements Step{
+public class LifecycleTransformation implements Transformation {
     ExecStep step;
     String file;
     Element definitionsElement;
@@ -39,7 +39,7 @@ public class StepOne implements Step{
 
     private Collaboration collaboration;
 
-    public StepOne(String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects) {
+    public LifecycleTransformation(String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects) {
         this.file = file;
         this.definitionsElement = definitionsElement;
         this.objectTypeObjects = objectTypeObjects;
@@ -57,7 +57,7 @@ public class StepOne implements Step{
         definitionsElement.appendChild(collaborationElement);
         setProcesses(definitionsElement);
 
-        FillBPMNDI di = new FillBPMNDI();
+        BPMNDiagram di = new BPMNDiagram();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, true, expandedSubprocess);
 
         createXml(file);

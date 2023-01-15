@@ -24,13 +24,12 @@ import java.util.regex.Pattern;
 
 import static org.bpmn.steps.BPMN.doc;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
-import static org.bpmn.steps.StepOne.allDataObjects;
-import static org.bpmn.steps.StepOne.allLoops;
+import static org.bpmn.steps.LifecycleTransformation.allDataObjects;
 
-public class FillBPMNDI {
+public class BPMNDiagram {
     final double participantX = 70.0;
-    final double participantWidth = 3000.0;
-    final double participantHeight = 1500.0;
+    final double participantWidth = 1200.0;
+    final double participantHeight = 400.0;
     final double participantYInc = participantHeight + 50.0;
 
     final double startEventYInc = 200.0;
@@ -179,9 +178,9 @@ public class FillBPMNDI {
                             stepShapes.add(stepShape);
                             rootElement.appendChild(stepShape.getBpmnElement());
                         }
-                        tempShape = new Shape(e, tempBounds, true);
+                        tempShape = new Shape(e, expandedSubprocess, tempBounds);
                     } else {
-                        tempShape = new Shape(e, tempBounds);
+                        tempShape = new Shape(e, expandedSubprocess, tempBounds);
                     }
 
                     tempShape.setBounds();
@@ -298,10 +297,8 @@ public class FillBPMNDI {
         HashSet<MessageFlow> messageFlows = collaboration.getMessageFlows();
 
         for (MessageFlow mf : messageFlows) {
-            Element flow = doc.createElement("bpmndi:BPMNEdge");
-            flow.setAttribute("id", mf.getId() + "_di");
-            flow.setAttribute("bpmnElement", mf.getId());
 
+            Edge messageFlow = new Edge(mf.getId());
             Shape bsSource = getBPMNShapeByFlowAllShapes(mf.getSourceRef().getId());
             Shape bsTarget = getBPMNShapeByFlowAllShapes(mf.getTargetRef().getId());
 
@@ -321,9 +318,9 @@ public class FillBPMNDI {
             waypointEnd.setAttribute("x", String.valueOf(xEnd));
             waypointEnd.setAttribute("y", String.valueOf(yEnd));
 
-            flow.appendChild(waypointStart);
-            flow.appendChild(waypointEnd);
-            rootElement.appendChild(flow);
+            messageFlow.getBpmnElement().appendChild(waypointStart);
+            messageFlow.getBpmnElement().appendChild(waypointEnd);
+            rootElement.appendChild(messageFlow.getBpmnElement());
         }
 
     }
@@ -332,7 +329,7 @@ public class FillBPMNDI {
 
         Bounds bounds = new Bounds(this.participantX, participantY, this.participantWidth, this.participantHeight);
         Shape shape = new Shape(p.getId(), "true", bounds);
-        shape.setShapeParticipantIH();
+        shape.setShapePool();
         shape.setBounds();
         poolHeight = shape.getBounds().getY();
         rootElement.appendChild(shape.getBpmnElement());
@@ -459,10 +456,7 @@ public class FillBPMNDI {
                 dataObjectBounds.setAttribute("height", String.valueOf(dataObjectHeight));
                 dataObject.appendChild(dataObjectBounds);
 
-                Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
-                //TODO: POTENZIELL BUGGY
-                dataObjectFlowOutput.setAttribute("id", task.getDataOutputAssociation().getId() + "_di");
-                dataObjectFlowOutput.setAttribute("bpmnElement", task.getDataOutputAssociation().getId());
+                Edge dataObjectFlowOutput = new Edge(task.getDataOutputAssociation().getId());
 
                 Element waypointOutStart = doc.createElement("di:waypoint");
                 Element waypointOutEnd = doc.createElement("di:waypoint");
@@ -477,9 +471,9 @@ public class FillBPMNDI {
                 waypointOutEnd.setAttribute("x", waypointOutEndX);
                 waypointOutEnd.setAttribute("y", waypointOutEndY);
 
-                dataObjectFlowOutput.appendChild(waypointOutStart);
-                dataObjectFlowOutput.appendChild(waypointOutEnd);
-                rootElement.appendChild(dataObjectFlowOutput);
+                dataObjectFlowOutput.getBpmnElement().appendChild(waypointOutStart);
+                dataObjectFlowOutput.getBpmnElement().appendChild(waypointOutEnd);
+                rootElement.appendChild(dataObjectFlowOutput.getBpmnElement());
 
                 rootElement.appendChild(dataObject);
 
@@ -511,10 +505,8 @@ public class FillBPMNDI {
                     dataObject.appendChild(dataObjectBounds);
 
                     if (step.getDataOutputAssociation() != null) {
-                        Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
-                        //TODO: POTENZIELL BUGGY
-                        dataObjectFlowOutput.setAttribute("id", step.getDataOutputAssociation().getId() + "_di");
-                        dataObjectFlowOutput.setAttribute("bpmnElement", step.getDataOutputAssociation().getId());
+
+                        Edge dataObjectFlowOutput = new Edge(step.getDataOutputAssociation().getId());
 
                         Element waypointOutStart = doc.createElement("di:waypoint");
                         Element waypointOutEnd = doc.createElement("di:waypoint");
@@ -529,17 +521,15 @@ public class FillBPMNDI {
                         waypointOutEnd.setAttribute("x", waypointOutEndX);
                         waypointOutEnd.setAttribute("y", waypointOutEndY);
 
-                        dataObjectFlowOutput.appendChild(waypointOutStart);
-                        dataObjectFlowOutput.appendChild(waypointOutEnd);
+                        dataObjectFlowOutput.getBpmnElement().appendChild(waypointOutStart);
+                        dataObjectFlowOutput.getBpmnElement().appendChild(waypointOutEnd);
 
-                        rootElement.appendChild(dataObjectFlowOutput);
+                        rootElement.appendChild(dataObjectFlowOutput.getBpmnElement());
                     } else {
 
                         for (DataInputAssociation in : step.getDataInputAssociations()) {
-                            Element dataObjectFlowInput = doc.createElement("bpmndi:BPMNEdge");
-                            //TODO: POTENZIELL BUGGY
-                            dataObjectFlowInput.setAttribute("id", in.getId() + "_di");
-                            dataObjectFlowInput.setAttribute("bpmnElement", in.getId());
+
+                            Edge dataObjectFlowInput = new Edge(in.getId());
 
                             Element waypointOutStart = doc.createElement("di:waypoint");
                             Element waypointOutEnd = doc.createElement("di:waypoint");
@@ -554,9 +544,9 @@ public class FillBPMNDI {
                             waypointOutEnd.setAttribute("x", waypointOutEndX);
                             waypointOutEnd.setAttribute("y", waypointOutEndY);
 
-                            dataObjectFlowInput.appendChild(waypointOutStart);
-                            dataObjectFlowInput.appendChild(waypointOutEnd);
-                            rootElement.appendChild(dataObjectFlowInput);
+                            dataObjectFlowInput.getBpmnElement().appendChild(waypointOutStart);
+                            dataObjectFlowInput.getBpmnElement().appendChild(waypointOutEnd);
+                            rootElement.appendChild(dataObjectFlowInput.getBpmnElement());
                         }
                     }
                     rootElement.appendChild(dataObject);
@@ -572,10 +562,7 @@ public class FillBPMNDI {
             for (DataInputAssociation in : d.getDataInputAssociations()) {
                 Shape bs = getBPMNShapeByFlowAllShapes(in.getAssociatedTaskId());
 
-                Element dataObjectFlowOutput = doc.createElement("bpmndi:BPMNEdge");
-                //TODO: POTENZIELL BUGGY
-                dataObjectFlowOutput.setAttribute("id", in.getId() + "_di");
-                dataObjectFlowOutput.setAttribute("bpmnElement", in.getId());
+                Edge dataObjectFlowOutput = new Edge(in.getId());
 
                 Element waypointOutStart = doc.createElement("di:waypoint");
                 Element waypointOutEnd = doc.createElement("di:waypoint");
@@ -590,9 +577,9 @@ public class FillBPMNDI {
                 waypointOutEnd.setAttribute("x", waypointOutEndX);
                 waypointOutEnd.setAttribute("y", waypointOutEndY);
 
-                dataObjectFlowOutput.appendChild(waypointOutStart);
-                dataObjectFlowOutput.appendChild(waypointOutEnd);
-                rootElement.appendChild(dataObjectFlowOutput);
+                dataObjectFlowOutput.getBpmnElement().appendChild(waypointOutStart);
+                dataObjectFlowOutput.getBpmnElement().appendChild(waypointOutEnd);
+                rootElement.appendChild(dataObjectFlowOutput.getBpmnElement());
             }
 
 
@@ -621,9 +608,7 @@ public class FillBPMNDI {
             Shape bsSource = getBPMNShapeByFlow(source.getId());
             Shape bsTarget = getBPMNShapeByFlow(target.getId());
 
-            Element flow = doc.createElement("bpmndi:BPMNEdge");
-            flow.setAttribute("id", sf.getId() + "_di");
-            flow.setAttribute("bpmnElement", sf.getId());
+            Edge sequenceFlow = new Edge(sf.getId());
 
             // JSON BUG FINDING :
             // System.out.println(sf);
@@ -646,8 +631,8 @@ public class FillBPMNDI {
             waypointEnd.setAttribute("x", String.valueOf(xEnd));
             waypointEnd.setAttribute("y", String.valueOf(yEnd));
 
-            flow.appendChild(waypointStart);
-            flow.appendChild(waypointEnd);
+            sequenceFlow.getBpmnElement().appendChild(waypointStart);
+            sequenceFlow.getBpmnElement().appendChild(waypointEnd);
 
             Element waypointAngleStart;
             Element waypointAngleEnd;
@@ -660,17 +645,17 @@ public class FillBPMNDI {
                 waypointAngleEnd.setAttribute("x", String.valueOf(xEnd));
                 waypointAngleEnd.setAttribute("y", String.valueOf(yEnd + loopOffset + (multipleLoopOffset * (cntLoops-1))));
 
-                flow.appendChild(waypointStart);
-                flow.appendChild(waypointAngleStart);
-                flow.appendChild(waypointAngleEnd);
-                flow.appendChild(waypointEnd);
+                sequenceFlow.getBpmnElement().appendChild(waypointStart);
+                sequenceFlow.getBpmnElement().appendChild(waypointAngleStart);
+                sequenceFlow.getBpmnElement().appendChild(waypointAngleEnd);
+                sequenceFlow.getBpmnElement().appendChild(waypointEnd);
 
-            } else{
-                flow.appendChild(waypointStart);
-                flow.appendChild(waypointEnd);
+            } else {
+                sequenceFlow.getBpmnElement().appendChild(waypointStart);
+                sequenceFlow.getBpmnElement().appendChild(waypointEnd);
             }
 
-            rootElement.appendChild(flow);
+            rootElement.appendChild(sequenceFlow.getBpmnElement());
 
         }
 

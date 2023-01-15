@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.bpmn.steps.BPMN.doc;
-import static org.bpmn.steps.StepOne.*;
+import static org.bpmn.steps.LifecycleTransformation.*;
 
 public class FlowsProcessObject {
 

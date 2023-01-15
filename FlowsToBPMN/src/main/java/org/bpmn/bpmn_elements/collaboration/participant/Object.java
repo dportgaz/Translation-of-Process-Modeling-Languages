@@ -10,7 +10,7 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static org.bpmn.steps.StepOne.allParticipants;
+import static org.bpmn.steps.LifecycleTransformation.allParticipants;
 
 public class Object extends Participant {
 

@@ -32,9 +32,9 @@ import java.util.regex.Pattern;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
 import static org.bpmn.steps.BPMN.createXml;
 import static org.bpmn.steps.BPMN.doc;
-import static org.bpmn.steps.StepOne.*;
+import static org.bpmn.steps.LifecycleTransformation.*;
 
-public class StepThree {
+public class CoordinationTransformation {
 
     ExecStep step;
     String file;
@@ -50,16 +50,16 @@ public class StepThree {
     HashMap<Double, ArrayList<Participant>> relations = new HashMap<>();
     Parser parser;
 
-    StepOne stepOne;
+    LifecycleTransformation lifecycleTransformation;
     static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
 
     private Collaboration collaboration;
 
     HashMap<Double, ArrayList<AbstractFlowsEntity>> userTypeObjects = new HashMap<>();
 
-    public StepThree(StepOne stepOne, String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects, HashMap<Double, ArrayList<AbstractFlowsEntity>> userTypeObjects,
-                     HashMap<Double, ArrayList<AbstractFlowsEntity>> coordinationProcessObjects, ArrayList<AbstractRelationship> relationsDataModel) {
-        this.stepOne = stepOne;
+    public CoordinationTransformation(LifecycleTransformation lifecycleTransformation, String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects, HashMap<Double, ArrayList<AbstractFlowsEntity>> userTypeObjects,
+                                      HashMap<Double, ArrayList<AbstractFlowsEntity>> coordinationProcessObjects, ArrayList<AbstractRelationship> relationsDataModel) {
+        this.lifecycleTransformation = lifecycleTransformation;
         this.file = file;
         this.definitionsElement = definitionsElement;
         this.objectTypeObjects = objectTypeObjects;
@@ -68,7 +68,7 @@ public class StepThree {
         this.coordinationProcessObjects = coordinationProcessObjects;
         this.parser = new Parser();
         this.relationsDataModel = relationsDataModel;
-        this.collaboration = stepOne.getCollaboration();
+        this.collaboration = lifecycleTransformation.getCollaboration();
 
     }
 
@@ -107,6 +107,7 @@ public class StepThree {
             }
         }
 
+        /*
         // set tasks to user
         for (Participant object : allParticipants) {
             HashSet<User> user = parser.parsePermissions(userTypeObjects);
@@ -146,6 +147,8 @@ public class StepThree {
                 }
             }
         }
+
+         */
 
         // TODO: complement coordination process with data model relation
 
@@ -187,10 +190,7 @@ public class StepThree {
                         messageCatch = setParallelPort(port, fp, task);
                     } else {
                         Task coordinationTask = port.getIncoming().get(0).getTask();
-                        messageCatch = new IntermediateCatchEvent("Receive " + coordinationTask.getName(), task.getUser());
-                        DataObject d = new DataObject(coordinationTask);
-                        fp.getDataObjects().add(d);
-                        messageCatch.getDataObjects().add(d);
+                        messageCatch = new IntermediateCatchEvent(task.getUser());
                         collaboration.getMessageFlows().add(new MessageFlow(coordinationTask, messageCatch));
                     }
 
@@ -218,10 +218,7 @@ public class StepThree {
                     Relation relation = port.getIncoming().get(0);
                     if (relation.getRelationType() == RelationType.OTHER) {
                         Task coordinationTask = relation.getTask();
-                        messageCatch = new IntermediateCatchEvent("Receive " + coordinationTask.getName(), task.getUser());
-                        DataObject d = new DataObject(coordinationTask);
-                        fp.getDataObjects().add(d);
-                        messageCatch.getDataObjects().add(d);
+                        messageCatch = new IntermediateCatchEvent(task.getUser());
                         collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
 
                     }
@@ -280,11 +277,7 @@ public class StepThree {
                     //TODO: write parallel Gateway class
                     for (Map.Entry<Task, DataObject> entry : event.getAssociatedTasks().entrySet()) {
                         Task task = entry.getKey();
-                        DataObject dataObject = entry.getValue();
-                        IntermediateCatchEvent messageCatch = new IntermediateCatchEvent("Receive " + task.getName(), task.getUser());
-                        fp.getDataObjects().add(dataObject);
-                        fp.getIntermediateCatchEvents().add(messageCatch);
-                        messageCatch.getDataObjects().add(dataObject);
+                        IntermediateCatchEvent messageCatch = new IntermediateCatchEvent(task.getUser());
 
                         SequenceFlow parallelToEvent = new SequenceFlow(parallelGatewaySplit, messageCatch);
                         SequenceFlow eventToParallel = new SequenceFlow(messageCatch, parallelGatewayJoin);
@@ -488,10 +481,7 @@ public class StepThree {
             for (Relation relation : port.getIncoming()) {
 
                 if (relation.getRelationType() == RelationType.OTHER) {
-                    messageCatch = new IntermediateCatchEvent("Receive " + relation.getTask().getName(), task.getUser());
-                    DataObject d = new DataObject(relation.getTask());
-                    messageCatch.getDataObjects().add(d);
-                    fp.getDataObjects().add(d);
+                    messageCatch = new IntermediateCatchEvent(task.getUser());
                     collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
                 }
 
@@ -527,7 +517,7 @@ public class StepThree {
         for (Object participant : objects) {
 
             participant.getProcessRef().setElementFlowsProcess();
-            setLane(participant);
+            //setLane(participant);
             definitionsElement.appendChild(participant.getProcessRef().getElementFlowsProcess());
 
         }

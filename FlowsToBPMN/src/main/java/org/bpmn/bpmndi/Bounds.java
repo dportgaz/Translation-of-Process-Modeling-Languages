@@ -6,11 +6,11 @@ import static org.bpmn.steps.BPMN.doc;
 
 public class Bounds {
 
-    private final Element elementBounds;
     private double x;
     private double y;
     private double width;
     private double height;
+    private final Element elementBounds;
 
     public Bounds(double x, double y, double width, double height) {
 
@@ -48,10 +48,6 @@ public class Bounds {
 
     public Element getElementBounds() {
         return elementBounds;
-    }
-
-    public void setX(double x) {
-        this.x = x;
     }
 
     public void setY(double y) {

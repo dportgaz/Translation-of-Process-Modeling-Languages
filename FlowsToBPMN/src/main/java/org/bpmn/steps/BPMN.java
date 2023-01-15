@@ -45,7 +45,7 @@ public class BPMN {
         ArrayList<AbstractRelationship> relationsDataModel = objects.getRelationships().getList();
 
         String fileTempOne = targetFile + "_Step1.xml";
-        StepOne s1 = new StepOne(fileTempOne, definitionsElement1, objectTypeObjects);
+        LifecycleTransformation s1 = new LifecycleTransformation(fileTempOne, definitionsElement1, objectTypeObjects);
         s1.execute();
 
         // ____________________________________________________________________________________________________________
@@ -58,7 +58,7 @@ public class BPMN {
 
 
         String fileTempThree = targetFile + "_Step3.xml";
-        StepThree s3 = new StepThree(s1, fileTempThree, definitionsElement2, objectTypeObjects, userTypeObjects, coordinationProcessObjects, relationsDataModel);
+        CoordinationTransformation s3 = new CoordinationTransformation(s1, fileTempThree, definitionsElement2, objectTypeObjects, userTypeObjects, coordinationProcessObjects, relationsDataModel);
         s3.execute();
 
 

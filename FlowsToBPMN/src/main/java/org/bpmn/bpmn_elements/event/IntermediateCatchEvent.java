@@ -63,6 +63,16 @@ public class IntermediateCatchEvent implements BPMNElement{
         setElement();
     }
 
+    public IntermediateCatchEvent(User user) {
+        this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.user = user;
+        if(this.user != null) {
+            user.getElements().add(this);
+        }
+        this.elementCatchEvent = doc.createElement("bpmn:intermediateCatchEvent");
+        setElement();
+    }
+
     public IntermediateCatchEvent(boolean parallelMultiple, User user) {
         this.id = "ReceiveActivity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.name = "Receive ";
@@ -127,11 +137,10 @@ public class IntermediateCatchEvent implements BPMNElement{
 
     public void setElement() {
         this.elementCatchEvent.setAttribute("id", this.id);
-        this.elementCatchEvent.setAttribute("name", this.name);
 
-        //Element messageEventDefinition = doc.createElement("bpmn:messageEventDefinition");
-        //messageEventDefinition.setAttribute("id", "MessageEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
-        //this.elementCatchEvent.appendChild(messageEventDefinition);
+        Element messageEventDefinition = doc.createElement("bpmn:messageEventDefinition");
+        messageEventDefinition.setAttribute("id", "MessageEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
+        this.elementCatchEvent.appendChild(messageEventDefinition);
     }
 
     public void setIncoming(SequenceFlow incoming) {

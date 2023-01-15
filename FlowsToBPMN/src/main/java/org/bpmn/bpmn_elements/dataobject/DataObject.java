@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import static org.bpmn.steps.BPMN.doc;
-import static org.bpmn.steps.StepOne.allDataObjects;
+import static org.bpmn.steps.LifecycleTransformation.allDataObjects;
 
 public class DataObject {
 

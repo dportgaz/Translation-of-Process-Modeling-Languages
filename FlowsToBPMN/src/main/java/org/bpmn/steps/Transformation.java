@@ -4,7 +4,7 @@ import org.w3c.dom.Element;
 
 import javax.xml.transform.TransformerException;
 
-public interface Step {
+public interface Transformation {
 
     void execute() throws TransformerException;
 

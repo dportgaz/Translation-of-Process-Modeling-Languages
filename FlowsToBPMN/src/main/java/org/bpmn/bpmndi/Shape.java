@@ -1,44 +1,46 @@
 package org.bpmn.bpmndi;
 
-import org.bpmn.bpmn_elements.BPMNElement;
-import org.bpmn.bpmn_elements.task.Task;
 import org.w3c.dom.Element;
-
-import java.util.ArrayList;
 
 import static org.bpmn.steps.BPMN.doc;
 
 public class Shape {
 
     private String elementId;
-    private String elementIdDi;
-    private String isHorizontal;
+    private String isPool;
+    private boolean isSubprocess = false;
+    boolean marked;
     private Bounds bounds;
     private Element bpmnElement;
-    private boolean isSubprocess = false;
 
-    boolean marked;
-
-    BPMNElement associatedBPMNElement;
-
-
-    public Shape(String elementId, String isHorizontal, Bounds bounds) {
+    public Shape(String elementId, String isPool, Bounds bounds) {
 
         this.elementId = elementId;
         this.marked = false;
-        this.elementIdDi = elementId + "_di";
-        this.isHorizontal = isHorizontal;
+        this.isPool = isPool;
         this.bounds = bounds;
         this.bpmnElement = doc.createElement("bpmndi:BPMNShape");
 
     }
 
-    private void setElement() {
-        bpmnElement.setAttribute("bpmnElement", elementId);
-        bpmnElement.setAttribute("id", elementIdDi);
-        bpmnElement.appendChild(bounds.getElementBounds());
+    public Shape(String elementId, boolean expandedSubprocess, Bounds bounds) {
+
+        this.elementId = elementId;
+        this.marked = false;
+        this.bounds = bounds;
+        this.bpmnElement = doc.createElement("bpmndi:BPMNShape");
+        setElement(expandedSubprocess);
+
     }
 
+    public Shape(String elementId, Bounds bounds) {
+
+        this.elementId = elementId;
+        this.marked = false;
+        this.bounds = bounds;
+        this.bpmnElement = doc.createElement("bpmndi:BPMNShape");
+
+    }
     public void setMarked() {
         this.marked = true;
     }
@@ -47,62 +49,35 @@ public class Shape {
         return this.marked;
     }
 
-    public Shape(String elementId, Bounds bounds) {
-
-        this.elementId = elementId;
-        this.marked = false;
-        this.elementIdDi = elementId + "_di";
-        this.bounds = bounds;
-        this.bpmnElement = doc.createElement("bpmndi:BPMNShape");
-
-    }
-
     private void setElement(boolean expandedSubprocess) {
         bpmnElement.setAttribute("bpmnElement", elementId);
-        bpmnElement.setAttribute("id", elementIdDi);
+        bpmnElement.setAttribute("id", elementId + "_di");
         if (expandedSubprocess) {
             bpmnElement.setAttribute("isExpanded", "true");
+        } else {
+            bpmnElement.setAttribute("isExpanded", "false");
         }
         bpmnElement.appendChild(bounds.getElementBounds());
     }
 
-    public Shape(String elementId, Bounds bounds, boolean expandedSubprocess) {
-
-        this.elementId = elementId;
-        this.marked = false;
-        this.elementIdDi = elementId + "_di";
-        this.bounds = bounds;
-        this.bpmnElement = doc.createElement("bpmndi:BPMNShape");
-        setElement(expandedSubprocess);
-
-    }
-
     public void setShapeParticipant() {
 
-        bpmnElement.setAttribute("id", elementIdDi);
+        bpmnElement.setAttribute("id", elementId + "_di");
         bpmnElement.setAttribute("bpmnElement", elementId);
-        //bpmnElement.setAttribute("isHorizontal", isHorizontal);
         if (isSubprocess) {
             bpmnElement.setAttribute("isExpanded", "false");
         }
 
     }
 
-    public void setShapeParticipantIH() {
+    public void setShapePool() {
 
-        bpmnElement.setAttribute("id", elementIdDi);
+        bpmnElement.setAttribute("id", elementId + "_di");
         bpmnElement.setAttribute("bpmnElement", elementId);
-        bpmnElement.setAttribute("isHorizontal", isHorizontal);
+        bpmnElement.setAttribute("isHorizontal", isPool);
         if (isSubprocess) {
             bpmnElement.setAttribute("isExpanded", "false");
         }
-
-    }
-
-    public void setShape() {
-
-        bpmnElement.setAttribute("id", elementIdDi);
-        bpmnElement.setAttribute("bpmnElement", elementId);
 
     }
 
