@@ -74,11 +74,12 @@ public class IntermediateCatchEvent implements BPMNElement{
     }
 
     public IntermediateCatchEvent(boolean parallelMultiple, User user) {
-        this.id = "ReceiveActivity_" + RandomIdGenerator.generateRandomUniqueId(6);
-        this.name = "Receive ";
+        this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.user = user;
-        user.getElements().add(this);
-        this.elementCatchEvent = doc.createElement("bpmn:receiveTask");
+        if(this.user != null) {
+            user.getElements().add(this);
+        }
+        this.elementCatchEvent = doc.createElement("bpmn:intermediateCatchEvent");
         this.parallelMultiple = true;
         setElementMultiple();
     }
@@ -125,14 +126,13 @@ public class IntermediateCatchEvent implements BPMNElement{
     private void setElementMultiple() {
         this.elementCatchEvent.setAttribute("id", this.id);
         this.elementCatchEvent.setAttribute("name", this.name);
-        //this.elementCatchEvent.setAttribute("name","");
-        //this.elementCatchEvent.setAttribute("parallelMultiple", String.valueOf(this.parallelMultiple));
-        //Element cancelEventDefinition = doc.createElement("bpmn:cancelEventDefinition ");
-        //cancelEventDefinition.setAttribute("id", "CancelEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
-        //Element terminateEventDefinition = doc.createElement("bpmn:terminateEventDefinition ");
-        //terminateEventDefinition.setAttribute("id", "TerminateEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
-        //this.elementCatchEvent.appendChild(cancelEventDefinition);
-        //this.elementCatchEvent.appendChild(terminateEventDefinition);
+        this.elementCatchEvent.setAttribute("parallelMultiple", "true");
+        Element cancelEventDefinition = doc.createElement("bpmn:cancelEventDefinition");
+        cancelEventDefinition.setAttribute("id", "CancelEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
+        Element terminateEventDefinition = doc.createElement("bpmn:terminateEventDefinition");
+        terminateEventDefinition.setAttribute("id", "TerminateEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
+        this.elementCatchEvent.appendChild(cancelEventDefinition);
+        this.elementCatchEvent.appendChild(terminateEventDefinition);
     }
 
     public void setElement() {

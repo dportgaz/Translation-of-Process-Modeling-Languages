@@ -141,7 +141,15 @@ public class FillBPMNDI_StepThree_lazy {
                             tempBounds = new Bounds(x, y, activityWidth, activityHeight);
                         } else if (eventMatcher.find()) {
                             x += 90;
-                            y += 6;
+                            y += 3;
+                            if (activityMatcherPrev.find()) {
+                                if (expandedSubprocess && fp.getTaskById(previous) != null && fp.getTaskById(previous).getIsSubprocess()) {
+                                    x += 50 - fp.getTaskById(previous).getSteps().size() * subProcessWidthOffset + activityWidth;
+                                } else {
+                                    x += 50;
+                                }
+                                y += 20;
+                            }
                             tempBounds = new Bounds(x, y, eventWidth, eventHeight);
                         } else if (gatewayMatcher.find()) {
                             x += 160;

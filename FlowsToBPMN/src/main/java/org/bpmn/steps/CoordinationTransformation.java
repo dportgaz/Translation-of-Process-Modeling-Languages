@@ -238,67 +238,28 @@ public class CoordinationTransformation {
             }
             fp.setBeforeAndAfterElements();
         }
-
         for (Participant object : allParticipants) {
 
             HashSet<IntermediateCatchEvent> events = object.getProcessRef().getIntermediateCatchEvents();
-            HashSet<IntermediateCatchEvent> eventsToRemove = new HashSet<>();
-            HashSet<DataObject> dataObjectsToRemove = new HashSet<>();
             FlowsProcessObject fp = object.getProcessRef();
 
             for (IntermediateCatchEvent event : events) {
                 if (event.getParallelMultiple()) {
 
-                    eventsToRemove.add(event);
-
-                    ExclusiveGateway parallelGatewaySplit = new ExclusiveGateway(true, true);
-                    ExclusiveGateway parallelGatewayJoin = new ExclusiveGateway(true, true);
-
-                    fp.getGateways().add(parallelGatewaySplit);
-                    fp.getGateways().add(parallelGatewayJoin);
-
-                    fp.getGateways().add(parallelGatewayJoin);
-                    fp.getGateways().add(parallelGatewayJoin);
-
                     SequenceFlow flowIn = fp.getFlowByTarget(event);
                     SequenceFlow flowOut = fp.getFlowBySource(event);
 
-                    SequenceFlow flowInToParallel = new SequenceFlow(flowIn.getSourceRef(), parallelGatewaySplit);
-                    SequenceFlow parallelToFlowOut = new SequenceFlow(parallelGatewayJoin, flowOut.getTargetRef());
-
-                    parallelGatewaySplit.addIncoming(flowInToParallel);
-                    parallelGatewayJoin.addOutgoing(parallelToFlowOut);
+                    SequenceFlow flowInToParallel = new SequenceFlow(flowIn.getSourceRef(), event);
+                    SequenceFlow parallelToFlowOut = new SequenceFlow(event, flowOut.getTargetRef());
 
                     fp.getFlows().add(flowInToParallel);
                     fp.getFlows().add(parallelToFlowOut);
                     fp.getFlows().remove(flowIn);
                     fp.getFlows().remove(flowOut);
 
-                    //TODO: write parallel Gateway class
-                    for (Map.Entry<Task, DataObject> entry : event.getAssociatedTasks().entrySet()) {
-                        Task task = entry.getKey();
-                        IntermediateCatchEvent messageCatch = new IntermediateCatchEvent(task.getUser());
-
-                        SequenceFlow parallelToEvent = new SequenceFlow(parallelGatewaySplit, messageCatch);
-                        SequenceFlow eventToParallel = new SequenceFlow(messageCatch, parallelGatewayJoin);
-
-                        parallelGatewaySplit.addOutgoing(parallelToEvent);
-                        parallelGatewayJoin.addIncoming(eventToParallel);
-                        messageCatch.setIncoming(parallelToEvent);
-                        messageCatch.setOutgoing(eventToParallel);
-
-                        fp.getFlows().add(parallelToEvent);
-                        fp.getFlows().add(eventToParallel);
-
-                        collaboration.getMessageFlows().remove(collaboration.getMessageFlowByTarget(event));
-                        collaboration.getMessageFlows().add(new MessageFlow(task, messageCatch));
-                    }
                     fp.setBeforeAndAfterElements();
                 }
             }
-
-            fp.getIntermediateCatchEvents().removeAll(eventsToRemove);
-            fp.getDataObjects().removeAll(dataObjectsToRemove);
 
             fp.setBeforeAndAfterElements();
         }
@@ -494,10 +455,6 @@ public class CoordinationTransformation {
             for (Relation relation : port.getIncoming()) {
 
                 if (relation.getRelationType() == RelationType.OTHER) {
-                    DataObject d = new DataObject(relation.getTask());
-                    messageCatch.getAssociatedTasks().put(relation.getTask(), d);
-                    fp.getDataObjects().add(d);
-                    messageCatch.getDataObjects().add(d);
                     collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
                 }
 
