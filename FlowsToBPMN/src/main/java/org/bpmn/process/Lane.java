@@ -1,15 +1,12 @@
 package org.bpmn.process;
 
 import org.bpmn.bpmn_elements.BPMNElement;
-import org.bpmn.bpmn_elements.collaboration.participant.Participant;
-import org.bpmn.bpmn_elements.collaboration.participant.User;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.steps.BPMN;
 import org.w3c.dom.Element;
 
 import java.util.HashSet;
 
-import static org.bpmn.steps.BPMN.doc;
+import static org.bpmn.transformation.FlowsToBpmn.doc;
 
 public class Lane {
 
@@ -22,7 +19,7 @@ public class Lane {
     Double width;
     String id;
 
-    User user;
+    org.bpmn.bpmn_elements.collaboration.participant.Lane lane;
 
     Double middleX;
 
@@ -34,8 +31,8 @@ public class Lane {
 
     Double participantMiddleY;
 
-    public Lane(User user){
-        this.user = user;
+    public Lane(org.bpmn.bpmn_elements.collaboration.participant.Lane lane){
+        this.lane = lane;
         this.id = "Lane_" + RandomIdGenerator.generateRandomUniqueId(6);
         setElement();
     }
@@ -43,7 +40,7 @@ public class Lane {
     private void setElement() {
         this.laneElement = doc.createElement("bpmn:lane");
         laneElement.setAttribute("id", id);
-        laneElement.setAttribute("name", user.getName());
+        laneElement.setAttribute("name", lane.getName());
     }
 
     public void addBPMNElement(BPMNElement element){
@@ -105,8 +102,8 @@ public class Lane {
         return id;
     }
 
-    public User getUser() {
-        return user;
+    public org.bpmn.bpmn_elements.collaboration.participant.Lane getUser() {
+        return lane;
     }
 
     public Double getMiddleX() {

@@ -1,7 +1,7 @@
 package org.bpmn.process;
 
 import org.bpmn.bpmn_elements.BPMNElement;
-import org.bpmn.bpmn_elements.Loop;
+import org.bpmn.bpmn_elements.flows.Loop;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
@@ -16,7 +16,7 @@ import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.parse_json.Parser;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.bpmn_elements.collaboration.participant.Object;
+import org.bpmn.bpmn_elements.collaboration.participant.Pool;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -26,8 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.bpmn.steps.BPMN.doc;
-import static org.bpmn.steps.LifecycleTransformation.*;
+import static org.bpmn.transformation.FlowsToBpmn.doc;
+import static org.bpmn.transformation.LifecycleTransformation.*;
 
 public class FlowsProcessObject {
 
@@ -39,7 +39,7 @@ public class FlowsProcessObject {
 
     Element elementFlowsProcess;
 
-    Object participant;
+    Pool participant;
     StartEvent startEvent;
     ArrayList<Task> tasks = new ArrayList<>();
 
@@ -68,7 +68,7 @@ public class FlowsProcessObject {
     boolean expandedSubprocess;
 
 
-    public FlowsProcessObject(Object participant, HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects, boolean adHoc, boolean expandedSubprocess) {
+    public FlowsProcessObject(Pool participant, HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects, boolean adHoc, boolean expandedSubprocess) {
 
         this.id = "Process_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.participant = participant;

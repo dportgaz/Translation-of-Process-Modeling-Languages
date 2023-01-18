@@ -2,7 +2,7 @@ package org.bpmn.bpmn_elements.event;
 
 import org.bpmn.bpmn_elements.BPMNElement;
 
-import org.bpmn.bpmn_elements.collaboration.participant.User;
+import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.w3c.dom.Element;
 import java.util.ArrayList;
 
@@ -56,7 +56,7 @@ public class Event implements BPMNElement {
     }
 
     @Override
-    public User getUser() {
+    public Lane getUser() {
         return null;
     }
 

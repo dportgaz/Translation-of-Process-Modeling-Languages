@@ -4,7 +4,7 @@ import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
-import org.bpmn.bpmn_elements.collaboration.participant.Object;
+import org.bpmn.bpmn_elements.collaboration.participant.Pool;
 
 import org.w3c.dom.Element;
 
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import static org.bpmn.steps.BPMN.doc;
+import static org.bpmn.transformation.FlowsToBpmn.doc;
 
 public class Collaboration {
 
@@ -20,7 +20,7 @@ public class Collaboration {
 
     Element elementCollaboration;
 
-    public static ArrayList<Object> objects = new ArrayList<>();
+    public static ArrayList<Pool> pools = new ArrayList<>();
 
     HashSet<MessageFlow> messageFlows = new HashSet<>();
 
@@ -70,25 +70,25 @@ public class Collaboration {
                     // TODO: JSON BUG
                     if (!containsParticipant(participantName)) {
 
-                        Object object = new Object(this, key, participantName);
-                        objects.add(object);
+                        Pool pool = new Pool(this, key, participantName);
+                        pools.add(pool);
 
                         // add participant to collaboration element
-                        elementCollaboration.appendChild(object.getParticipantElement());
+                        elementCollaboration.appendChild(pool.getParticipantElement());
                     }
 
                 }
 
             });
         }
-        for (Object object : objects) {
-            object.setProcessRef(objectTypeObjects, adHoc, expandedSubprocess);
+        for (Pool pool : pools) {
+            pool.setProcessRef(objectTypeObjects, adHoc, expandedSubprocess);
         }
     }
 
     private boolean containsParticipant(String participantName) {
 
-        for (Object participant : objects) {
+        for (Pool participant : pools) {
             if (participant.getName().equals(participantName)) {
                 return true;
             }

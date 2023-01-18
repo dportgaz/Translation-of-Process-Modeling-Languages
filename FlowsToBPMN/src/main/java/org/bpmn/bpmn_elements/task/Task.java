@@ -2,11 +2,11 @@ package org.bpmn.bpmn_elements.task;
 
 import com.google.gson.internal.LinkedTreeMap;
 import org.bpmn.bpmn_elements.BPMNElement;
-import org.bpmn.bpmn_elements.Port;
+import org.bpmn.flows_process_model.Port;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.association.DataOutputAssociation;
-import org.bpmn.bpmn_elements.collaboration.participant.Object;
-import org.bpmn.bpmn_elements.collaboration.participant.User;
+import org.bpmn.bpmn_elements.collaboration.participant.Pool;
+import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
@@ -22,8 +22,8 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
-import static org.bpmn.steps.BPMN.doc;
+import static org.bpmn.bpmn_elements.collaboration.Collaboration.pools;
+import static org.bpmn.transformation.FlowsToBpmn.doc;
 
 public class Task implements BPMNElement {
 
@@ -108,7 +108,7 @@ public class Task implements BPMNElement {
 
     boolean isSendTask;
 
-    User user;
+    Lane lane;
 
     public Task(Double createdEntityId, String name, Participant participant, boolean computationStep) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -140,9 +140,9 @@ public class Task implements BPMNElement {
     }
 
     private Permission permissionForStep(String name) {
-        for (Object object : objects) {
-            if (name.equals(object.getName())) {
-                this.stepParticipant = object;
+        for (Pool pool : pools) {
+            if (name.equals(pool.getName())) {
+                this.stepParticipant = pool;
                 return Permission.READ;
             }
         }
@@ -177,12 +177,12 @@ public class Task implements BPMNElement {
         cntOtherRelations++;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Lane lane) {
+        this.lane = lane;
     }
 
-    public User getUser() {
-        return user;
+    public Lane getUser() {
+        return lane;
     }
 
     public Task(Double createId, Double createdEntityId, String name, Participant participant, ArrayList<AbstractFlowsEntity> objects, boolean adHoc, boolean expandedSubprocess) {

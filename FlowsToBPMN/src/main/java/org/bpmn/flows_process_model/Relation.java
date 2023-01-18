@@ -1,4 +1,4 @@
-package org.bpmn.bpmn_elements;
+package org.bpmn.flows_process_model;
 
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.task.Task;

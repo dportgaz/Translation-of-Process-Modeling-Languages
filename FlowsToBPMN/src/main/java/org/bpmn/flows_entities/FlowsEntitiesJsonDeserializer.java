@@ -9,7 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FlowsEntitiesJsonDeserializer implements JsonDeserializer<AbstractFlowsEntity> {
-
     @Override
     public AbstractFlowsEntity deserialize(JsonElement json, java.lang.reflect.Type typeOfT,
                                            JsonDeserializationContext context) throws JsonParseException {

@@ -1,6 +1,6 @@
-package org.bpmn.steps;
+package org.bpmn.transformation;
 
-import org.bpmn.bpmn_elements.Loop;
+import org.bpmn.bpmn_elements.flows.Loop;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
@@ -12,7 +12,7 @@ import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.process.FlowsProcessObject;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
-import org.bpmn.bpmn_elements.collaboration.participant.Object;
+import org.bpmn.bpmn_elements.collaboration.participant.Pool;
 import org.w3c.dom.Element;
 
 import javax.xml.transform.TransformerException;
@@ -20,15 +20,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import static org.bpmn.steps.BPMN.*;
-import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
+import static org.bpmn.bpmn_elements.collaboration.Collaboration.pools;
+import static org.bpmn.transformation.FlowsToBpmn.createXml;
 
 public class LifecycleTransformation implements Transformation {
-    ExecStep step;
     String file;
     Element definitionsElement;
     HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects;
-    public static ArrayList<Object> allParticipants = new ArrayList();
+    public static ArrayList<Pool> Participants = new ArrayList();
     public static ArrayList<Task> allTasks = new ArrayList();
     public static ArrayList<DataObject> allDataObjects = new ArrayList();
     public static ArrayList<SequenceFlow> allFlows = new ArrayList();
@@ -43,10 +42,9 @@ public class LifecycleTransformation implements Transformation {
         this.file = file;
         this.definitionsElement = definitionsElement;
         this.objectTypeObjects = objectTypeObjects;
-        this.step = ExecStep.ONE;
     }
 
-    public void execute() throws TransformerException {
+    public void transform() throws TransformerException {
 
         boolean adHoc = true;
         boolean expandedSubprocess = true;
@@ -55,7 +53,7 @@ public class LifecycleTransformation implements Transformation {
         Element collaborationElement = collaboration.getElementCollaboration();
 
         definitionsElement.appendChild(collaborationElement);
-        setProcesses(definitionsElement);
+        appendXMLElements(definitionsElement);
 
         BPMNDiagram di = new BPMNDiagram();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, true, expandedSubprocess);
@@ -64,9 +62,9 @@ public class LifecycleTransformation implements Transformation {
 
     }
 
-     public void setProcesses(Element definitionsElement) {
+     public void appendXMLElements(Element definitionsElement) {
 
-        for (Object participant : objects) {
+        for (Pool participant : pools) {
 
             participant.getProcessRef().setElementFlowsProcess();
             definitionsElement.appendChild(participant.getProcessRef().getElementFlowsProcess());

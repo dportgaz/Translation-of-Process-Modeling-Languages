@@ -1,18 +1,20 @@
 package org.bpmn.bpmn_elements.gateway;
 
 import org.bpmn.bpmn_elements.BPMNElement;
-import org.bpmn.bpmn_elements.collaboration.participant.User;
+import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 
-import static org.bpmn.steps.BPMN.doc;
+import static org.bpmn.transformation.FlowsToBpmn.doc;
 
 public class ExclusiveGateway implements BPMNElement {
 
     String id;
+
+    boolean marked;
 
     ArrayList<SequenceFlow> incomings = new ArrayList<>();
 
@@ -32,7 +34,7 @@ public class ExclusiveGateway implements BPMNElement {
 
     boolean parallelGate = false;
 
-    User user;
+    Lane lane;
 
     public ExclusiveGateway() {
         this.id = "Gateway_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -66,13 +68,13 @@ public class ExclusiveGateway implements BPMNElement {
         setElementExclusiveGateway();
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Lane lane) {
+        this.lane = lane;
     }
 
     @Override
-    public User getUser() {
-        return user;
+    public Lane getUser() {
+        return lane;
     }
 
     @Override
@@ -191,6 +193,14 @@ public class ExclusiveGateway implements BPMNElement {
         elementExclusiveGateway.appendChild(temp);
     }
 
+    public void setMarked() {
+        this.marked = true;
+    }
+
+
+    public boolean getMarked() {
+        return this.marked;
+    }
     @Override
     public String toString() {
         return this.id;

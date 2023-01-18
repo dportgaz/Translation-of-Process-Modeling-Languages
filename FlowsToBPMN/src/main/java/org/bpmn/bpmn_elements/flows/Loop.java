@@ -1,4 +1,4 @@
-package org.bpmn.bpmn_elements;
+package org.bpmn.bpmn_elements.flows;
 
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;

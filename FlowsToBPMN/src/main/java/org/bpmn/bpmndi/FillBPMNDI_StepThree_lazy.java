@@ -1,11 +1,11 @@
 package org.bpmn.bpmndi;
 
 import org.bpmn.bpmn_elements.BPMNElement;
-import org.bpmn.bpmn_elements.Loop;
+import org.bpmn.bpmn_elements.flows.Loop;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
-import org.bpmn.bpmn_elements.collaboration.participant.User;
+import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
@@ -13,7 +13,6 @@ import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.process.FlowsProcessObject;
-import org.bpmn.process.Lane;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
@@ -24,13 +23,20 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
-import static org.bpmn.steps.BPMN.doc;
+import static org.bpmn.bpmn_elements.collaboration.Collaboration.pools;
+import static org.bpmn.transformation.FlowsToBpmn.doc;
 
 public class FillBPMNDI_StepThree_lazy {
     final double participantX = 70.0;
+
+    // use with lanes
+    /*
     final double participantWidth = 3000.0;
     final double participantHeight = 1500.0;
+    */
+    // use without lanes
+    final double participantWidth = 1900.0;
+    final double participantHeight = 800.0;
     final double participantYInc = participantHeight + 50.0;
 
     final double startEventYInc = 200.0;
@@ -269,13 +275,13 @@ public class FillBPMNDI_StepThree_lazy {
 
             Shape shape = entry.getKey();
             BPMNElement bpmnElement = entry.getValue();
-            User user = bpmnElement.getUser();
+            Lane lane = bpmnElement.getUser();
 
-            for (Map.Entry<User, Lane> laneMap : object.getLanes().entrySet()) {
+            for (Map.Entry<Lane, org.bpmn.process.Lane> laneMap : object.getLanes().entrySet()) {
 
-                Lane entryLane = laneMap.getValue();
+                org.bpmn.process.Lane entryLane = laneMap.getValue();
 
-                if (user.getId().equals(laneMap.getKey().getId()) && !shape.getMarked()) {
+                if (lane.getId().equals(laneMap.getKey().getId()) && !shape.getMarked()) {
                     Double yOffSet;
                     if (expandedSubprocess && bpmnElement.getClass().equals(Task.class) && ((Task) bpmnElement).getIsSubprocess() && !shape.getMarked()) {
                         yOffSet = shape.getBounds().getY() - entryLane.getParticipantMiddleY() + entryLane.getMiddleY() - subProcessHeight / 4 + activityHeight * 0.96;
@@ -322,7 +328,7 @@ public class FillBPMNDI_StepThree_lazy {
 
         double participantStartY = 100.0;
         double startEventY = participantHeight / 2 - 20 + participantStartY;
-        for (Participant object : objects) {
+        for (Participant object : pools) {
 
             // add pools
             addParticipantsShape(bpmnLane, object, participantStartY);
@@ -336,7 +342,7 @@ public class FillBPMNDI_StepThree_lazy {
         }
 
 
-        for (Participant object : objects) {
+        for (Participant object : pools) {
             addDataObjectsInput(bpmnLane, object.getProcessRef().getIntermediateCatchEvents());
         }
 
@@ -391,9 +397,9 @@ public class FillBPMNDI_StepThree_lazy {
 
         int yOff = 0;
         // add Lanes
-        for (Map.Entry<User, Lane> lane : p.getLanes().entrySet()) {
+        for (Map.Entry<Lane, org.bpmn.process.Lane> lane : p.getLanes().entrySet()) {
 
-            Lane laneEntry = lane.getValue();
+            org.bpmn.process.Lane laneEntry = lane.getValue();
 
             Element temp = doc.createElement("bpmndi:BPMNShape");
             temp.setAttribute("bpmnElement", laneEntry.getId());

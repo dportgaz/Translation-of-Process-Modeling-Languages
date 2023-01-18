@@ -6,9 +6,7 @@ public abstract class AbstractFlowsEntity {
 
     // protected String __type;
     // protected String Id;
-
     protected String MethodName;
-
     protected ArrayList<Object> Parameters;
     protected Double CreatedEntityId;
     protected Double UpdatedEntityId;

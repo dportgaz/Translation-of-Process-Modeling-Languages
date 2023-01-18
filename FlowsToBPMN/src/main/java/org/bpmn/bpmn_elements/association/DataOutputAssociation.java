@@ -5,17 +5,15 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 
 import org.w3c.dom.Element;
 
-import static org.bpmn.steps.BPMN.doc;
+import static org.bpmn.transformation.FlowsToBpmn.doc;
 
 public class DataOutputAssociation extends Association{
 
     String id;
     DataObject targetRef;
-
     String outputAssociationTarget;
     Element elementDataOutputAssociation;
 
-    Element elementTarget;
 
     public DataOutputAssociation(){
 
@@ -41,18 +39,6 @@ public class DataOutputAssociation extends Association{
 
     public void setTargetRef(DataObject targetRef) {
         this.targetRef = targetRef;
-    }
-
-    public DataObject getTargetRef() {
-        return targetRef;
-    }
-
-    public void setElementTarget(Element elementTarget) {
-        this.elementTarget = elementTarget;
-    }
-
-    public Element getElementTarget() {
-        return elementTarget;
     }
 
     public Element getElementDataOutputAssociation() {

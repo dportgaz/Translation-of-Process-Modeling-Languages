@@ -4,7 +4,7 @@ import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
-import static org.bpmn.steps.BPMN.doc;
+import static org.bpmn.transformation.FlowsToBpmn.doc;
 
 public class MessageFlow {
 

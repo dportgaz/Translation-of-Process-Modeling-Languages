@@ -1,6 +1,4 @@
-package org.bpmn.bpmn_elements;
-
-import org.bpmn.bpmn_elements.task.Task;
+package org.bpmn.flows_process_model;
 
 import java.util.ArrayList;
 

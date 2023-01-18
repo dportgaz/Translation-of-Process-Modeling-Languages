@@ -1,7 +1,7 @@
 package org.bpmn.bpmn_elements;
 
 
-import org.bpmn.bpmn_elements.collaboration.participant.User;
+import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ public interface BPMNElement {
 
     void setElement();
 
-    User getUser();
+    Lane getUser();
 
     String getName();
 

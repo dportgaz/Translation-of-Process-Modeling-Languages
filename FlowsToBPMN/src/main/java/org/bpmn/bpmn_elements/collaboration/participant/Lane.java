@@ -4,7 +4,7 @@ import org.bpmn.bpmn_elements.BPMNElement;
 
 import java.util.HashSet;
 
-public class User {
+public class Lane {
 
     Double id;
 
@@ -12,15 +12,15 @@ public class User {
 
     HashSet<BPMNElement> elements = new HashSet<>();
 
-    public User(Double id){
+    public Lane(Double id){
         this.id = id;
     }
 
-    public User(String name){
+    public Lane(String name){
         this.name = name;
     }
 
-    public User(Double id, String name){
+    public Lane(Double id, String name){
         this.id = id;
         this.name = name;
     }

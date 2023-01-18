@@ -1,7 +1,7 @@
 package org.bpmn.bpmn_elements.dataobject;
 
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
-import org.bpmn.bpmn_elements.collaboration.participant.Object;
+import org.bpmn.bpmn_elements.collaboration.participant.Pool;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
@@ -11,8 +11,8 @@ import org.w3c.dom.Element;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import static org.bpmn.steps.BPMN.doc;
-import static org.bpmn.steps.LifecycleTransformation.allDataObjects;
+import static org.bpmn.transformation.FlowsToBpmn.doc;
+import static org.bpmn.transformation.LifecycleTransformation.allDataObjects;
 
 public class DataObject {
 
@@ -34,7 +34,7 @@ public class DataObject {
 
     Element elementDataObjectSingle;
 
-    Object object;
+    Pool pool;
 
     HashSet<DataInputAssociation> dataInputAssociations = new HashSet<>();
 
@@ -154,10 +154,6 @@ public class DataObject {
 
     public String getRefId() {
         return refId;
-    }
-
-    public void setAssociatedTask(Task associatedTask) {
-        this.associatedTask = associatedTask;
     }
 
     public Task getAssociatedTask() {

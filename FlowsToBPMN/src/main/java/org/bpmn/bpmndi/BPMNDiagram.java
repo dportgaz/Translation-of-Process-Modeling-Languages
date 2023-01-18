@@ -1,15 +1,14 @@
 package org.bpmn.bpmndi;
 
 import org.bpmn.bpmn_elements.BPMNElement;
-import org.bpmn.bpmn_elements.Loop;
+import org.bpmn.bpmn_elements.flows.Loop;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
-import org.bpmn.bpmn_elements.collaboration.participant.User;
+import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
-import org.bpmn.process.Lane;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.process.FlowsProcessObject;
@@ -22,9 +21,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.steps.BPMN.doc;
-import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
-import static org.bpmn.steps.LifecycleTransformation.allDataObjects;
+import static org.bpmn.bpmn_elements.collaboration.Collaboration.pools;
+import static org.bpmn.transformation.FlowsToBpmn.doc;
+import static org.bpmn.transformation.LifecycleTransformation.allDataObjects;
 
 public class BPMNDiagram {
     final double participantX = 70.0;
@@ -246,9 +245,8 @@ public class BPMNDiagram {
         f(rootElement, x, y, start, object, tasks, flows, null, expandedSubprocess);
         addFlowsEdge(rootElement, flows, fp);
         //addDataObjects(rootElement, flows);
-        if(expandedSubprocess){
-            addDataObjectsOutput(rootElement, tasks);
-        }
+        addDataObjectsOutput(rootElement, tasks, expandedSubprocess);
+
         allShapes.addAll(shapes);
         shapes.clear();
         stepShapes.clear();
@@ -268,7 +266,7 @@ public class BPMNDiagram {
 
         double participantStartY = 100.0;
         double startEventY = participantHeight / 2 - 20 + participantStartY;
-        for (Participant object : objects) {
+        for (Participant object : pools) {
 
             // add pools
             addParticipantsShape(bpmnLane, object, participantStartY);
@@ -286,7 +284,7 @@ public class BPMNDiagram {
         }
 
         if (visibleDataObjectFlows) {
-            for (Participant object : objects) {
+            for (Participant object : pools) {
                 addDataObjectsInputEdges(bpmnLane);
             }
         }
@@ -336,9 +334,9 @@ public class BPMNDiagram {
 
         int yOff = 0;
         // add Lanes
-        for (Map.Entry<User, Lane> lane : p.getLanes().entrySet()) {
+        for (Map.Entry<Lane, org.bpmn.process.Lane> lane : p.getLanes().entrySet()) {
 
-            Lane laneEntry = lane.getValue();
+            org.bpmn.process.Lane laneEntry = lane.getValue();
 
             Element temp = doc.createElement("bpmndi:BPMNShape");
             temp.setAttribute("bpmnElement", laneEntry.getId());
@@ -427,7 +425,7 @@ public class BPMNDiagram {
 
     }
 
-    public void addDataObjectsOutput(Element rootElement, ArrayList<Task> tasks) {
+    public void addDataObjectsOutput(Element rootElement, ArrayList<Task> tasks, boolean expandedSubprocess) {
 
         Double xBoundOffset = 0d;
         for (int i = 0; i < tasks.size(); i++) {
@@ -479,7 +477,7 @@ public class BPMNDiagram {
 
             }
 
-            if (task.getIsSubprocess()) {
+            if (task.getIsSubprocess() && expandedSubprocess) {
                 ArrayList<Step> steps = task.getSteps();
                 for (Step step : steps) {
 

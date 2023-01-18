@@ -1,12 +1,9 @@
-package org.bpmn.steps;
+package org.bpmn.transformation;
 
-import org.bpmn.bpmn_elements.*;
-import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
-import org.bpmn.bpmn_elements.collaboration.participant.Object;
+import org.bpmn.bpmn_elements.collaboration.participant.Pool;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
-import org.bpmn.bpmn_elements.collaboration.participant.User;
-import org.bpmn.bpmn_elements.dataobject.DataObject;
+import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
@@ -15,9 +12,11 @@ import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.bpmndi.FillBPMNDI_StepThree_lazy;
 import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.flows_entities.AbstractRelationship;
+import org.bpmn.flows_process_model.Port;
+import org.bpmn.flows_process_model.Relation;
+import org.bpmn.flows_process_model.RelationType;
 import org.bpmn.parse_json.Parser;
 import org.bpmn.process.FlowsProcessObject;
-import org.bpmn.process.Lane;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
@@ -25,46 +24,32 @@ import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.bpmn_elements.collaboration.Collaboration.objects;
-import static org.bpmn.steps.BPMN.createXml;
-import static org.bpmn.steps.BPMN.doc;
-import static org.bpmn.steps.LifecycleTransformation.*;
+import static org.bpmn.bpmn_elements.collaboration.Collaboration.pools;
+import static org.bpmn.transformation.FlowsToBpmn.createXml;
+import static org.bpmn.transformation.LifecycleTransformation.*;
 
-public class CoordinationTransformation {
-
-    ExecStep step;
+public class CoordinationTransformation implements Transformation {
     String file;
     Element definitionsElement;
-    HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects;
-
     HashMap<Double, ArrayList<AbstractFlowsEntity>> coordinationProcessObjects;
-
     ArrayList<AbstractRelationship> relationsDataModel;
-
     ArrayList<Task> coordinationProcess = new ArrayList<>();
-
-    HashMap<Double, ArrayList<Participant>> relations = new HashMap<>();
+    HashMap<Double, ArrayList<Participant>> relationships = new HashMap<>();
     Parser parser;
-
     LifecycleTransformation lifecycleTransformation;
     static String bpmnDiagramID = "BPMNDiagram_" + RandomIdGenerator.generateRandomUniqueId(6);
 
     private Collaboration collaboration;
+    HashMap<Double, ArrayList<AbstractFlowsEntity>> userTypes;
 
-    HashMap<Double, ArrayList<AbstractFlowsEntity>> userTypeObjects = new HashMap<>();
-
-    public CoordinationTransformation(LifecycleTransformation lifecycleTransformation, String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractFlowsEntity>> objectTypeObjects, HashMap<Double, ArrayList<AbstractFlowsEntity>> userTypeObjects,
-                                      HashMap<Double, ArrayList<AbstractFlowsEntity>> coordinationProcessObjects, ArrayList<AbstractRelationship> relationsDataModel) {
+    public CoordinationTransformation(LifecycleTransformation lifecycleTransformation, String file, Element definitionsElement, HashMap<Double, ArrayList<AbstractFlowsEntity>> userTypes, ArrayList<AbstractRelationship> relationsDataModel, HashMap<Double, ArrayList<AbstractFlowsEntity>> coordinationProcessObjects) {
         this.lifecycleTransformation = lifecycleTransformation;
         this.file = file;
         this.definitionsElement = definitionsElement;
-        this.objectTypeObjects = objectTypeObjects;
-        this.userTypeObjects = userTypeObjects;
-        this.step = ExecStep.THREE;
+        this.userTypes = userTypes;
         this.coordinationProcessObjects = coordinationProcessObjects;
         this.parser = new Parser();
         this.relationsDataModel = relationsDataModel;
@@ -72,13 +57,10 @@ public class CoordinationTransformation {
 
     }
 
-
-    public void execute() throws TransformerException {
-
+    public void transform() throws TransformerException {
 
         // fill coordination Process
         coordinationProcess = parser.getCoordinationTasks(coordinationProcessObjects);
-
         // fill Data Model
         for (AbstractRelationship relation : relationsDataModel) {
 
@@ -86,33 +68,31 @@ public class CoordinationTransformation {
             Double targetId = (Double) relation.getParameters().get(1);
             ArrayList<Participant> p = new ArrayList<>();
 
-            if (relations.containsKey(sourceId)) {
-                ArrayList<Participant> temp = relations.get(sourceId);
-                for (Participant target : allParticipants) {
+            if (relationships.containsKey(sourceId)) {
+                ArrayList<Participant> temp = relationships.get(sourceId);
+                for (Participant target : Participants) {
                     if (target.getKey().equals(targetId)) {
                         temp.add(target);
                     }
                 }
             } else {
-                for (Participant source : allParticipants) {
+                for (Participant source : Participants) {
                     if (source.getKey().equals(sourceId)) {
-                        for (Participant target : allParticipants) {
+                        for (Participant target : Participants) {
                             if (target.getKey().equals(targetId)) {
                                 p.add(target);
                             }
                         }
                     }
-                    relations.put(sourceId, p);
+                    relationships.put(sourceId, p);
                 }
             }
         }
-
-        /*
         // set tasks to user
-        for (Participant object : allParticipants) {
-            HashSet<User> user = parser.parsePermissions(userTypeObjects);
-            for (Double key : userTypeObjects.keySet()) {
-                userTypeObjects.get(key).forEach(obj -> {
+        for (Participant object : Participants) {
+            HashSet<Lane> lane = parser.parsePermissions(userTypes);
+            for (Double key : userTypes.keySet()) {
+                userTypes.get(key).forEach(obj -> {
                     if (obj != null && obj.getMethodName().equals("AddStateExecutionPermissionToGlobalRole")) {
 
                         Double participantId = (Double) obj.getParameters().get(0);
@@ -120,7 +100,7 @@ public class CoordinationTransformation {
 
                         for (Task task : object.getProcessRef().getTasks()) {
                             if (task.getCreatedEntityId().equals(taskId)) {
-                                for (User u : user) {
+                                for (Lane u : lane) {
                                     if (u.getId().equals(participantId)) {
                                         task.setUser(u);
                                         u.getElements().add(task);
@@ -134,25 +114,19 @@ public class CoordinationTransformation {
                 });
             }
 
-            User systemUser = null;
-            for (User k : user) {
+            Lane systemLane = null;
+            for (Lane k : lane) {
                 if (k.getName().equals("System")) {
-                    systemUser = k;
+                    systemLane = k;
                 }
             }
             for (Task task : allTasks) {
                 if (task.getUser() == null) {
-                    task.setUser(systemUser);
-                    systemUser.getElements().add(task);
+                    task.setUser(systemLane);
+                    systemLane.getElements().add(task);
                 }
             }
         }
-
-         */
-
-        // TODO: complement coordination process with data model relation
-
-        // _______________________________
 
         for (Task task : coordinationProcess) {
 
@@ -217,7 +191,6 @@ public class CoordinationTransformation {
                 } else {
                     Relation relation = port.getIncoming().get(0);
                     if (relation.getRelationType() == RelationType.OTHER) {
-                        Task coordinationTask = relation.getTask();
                         messageCatch = new IntermediateCatchEvent(task.getUser());
                         collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
 
@@ -238,7 +211,8 @@ public class CoordinationTransformation {
             }
             fp.setBeforeAndAfterElements();
         }
-        for (Participant object : allParticipants) {
+
+        for (Participant object : Participants) {
 
             HashSet<IntermediateCatchEvent> events = object.getProcessRef().getIntermediateCatchEvents();
             FlowsProcessObject fp = object.getProcessRef();
@@ -264,23 +238,8 @@ public class CoordinationTransformation {
             fp.setBeforeAndAfterElements();
         }
 
-        /*
-        // prints coordination process and data relations
-        System.out.println(relations + "\n");
-        for (Task task : coordinationProcess) {
-            System.out.print(task + " ");
-            if (task.getPorts().size() > 0) {
-                for (Port port : task.getPorts()) {
-                    System.out.print(port + " ");
-                    System.out.print(port.getIncoming() + " ");
-                }
-            }
-            System.out.println();
-        }
-         */
-
-        // TODO: Very ugly, needs refactor; replaces XOR to event when appropriate
-        for (Participant object : allParticipants) {
+        // Replaces XOR to event when appropriate
+        for (Participant object : Participants) {
 
             ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
             for (int i = 0; i < flows.size(); i++) {
@@ -324,7 +283,7 @@ public class CoordinationTransformation {
         }
 
         // trim eventgate --> eventgate
-        for (Participant object : allParticipants) {
+        for (Participant object : Participants) {
 
             ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
             HashSet<SequenceFlow> flowsToRemove = new HashSet<>();
@@ -359,7 +318,6 @@ public class CoordinationTransformation {
         }
 
         // transforms throwing message tasks to sendTasks
-
         HashSet<Task> throwingMessageTasks = new HashSet<>();
 
         for (MessageFlow mf : collaboration.getMessageFlows()) {
@@ -375,7 +333,7 @@ public class CoordinationTransformation {
         }
 
         // fill allFlows
-        for (Participant object : allParticipants) {
+        for (Participant object : Participants) {
             allFlows.addAll(object.getProcessRef().getFlows());
         }
 
@@ -402,29 +360,7 @@ public class CoordinationTransformation {
         }
         throwingMessageTasks.removeAll(transformedMessages);
 
-        // set data input associations for receiving tasks
-
-        for (Participant object : objects) {
-            HashSet<IntermediateCatchEvent> events = object.getProcessRef().getIntermediateCatchEvents();
-            for (IntermediateCatchEvent event : events) {
-                for (DataObject d : event.getDataObjects()) {
-                    DataInputAssociation in = new DataInputAssociation();
-                    d.getDataInputAssociations().add(in);
-                    in.setAssociatedTaskId(event.getId());
-                    event.getDataInputAssociations().add(in);
-                    Element tempSource = doc.createElement("bpmn:sourceRef");
-                    Element tempTarget = doc.createElement("bpmn:targetRef");
-                    tempSource.setTextContent(d.getRefId());
-                    tempTarget.setTextContent("_property_placeholder");
-                    in.getElementDataInputAssociation().appendChild(tempSource);
-                    in.getElementDataInputAssociation().appendChild(tempTarget);
-                    event.getElement().appendChild(in.getElementDataInputAssociation());
-                }
-            }
-
-        }
-
-        setProcesses(definitionsElement);
+        appendXMLElements(definitionsElement);
 
         FillBPMNDI_StepThree_lazy di = new FillBPMNDI_StepThree_lazy();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, true, false);
@@ -460,10 +396,11 @@ public class CoordinationTransformation {
 
             }
         }
+        fp.getIntermediateCatchEvents().add(messageCatch);
         return messageCatch;
     }
 
-    public void setProcesses(Element definitionsElement) {
+    public void appendXMLElements(Element definitionsElement) {
 
         definitionsElement.appendChild(collaboration.getElementCollaboration());
 
@@ -471,7 +408,7 @@ public class CoordinationTransformation {
             collaboration.getElementCollaboration().appendChild(mf.getElement());
         }
 
-        for (Object participant : objects) {
+        for (Pool participant : pools) {
 
             participant.getProcessRef().setElementFlowsProcess();
             //setLane(participant);
@@ -480,70 +417,9 @@ public class CoordinationTransformation {
         }
 
     }
-
-    private void setLane(Participant object) {
-
-        HashSet<User> users = new HashSet<>();
-        ArrayList<Task> tasks = object.getProcessRef().getTasks();
-        HashSet<IntermediateCatchEvent> catchEvents = object.getProcessRef().getIntermediateCatchEvents();
-        HashSet<ExclusiveGateway> gateways = object.getProcessRef().getGateways();
-        ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
-
-        for (Task task : tasks) {
-            users.add(task.getUser());
-        }
-        for (IntermediateCatchEvent event : catchEvents) {
-            users.add(event.getUser());
-        }
-
-        object.getProcessRef().getStartEvent().setUser(tasks.get(0).getUser());
-        tasks.get(0).getUser().getElements().add(object.getProcessRef().getStartEvent());
-        object.getProcessRef().getEndEvent().setUser(tasks.get(tasks.size() - 1).getUser());
-        tasks.get(tasks.size() - 1).getUser().getElements().add(object.getProcessRef().getEndEvent());
-
-        for (ExclusiveGateway gateway : gateways) {
-
-            for (SequenceFlow flow : flows) {
-                if (flow.getSourceRef().getId().equals(gateway.getId())) {
-                    BPMNElement target = flow.getTargetRef();
-                    User temp = target.getUser();
-                    BPMNElement targetFromTarget = target;
-                    while(temp == null){
-                        SequenceFlow tempFlow = object.getProcessRef().getFlowBySource(targetFromTarget);
-                        targetFromTarget = tempFlow.getTargetRef();
-                        temp = targetFromTarget.getUser();
-                    }
-                    if (temp != null) {
-                        gateway.setUser(temp);
-                        temp.getElements().add(gateway);
-                    }
-                }
-            }
-        }
-
-        for (SequenceFlow flow : flows) {
-            if (flow.getTargetRef().getId().equals(object.getProcessRef().getEndEvent().getId())) {
-                object.getProcessRef().getEndEvent().setUser(flow.getSourceRef().getUser());
-            }
-        }
-
-        Element laneSet = doc.createElement("bpmn:laneSet");
-        laneSet.setAttribute("id", "LaneSet_" + RandomIdGenerator.generateRandomUniqueId(6));
-
-        HashMap<User, Lane> lanes = new HashMap<>();
-        for (User u : users) {
-            Lane lane = new Lane(u);
-            lanes.put(u, lane);
-
-            for (BPMNElement element : u.getElements()) {
-                lane.addBPMNElement(element);
-            }
-            laneSet.appendChild(lane.getLaneElement());
-        }
-
-        object.getProcessRef().getElementFlowsProcess().appendChild(laneSet);
-        object.setLanes(lanes);
-
+    public Collaboration getCollaboration() {
+        return collaboration;
     }
+
 }
 

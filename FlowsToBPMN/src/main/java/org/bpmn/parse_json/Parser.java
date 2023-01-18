@@ -1,10 +1,10 @@
 package org.bpmn.parse_json;
 
-import org.bpmn.bpmn_elements.Loop;
-import org.bpmn.bpmn_elements.Port;
-import org.bpmn.bpmn_elements.Relation;
-import org.bpmn.bpmn_elements.RelationType;
-import org.bpmn.bpmn_elements.collaboration.participant.User;
+import org.bpmn.bpmn_elements.flows.Loop;
+import org.bpmn.flows_process_model.Port;
+import org.bpmn.flows_process_model.Relation;
+import org.bpmn.flows_process_model.RelationType;
+import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.Predicate;
@@ -21,7 +21,7 @@ import static org.bpmn.bpmn_elements.flows.SequenceFlow.getFlowBySource;
 import static org.bpmn.bpmn_elements.flows.SequenceFlow.getFlowByTarget;
 import static org.bpmn.bpmn_elements.gateway.Predicate.getPredicate;
 import static org.bpmn.bpmn_elements.gateway.Predicate.parsePredicate;
-import static org.bpmn.steps.LifecycleTransformation.allTasks;
+import static org.bpmn.transformation.LifecycleTransformation.allTasks;
 
 public class Parser {
 
@@ -153,21 +153,21 @@ public class Parser {
         return predicates;
     }
 
-    public HashSet<User> parsePermissions(HashMap<Double, ArrayList<AbstractFlowsEntity>> users) {
-        HashSet<User> user = new HashSet<>();
+    public HashSet<Lane> parsePermissions(HashMap<Double, ArrayList<AbstractFlowsEntity>> users) {
+        HashSet<Lane> lane = new HashSet<>();
         for (Double key : users.keySet()) {
             users.get(key).forEach(obj -> {
                 if (obj != null && obj.getMethodName().equals("UpdateGlobalRoleName")) {
 
                     Double userId = (Double) obj.getParameters().get(0);
                     String name = (String) obj.getParameters().get(1);
-                    user.add(new User(userId, name));
+                    lane.add(new Lane(userId, name));
                 }
             });
         }
         Double d = 71238172381763d;
-        user.add(new User(d, "System"));
-        return user;
+        lane.add(new Lane(d, "System"));
+        return lane;
     }
 
 

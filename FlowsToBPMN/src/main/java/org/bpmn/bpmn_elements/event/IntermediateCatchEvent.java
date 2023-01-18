@@ -3,7 +3,7 @@ package org.bpmn.bpmn_elements.event;
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.association.DataOutputAssociation;
-import org.bpmn.bpmn_elements.collaboration.participant.User;
+import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Task;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import static org.bpmn.steps.BPMN.doc;
+import static org.bpmn.transformation.FlowsToBpmn.doc;
 
 public class IntermediateCatchEvent implements BPMNElement{
 
@@ -46,38 +46,38 @@ public class IntermediateCatchEvent implements BPMNElement{
 
     String name;
 
-    User user;
+    Lane lane;
 
     HashSet<DataInputAssociation> dataInputAssociations = new HashSet<>();
 
     HashMap<Task, DataObject> associatedTasks = new HashMap<Task, DataObject>();
 
-    public IntermediateCatchEvent(String name, User user) {
+    public IntermediateCatchEvent(String name, Lane lane) {
         this.id = "ReceiveActivity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.name = name;
-        this.user = user;
-        if(this.user != null) {
-            user.getElements().add(this);
+        this.lane = lane;
+        if(this.lane != null) {
+            lane.getElements().add(this);
         }
         this.elementCatchEvent = doc.createElement("bpmn:receiveTask");
         setElement();
     }
 
-    public IntermediateCatchEvent(User user) {
+    public IntermediateCatchEvent(Lane lane) {
         this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
-        this.user = user;
-        if(this.user != null) {
-            user.getElements().add(this);
+        this.lane = lane;
+        if(this.lane != null) {
+            lane.getElements().add(this);
         }
         this.elementCatchEvent = doc.createElement("bpmn:intermediateCatchEvent");
         setElement();
     }
 
-    public IntermediateCatchEvent(boolean parallelMultiple, User user) {
+    public IntermediateCatchEvent(boolean parallelMultiple, Lane lane) {
         this.id = "Event_" + RandomIdGenerator.generateRandomUniqueId(6);
-        this.user = user;
-        if(this.user != null) {
-            user.getElements().add(this);
+        this.lane = lane;
+        if(this.lane != null) {
+            lane.getElements().add(this);
         }
         this.elementCatchEvent = doc.createElement("bpmn:intermediateCatchEvent");
         this.parallelMultiple = true;
@@ -115,12 +115,12 @@ public class IntermediateCatchEvent implements BPMNElement{
         return dataObjects;
     }
 
-    public User getUser() {
-        return user;
+    public Lane getUser() {
+        return lane;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(Lane lane) {
+        this.lane = lane;
     }
 
     private void setElementMultiple() {

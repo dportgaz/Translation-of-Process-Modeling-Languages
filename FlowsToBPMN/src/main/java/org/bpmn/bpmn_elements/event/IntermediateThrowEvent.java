@@ -9,7 +9,7 @@ import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 
-import static org.bpmn.steps.BPMN.doc;
+import static org.bpmn.transformation.FlowsToBpmn.doc;
 
 public class IntermediateThrowEvent {
 
