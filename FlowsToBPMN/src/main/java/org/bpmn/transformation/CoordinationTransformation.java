@@ -238,7 +238,7 @@ public class CoordinationTransformation implements Transformation {
             fp.setBeforeAndAfterElements();
         }
 
-        // Replaces XOR to event when appropriate
+        // Replaces XOR to event when appropriate; braucht man vielleicht/wahrscheinlich für backwards transitions mit predicates
         for (Participant object : Participants) {
 
             ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
@@ -282,7 +282,7 @@ public class CoordinationTransformation implements Transformation {
 
         }
 
-        // trim eventgate --> eventgate
+        // trim event --> event; braucht man vielleicht/wahrscheinlich für backwards transitions mit predicates
         for (Participant object : Participants) {
 
             ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();

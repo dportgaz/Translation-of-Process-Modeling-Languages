@@ -609,7 +609,7 @@ public class BPMNDiagram {
             Edge sequenceFlow = new Edge(sf.getId());
 
             // JSON BUG FINDING :
-            // System.out.println(sf);
+            System.out.println(sf);
             double xStart = bsSource.getBounds().getX() + bsSource.getBounds().getWidth();
             double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2;
 

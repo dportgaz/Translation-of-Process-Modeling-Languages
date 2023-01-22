@@ -50,27 +50,6 @@ public class SequenceFlow {
         setSourceRef(sourceRef);
         setTargetRef(targetRef);
     }
-
-    public HashSet<Association> getAssociations() {
-        return associations;
-    }
-
-    public Double getXEnd() {
-        return xEnd;
-    }
-
-    public Double getXStart() {
-        return xStart;
-    }
-
-    public Double getYEnd() {
-        return yEnd;
-    }
-
-    public Double getYStart() {
-        return yStart;
-    }
-
     public void setXEnd(Double xEnd) {
         this.xEnd = xEnd;
     }

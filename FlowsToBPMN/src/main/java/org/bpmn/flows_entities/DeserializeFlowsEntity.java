@@ -31,7 +31,7 @@ public class DeserializeFlowsEntity extends AbstractFlowsEntity {
 
     private void deserializeObjectTypeActionLogs(String file) throws FileNotFoundException {
         // deserializes JSON objects where MethodName starts with "Add" or "Update"
-        Gson gsonFlowsObjectTypeJsonDeserializer = new GsonBuilder().registerTypeAdapter(AbstractFlowsEntity.class, new FlowsEntitiesJsonDeserializer()).create();
+        Gson gsonFlowsObjectTypeJsonDeserializer = new GsonBuilder().registerTypeAdapter(AbstractFlowsEntity.class, new FlowsEntitiesDeserializer()).create();
         // initializes Java objects for each deserialized JSON object
         flowsEntity = gsonFlowsObjectTypeJsonDeserializer.fromJson(new JsonReader(new FileReader(file)), DeserializeFlowsEntity.class);
         // stores each Java object in data structure
