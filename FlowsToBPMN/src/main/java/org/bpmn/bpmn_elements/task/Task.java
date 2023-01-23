@@ -2,6 +2,7 @@ package org.bpmn.bpmn_elements.task;
 
 import com.google.gson.internal.LinkedTreeMap;
 import org.bpmn.bpmn_elements.BPMNElement;
+import org.bpmn.bpmn_elements.event.IntermediateThrowEvent;
 import org.bpmn.flows_process_model.Port;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.association.DataOutputAssociation;
@@ -110,6 +111,8 @@ public class Task implements BPMNElement {
 
     Lane lane;
 
+    IntermediateThrowEvent sendingMessage;
+
     public Task(Double createdEntityId, String name, Participant participant, boolean computationStep) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
@@ -127,6 +130,10 @@ public class Task implements BPMNElement {
         }
         this.elementTask.setAttribute("id", this.id);
         this.elementTask.setAttribute("name", this.name);
+        this.elementIncoming = doc.createElement("bpmn:incoming");
+        this.elementTask.appendChild(this.elementIncoming);
+        this.elementOutgoing = doc.createElement("bpmn:outgoing");
+        this.elementTask.appendChild(this.elementOutgoing);
     }
 
     public void setSendTask() {
@@ -155,6 +162,14 @@ public class Task implements BPMNElement {
         } else {
             return "Read";
         }
+    }
+
+    public void setSendingMessage(IntermediateThrowEvent sendingMessage) {
+        this.sendingMessage = sendingMessage;
+    }
+
+    public IntermediateThrowEvent getSendingMessage() {
+        return sendingMessage;
     }
 
     public Double getCreateId() {
@@ -196,6 +211,10 @@ public class Task implements BPMNElement {
         this.steps = setSteps(objects);
         setElement();
         setDataOutputAssociation();
+        this.elementIncoming = doc.createElement("bpmn:incoming");
+        this.elementTask.appendChild(this.elementIncoming);
+        this.elementOutgoing = doc.createElement("bpmn:outgoing");
+        this.elementTask.appendChild(this.elementOutgoing);
     }
 
     public ArrayList<Port> getPorts() {
@@ -445,18 +464,14 @@ public class Task implements BPMNElement {
     public void setIncoming(SequenceFlow incoming) {
         this.incoming = incoming;
         if (incoming != null) {
-            this.elementIncoming = doc.createElement("bpmn:incoming");
             this.elementIncoming.setTextContent(incoming.getId());
-            this.elementTask.appendChild(this.elementIncoming);
         }
     }
 
     public void setOutgoing(SequenceFlow outgoing) {
         this.outgoing = outgoing;
         if (outgoing != null) {
-            this.elementOutgoing = doc.createElement("bpmn:outgoing");
             this.elementOutgoing.setTextContent(outgoing.getId());
-            this.elementTask.appendChild(this.elementOutgoing);
         }
     }
 

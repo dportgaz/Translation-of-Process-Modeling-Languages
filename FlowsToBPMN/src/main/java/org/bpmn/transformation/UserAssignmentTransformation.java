@@ -47,7 +47,7 @@ public class UserAssignmentTransformation implements Transformation {
         appendXMLElements(definitionsElement);
 
         FillBPMNDI_StepThree_lazy di = new FillBPMNDI_StepThree_lazy();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, true, false);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, true, false, true);
 
         createXml(file);
 

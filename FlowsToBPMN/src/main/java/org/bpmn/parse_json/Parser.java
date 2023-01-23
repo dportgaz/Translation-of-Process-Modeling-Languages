@@ -38,7 +38,7 @@ public class Parser {
 
             if (obj != null && obj.getMethodName().equals("UpdateStateType")) {
 
-                String taskName = obj.getParameters().get(1) + " " + participant.getName();
+                String taskName = "Execute " + obj.getParameters().get(1);
                 Double updateEntityId = (Double) obj.getParameters().get(0);
                 Double stepEntityId = null;
 

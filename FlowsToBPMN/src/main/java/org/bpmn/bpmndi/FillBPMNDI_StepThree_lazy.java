@@ -28,16 +28,9 @@ import static org.bpmn.transformation.FlowsToBpmn.doc;
 
 public class FillBPMNDI_StepThree_lazy {
     final double participantX = 70.0;
-
-    // use with lanes
-    /*
-    final double participantWidth = 3000.0;
-    final double participantHeight = 1500.0;
-    */
-    // use without lanes
-    final double participantWidth = 1900.0;
-    final double participantHeight = 800.0;
-    final double participantYInc = participantHeight + 50.0;
+    double participantWidth = 1700.0;
+    double participantHeight = 600.0;
+    double participantYInc = participantHeight + 50.0;
 
     final double startEventYInc = 200.0;
 
@@ -130,7 +123,6 @@ public class FillBPMNDI_StepThree_lazy {
                 if (!printMark.contains(e)) {
 
                     if (previous != null) {
-
                         if (activityMatcher.find()) {
                             if (expandedSubprocess && fp.getTaskById(previous) != null && fp.getTaskById(previous).getIsSubprocess()) {
                                 x += 145 + fp.getTaskById(previous).getSteps().size() * subProcessWidthOffset - activityWidth;
@@ -146,6 +138,7 @@ public class FillBPMNDI_StepThree_lazy {
                             }
                             tempBounds = new Bounds(x, y, activityWidth, activityHeight);
                         } else if (eventMatcher.find()) {
+
                             x += 90;
                             y += 3;
                             if (activityMatcherPrev.find()) {
@@ -240,20 +233,24 @@ public class FillBPMNDI_StepThree_lazy {
 
     }
 
-    public void parseFlows(Element rootElement, Participant object, double x, double y, boolean expandedSubprocess) {
+    public void parseFlows(Element rootElement, Participant object, double x, double y, boolean expandedSubprocess, boolean lane) {
 
         //bring elements of pool in order according to flows
 
         FlowsProcessObject fp = object.getProcessRef();
         String start = fp.getStartEvent().getId();
         ArrayList<SequenceFlow> flows = fp.getFlows();
-        ArrayList<Task> tasks = fp.getTasks();
         printMark.clear();
         targetMark.clear();
 
 
         f(x, y, start, object, flows, null, expandedSubprocess);
-        q(object, rootElement, expandedSubprocess);
+        if (lane) {
+            participantWidth = 3000.0;
+            participantHeight = 1500.0;
+            participantYInc = participantHeight + 50.0;
+            q(object, rootElement, expandedSubprocess);
+        }
         for (Shape shape : shapes) {
             shape.setBounds();
             rootElement.appendChild(shape.getBpmnElement());
@@ -262,7 +259,7 @@ public class FillBPMNDI_StepThree_lazy {
         addFlowsEdge(rootElement, flows, fp);
 
         //addDataObjects(rootElement, flows);
-        addDataObjectsOutput(rootElement, tasks, expandedSubprocess);
+        //addDataObjectsOutput(rootElement, tasks, expandedSubprocess);
 
         allShapes.addAll(shapes);
         shapes.clear();
@@ -315,7 +312,7 @@ public class FillBPMNDI_StepThree_lazy {
     }
 
     public void fillBPMNDI(String id, Element rootElement, Collaboration collaboration, boolean visibleMessageFlows,
-                           boolean expandedSubprocess) {
+                           boolean expandedSubprocess, boolean lane) {
 
         Element bpmnDiagram = doc.createElement("bpmndi:BPMNDiagram");
         bpmnDiagram.setAttribute("id", id);
@@ -333,7 +330,7 @@ public class FillBPMNDI_StepThree_lazy {
             // add pools
             addParticipantsShape(bpmnLane, object, participantStartY);
 
-            parseFlows(bpmnLane, object, startEventX, startEventY, expandedSubprocess);
+            parseFlows(bpmnLane, object, startEventX, startEventY, expandedSubprocess, lane);
 
             // adapt positions for next participant/pool
             participantStartY += participantYInc;
@@ -695,7 +692,7 @@ public class FillBPMNDI_StepThree_lazy {
             Edge sequenceFlow = new Edge(sf.getId());
 
             // JSON BUG FINDING :
-            // System.out.println(sf);
+            //System.out.println(sf);
             double xStart = bsSource.getBounds().getX() + bsSource.getBounds().getWidth();
             double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2;
 

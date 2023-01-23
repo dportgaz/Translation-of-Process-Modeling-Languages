@@ -27,8 +27,8 @@ import static org.bpmn.transformation.LifecycleTransformation.allDataObjects;
 
 public class BPMNDiagram {
     final double participantX = 70.0;
-    final double participantWidth = 1900.0;
-    final double participantHeight = 800.0;
+    double participantWidth = 1700.0;
+    double participantHeight = 800.0;
     final double participantYInc = participantHeight + 50.0;
 
     final double startEventYInc = 200.0;

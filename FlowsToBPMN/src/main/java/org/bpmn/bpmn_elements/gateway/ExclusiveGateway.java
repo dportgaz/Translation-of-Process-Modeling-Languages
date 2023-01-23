@@ -7,6 +7,7 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.bpmn.transformation.FlowsToBpmn.doc;
 
@@ -36,16 +37,15 @@ public class ExclusiveGateway implements BPMNElement {
 
     Lane lane;
 
+    HashSet<SequenceFlow> incomingMarker;
+
+    HashSet<SequenceFlow> outgoingMarker;
+
     public ExclusiveGateway() {
         this.id = "Gateway_" + RandomIdGenerator.generateRandomUniqueId(6);
+        this.incomingMarker = new HashSet<>();
+        this.outgoingMarker = new HashSet<>();
         this.elementExclusiveGateway = doc.createElement("bpmn:exclusiveGateway");
-        setElementExclusiveGateway();
-    }
-
-    public ExclusiveGateway(boolean parallel, boolean p) {
-        this.parallelGate = true;
-        this.id = "Gateway_" + RandomIdGenerator.generateRandomUniqueId(6);
-        this.elementExclusiveGateway = doc.createElement("bpmn:parallelGateway");
         setElementExclusiveGateway();
     }
 
@@ -56,6 +56,8 @@ public class ExclusiveGateway implements BPMNElement {
     // TODO: create event based class?
     public ExclusiveGateway(boolean eventBased) {
         this.eventBased = eventBased;
+        this.incomingMarker = new HashSet<>();
+        this.outgoingMarker = new HashSet<>();
         this.id = "EventGateway_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementExclusiveGateway = doc.createElement("bpmn:eventBasedGateway");
         setElementExclusiveGateway();
@@ -66,6 +68,10 @@ public class ExclusiveGateway implements BPMNElement {
         this.id = "EventGateway_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementExclusiveGateway = doc.createElement("bpmn:eventBasedGateway");
         setElementExclusiveGateway();
+    }
+
+    public boolean getEventBased(){
+        return this.eventBased;
     }
 
     public void setUser(Lane lane) {
@@ -84,6 +90,26 @@ public class ExclusiveGateway implements BPMNElement {
 
     @Override
     public Double getCreateId() {
+        return null;
+    }
+
+    @Override
+    public void setOutgoing(SequenceFlow outgoing) {
+        addOutgoing(outgoing);
+    }
+
+    @Override
+    public void setIncoming(SequenceFlow incoming) {
+        addIncoming(incoming);
+    }
+
+    @Override
+    public SequenceFlow getOutgoing() {
+        return null;
+    }
+
+    @Override
+    public SequenceFlow getIncoming() {
         return null;
     }
 
@@ -179,18 +205,21 @@ public class ExclusiveGateway implements BPMNElement {
     }
 
     public void addIncoming(SequenceFlow incoming) {
-        incomings.add(incoming);
-        Element temp = doc.createElement("bpmn:incoming");
-        temp.setTextContent(incoming.getId());
-        elementExclusiveGateway.appendChild(temp);
+        if(!incomingMarker.contains(incoming)) {
+            incomingMarker.add(incoming);
+            Element temp = doc.createElement("bpmn:incoming");
+            temp.setTextContent(incoming.getId());
+            elementExclusiveGateway.appendChild(temp);
+        }
     }
 
     public void addOutgoing(SequenceFlow outgoing) {
-        outgoings.add(outgoing);
-        incomings.add(outgoing);
-        Element temp = doc.createElement("bpmn:outgoing");
-        temp.setTextContent(outgoing.getId());
-        elementExclusiveGateway.appendChild(temp);
+        if(!outgoingMarker.contains(outgoing)) {
+            outgoingMarker.add(outgoing);
+            Element temp = doc.createElement("bpmn:outgoing");
+            temp.setTextContent(outgoing.getId());
+            elementExclusiveGateway.appendChild(temp);
+        }
     }
 
     public void setMarked() {

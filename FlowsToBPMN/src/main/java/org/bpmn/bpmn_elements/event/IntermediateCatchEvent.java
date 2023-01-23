@@ -71,6 +71,10 @@ public class IntermediateCatchEvent implements BPMNElement{
         }
         this.elementCatchEvent = doc.createElement("bpmn:intermediateCatchEvent");
         setElement();
+        this.elementIncoming = doc.createElement("bpmn:incoming");
+        this.elementCatchEvent.appendChild(this.elementIncoming);
+        this.elementOutgoing = doc.createElement("bpmn:outgoing");
+        this.elementCatchEvent.appendChild(this.elementOutgoing);
     }
 
     public IntermediateCatchEvent(boolean parallelMultiple, Lane lane) {
@@ -82,6 +86,10 @@ public class IntermediateCatchEvent implements BPMNElement{
         this.elementCatchEvent = doc.createElement("bpmn:intermediateCatchEvent");
         this.parallelMultiple = true;
         setElementMultiple();
+        this.elementIncoming = doc.createElement("bpmn:incoming");
+        this.elementCatchEvent.appendChild(this.elementIncoming);
+        this.elementOutgoing = doc.createElement("bpmn:outgoing");
+        this.elementCatchEvent.appendChild(this.elementOutgoing);
     }
 
     public boolean getParallelMultiple(){
@@ -146,18 +154,24 @@ public class IntermediateCatchEvent implements BPMNElement{
     public void setIncoming(SequenceFlow incoming) {
         this.incoming = incoming;
         if (incoming != null) {
-            this.elementIncoming = doc.createElement("bpmn:incoming");
             this.elementIncoming.setTextContent(incoming.getId());
-            this.elementCatchEvent.appendChild(this.elementIncoming);
         }
+    }
+
+    @Override
+    public SequenceFlow getOutgoing() {
+        return this.outgoing;
+    }
+
+    @Override
+    public SequenceFlow getIncoming() {
+        return this.incoming;
     }
 
     public void setOutgoing(SequenceFlow outgoing) {
         this.outgoing = outgoing;
         if (outgoing != null) {
-            this.elementOutgoing = doc.createElement("bpmn:outgoing");
             this.elementOutgoing.setTextContent(outgoing.getId());
-            this.elementCatchEvent.appendChild(this.elementOutgoing);
         }
     }
 

@@ -42,7 +42,15 @@ public class StartEvent extends Event{
     public StartEvent() {
         this.id = "StartEvent_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementStartEvent = doc.createElement("bpmn:startEvent");
+        this.elementOutgoing = doc.createElement("bpmn:outgoing");
+        this.elementStartEvent.appendChild(this.elementOutgoing);
         setElement();
+    }
+
+    public void setMessage(){
+        Element startMessage = doc.createElement("bpmn:messageEventDefinition");
+        startMessage.setAttribute("id", RandomIdGenerator.generateRandomUniqueId(6));
+        this.elementStartEvent.appendChild(startMessage);
     }
 
     public void setUser(Lane lane) {
@@ -104,9 +112,7 @@ public class StartEvent extends Event{
     public void setOutgoing(SequenceFlow outgoing) {
         this.outgoing = outgoing;
         if (outgoing != null) {
-            this.elementOutgoing = doc.createElement("bpmn:outgoing");
             this.elementOutgoing.setTextContent(outgoing.getId());
-            this.elementStartEvent.appendChild(this.elementOutgoing);
         }
     }
 

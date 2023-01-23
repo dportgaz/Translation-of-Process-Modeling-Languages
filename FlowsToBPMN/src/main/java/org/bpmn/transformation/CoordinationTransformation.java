@@ -4,7 +4,10 @@ import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Pool;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.collaboration.participant.Lane;
+import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
+import org.bpmn.bpmn_elements.event.IntermediateThrowEvent;
+import org.bpmn.bpmn_elements.event.StartEvent;
 import org.bpmn.bpmn_elements.flows.MessageFlow;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
@@ -181,6 +184,8 @@ public class CoordinationTransformation implements Transformation {
                     fp.getFlows().add(splitToCatch);
                     fp.getFlows().add(catchToJoin);
 
+                    fp.getGateways().add(gateSplit);
+                    fp.getGateways().add(gateJoin);
 
                 }
 
@@ -193,7 +198,6 @@ public class CoordinationTransformation implements Transformation {
                     if (relation.getRelationType() == RelationType.OTHER) {
                         messageCatch = new IntermediateCatchEvent(task.getUser());
                         collaboration.getMessageFlows().add(new MessageFlow(relation.getTask(), messageCatch));
-
                     }
                 }
                 if (messageCatch != null) {
@@ -201,13 +205,16 @@ public class CoordinationTransformation implements Transformation {
 
                     SequenceFlow flow = fp.getFlowByTarget(task);
                     SequenceFlow beforeTaskToCatch = new SequenceFlow(task.getBeforeElement(), messageCatch);
+                    task.getBeforeElement().setOutgoing(beforeTaskToCatch);
                     SequenceFlow catchToTask = new SequenceFlow(messageCatch, task);
+                    task.setIncoming(catchToTask);
 
                     fp.getFlows().add(beforeTaskToCatch);
                     fp.getFlows().add(catchToTask);
                     fp.getFlows().remove(flow);
                     fp.setBeforeAndAfterElements();
                 }
+
             }
             fp.setBeforeAndAfterElements();
         }
@@ -318,52 +325,80 @@ public class CoordinationTransformation implements Transformation {
         }
 
         // transforms throwing message tasks to sendTasks
-        HashSet<Task> throwingMessageTasks = new HashSet<>();
+        HashSet<Task> marked = new HashSet<>();
 
         for (MessageFlow mf : collaboration.getMessageFlows()) {
 
-            for (Task task : allTasks) {
-
-                if (task.getId().equals(mf.getSourceRef().getId())) {
-                    throwingMessageTasks.add(task);
-                }
-
+            Task task = (Task) mf.getSourceRef();
+            IntermediateThrowEvent messageThrow = null;
+            if (!marked.contains(task)) {
+                FlowsProcessObject fp = task.getParticipant().getProcessRef();
+                messageThrow = new IntermediateThrowEvent(task);
+                task.setSendingMessage(messageThrow);
+                fp.getIntermediateThrowEvents().add(messageThrow);
+                fp.getFlows().add(new SequenceFlow(messageThrow, task.getAfterElement()));
+                fp.setBeforeAndAfterElements();
+                fp.getFlows().remove(task.getOutgoing());
+                fp.getFlows().add(new SequenceFlow(task, messageThrow));
+                marked.add(task);
+            } else {
+                mf.setSourceRef(task.getSendingMessage());
             }
-
-        }
-
-        // fill allFlows
-        for (Participant object : Participants) {
-            allFlows.addAll(object.getProcessRef().getFlows());
-        }
-
-        // transforms throwing message tasks to sendTasks; helping method; needs to be after "fill allFlows"
-        HashSet<Task> transformedMessages = new HashSet<>();
-        for (Task task : throwingMessageTasks) {
-            if (!task.getIsSubprocess()) {
-                task.setSendTask();
-                transformedMessages.add(task);
-                for (SequenceFlow sf : allFlows) {
-                    if (sf.getSourceRef().getId().equals(task.getId())) {
-                        sf.setSourceRef(task);
-                    }
-                    if (sf.getTargetRef().getId().equals(task.getId())) {
-                        sf.setTargetRef(task);
-                    }
-                }
-                for (MessageFlow mf : collaboration.getMessageFlows()) {
-                    if (mf.getSourceRef().getId().equals(task.getId())) {
-                        mf.setSourceRef(task);
-                    }
-                }
+            if(messageThrow != null) {
+                mf.setSourceRef(messageThrow);
             }
         }
-        throwingMessageTasks.removeAll(transformedMessages);
+
+        // subsequent step for start and end messages
+        for(Participant object: Participants){
+
+            // start message
+            FlowsProcessObject fp = object.getProcessRef();
+            fp.setBeforeAndAfterElements();
+            StartEvent startEvent = fp.getStartEvent();
+
+            Pattern p = Pattern.compile("^Event_+");
+            Matcher m = p.matcher(startEvent.getOutgoing().getTargetRef().getId());
+
+            if(m.find()){
+                IntermediateCatchEvent messageCatch = (IntermediateCatchEvent) startEvent.getAfterElement();
+                for(MessageFlow mf : collaboration.getMessageFlows()){
+                    if(mf.getTargetRef().getId().equals(messageCatch.getId())){
+                        mf.setTargetRef(startEvent);
+                    }
+                }
+                startEvent.setMessage();
+                startEvent.getOutgoing().setTargetRef(messageCatch.getOutgoing().getTargetRef());
+                fp.getFlows().remove(messageCatch.getOutgoing());
+                fp.getIntermediateCatchEvents().remove(messageCatch);
+            }
+
+            // end message
+            EndEvent endEvent = fp.getEndEvent();
+
+            Pattern p2 = Pattern.compile("^Event_+");
+            Matcher m2 = p2.matcher(endEvent.getIncoming().getSourceRef().getId());
+
+            if(m2.find()){
+                IntermediateThrowEvent messageThrow = (IntermediateThrowEvent) endEvent.getIncoming().getSourceRef();
+                for(MessageFlow mf : collaboration.getMessageFlows()){
+                    if(mf.getSourceRef().getId().equals(messageThrow.getId())){
+                        mf.setSourceRef(endEvent);
+                    }
+                }
+                endEvent.setMessage();
+                endEvent.getIncoming().setSourceRef(messageThrow.getIncoming().getSourceRef());
+                fp.getFlows().remove(messageThrow.getIncoming());
+                fp.getIntermediateCatchEvents().remove(messageThrow);
+            }
+
+            fp.setBeforeAndAfterElements();
+      }
 
         appendXMLElements(definitionsElement);
 
         FillBPMNDI_StepThree_lazy di = new FillBPMNDI_StepThree_lazy();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, true, false);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, true, false, false);
 
         createXml(file);
 

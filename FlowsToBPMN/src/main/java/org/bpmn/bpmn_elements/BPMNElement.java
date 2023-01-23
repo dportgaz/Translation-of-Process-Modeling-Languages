@@ -2,8 +2,10 @@ package org.bpmn.bpmn_elements;
 
 
 import org.bpmn.bpmn_elements.collaboration.participant.Lane;
+import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.w3c.dom.Element;
 
+import javax.sound.midi.Sequence;
 import java.util.ArrayList;
 
 public interface BPMNElement {
@@ -31,5 +33,13 @@ public interface BPMNElement {
     String getName();
 
     Double getCreateId();
+
+    void setOutgoing(SequenceFlow sf);
+
+    void setIncoming(SequenceFlow sf);
+
+    SequenceFlow getOutgoing();
+
+    SequenceFlow getIncoming();
 
 }

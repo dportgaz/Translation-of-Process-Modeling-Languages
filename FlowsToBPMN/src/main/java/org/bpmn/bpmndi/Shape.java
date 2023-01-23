@@ -109,4 +109,8 @@ public class Shape {
     public String toString() {
         return elementId;
     }
+
+    public String getIsPool() {
+        return isPool;
+    }
 }

@@ -3,6 +3,7 @@ package org.bpmn.bpmn_elements.event;
 import org.bpmn.bpmn_elements.BPMNElement;
 
 import org.bpmn.bpmn_elements.collaboration.participant.Lane;
+import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.w3c.dom.Element;
 import java.util.ArrayList;
 
@@ -17,6 +18,11 @@ public class Event implements BPMNElement {
     BPMNElement beforeElement;
 
     BPMNElement afterElement;
+
+    SequenceFlow incoming;
+
+    SequenceFlow outgoing;
+
 
     public String getId() {
         return id;
@@ -68,6 +74,26 @@ public class Event implements BPMNElement {
     @Override
     public Double getCreateId() {
         return null;
+    }
+
+    @Override
+    public void setOutgoing(SequenceFlow sf) {
+        this.outgoing = sf;
+    }
+
+    @Override
+    public void setIncoming(SequenceFlow sf) {
+        this.incoming = sf;
+    }
+
+    @Override
+    public SequenceFlow getOutgoing() {
+        return this.outgoing;
+    }
+
+    @Override
+    public SequenceFlow getIncoming() {
+        return this.incoming;
     }
 
     public ArrayList<BPMNElement> getBefore() {
