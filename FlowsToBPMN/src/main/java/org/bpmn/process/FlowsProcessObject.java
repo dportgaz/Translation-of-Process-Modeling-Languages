@@ -401,53 +401,13 @@ public class FlowsProcessObject {
             task.getDataOutputAssociation().setOutputAssociationTarget(task.getDataObject());
         }
 
-         /*
-
-        for(Task task : tasks){
-            for(SequenceFlow flow : flows){
-                if(flow.getSourceRef().getId().equals(task.getId())){
-                    String id = "FlowAssociation_" + RandomIdGenerator.generateRandomUniqueId(6);
-                    flow.getAssociations().add(new Association(id, task.getDataObject()));
-                    Element associationFlow = doc.createElement("bpmn:association");
-                    associationFlow.setAttribute("associationDirection", "One");
-                    associationFlow.setAttribute("id", id);
-                    associationFlow.setAttribute("sourceRef", task.getDataObject().getRefId());
-                    associationFlow.setAttribute("targetRef", flow.getId());
-                    associationFlows.add(associationFlow);
-                }
-            }
-        }
-
-          */
-
-
-        /*
-        int i = 1;
-        for (DataObject d : finishedDataObjects) {
-            System.out.println(finishedDataObjects);
-            tasks.get(tasks.size() - i).getDataOutputAssociation().setOutputAssociationTarget(d);
-            i++;
-        }
-
-         */
-
-
     }
-
-    public HashSet<Element> getAssociationFlows() {
-        return associationFlows;
-    }
-
     public void setFlowsElement() {
 
         for (SequenceFlow flow : flows) {
             this.elementFlowsProcess.appendChild(flow.getElementSequenceFlow());
         }
 
-    }
-
-    public HashSet<DataObject> getFinishedDataObject() {
-        return finishedDataObjects;
     }
 
     private void setDataObjects() {

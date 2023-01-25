@@ -104,16 +104,17 @@ public class DataObject {
 
         String obj = associatedTask.getParticipant().getName();
         String temp = associatedTask.getName().replaceAll(obj, "");
-        String state = temp.substring(0, temp.length()-1);
+        temp = associatedTask.getName().replaceAll("Execute ", "");
+        String state = temp.substring(0, temp.length());
 
         this.elementDataObject.setAttribute("name", obj + " " + "[" + state + "]");
-
     }
 
     private void setElementDataObjectSingle() {
 
         this.elementDataObjectSingle = doc.createElement("bpmn:dataObject");
         this.elementDataObjectSingle.setAttribute("id", this.id);
+        this.elementDataObjectSingle.setAttribute("isCollection", "true");
 
     }
 

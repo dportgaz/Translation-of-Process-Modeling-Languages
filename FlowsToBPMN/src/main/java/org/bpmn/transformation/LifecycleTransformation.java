@@ -46,7 +46,7 @@ public class LifecycleTransformation implements Transformation {
 
     public void transform() throws TransformerException {
 
-        boolean adHoc = true;
+        boolean adHoc = false;
         boolean expandedSubprocess = true;
         this.collaboration = new Collaboration();
         collaboration.setParticipants(objectTypeObjects, adHoc, expandedSubprocess);
@@ -56,7 +56,7 @@ public class LifecycleTransformation implements Transformation {
         appendXMLElements(definitionsElement);
 
         BPMNDiagram di = new BPMNDiagram();
-        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, false, true, expandedSubprocess);
+        di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, expandedSubprocess);
 
         createXml(file);
 

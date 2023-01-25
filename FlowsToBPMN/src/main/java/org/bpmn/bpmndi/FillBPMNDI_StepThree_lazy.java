@@ -30,7 +30,8 @@ public class FillBPMNDI_StepThree_lazy {
     final double participantX = 70.0;
     double participantWidth = 1700.0;
     double participantHeight = 600.0;
-    double participantYInc = participantHeight + 50.0;
+
+    double participantYInc;
 
     final double startEventYInc = 200.0;
 
@@ -86,6 +87,9 @@ public class FillBPMNDI_StepThree_lazy {
     HashSet<Shape> allShapes = new HashSet<>();
 
     HashMap<Shape, BPMNElement> shapeBPMNElementHashMap = new HashMap<>();
+    double participantStartY = 100.0;
+
+    double startEventY;
 
     public void f(double x, double y, String e, Participant object, ArrayList<SequenceFlow> flows, String previous, boolean expandedSubprocess) {
 
@@ -246,9 +250,6 @@ public class FillBPMNDI_StepThree_lazy {
 
         f(x, y, start, object, flows, null, expandedSubprocess);
         if (lane) {
-            participantWidth = 3000.0;
-            participantHeight = 1500.0;
-            participantYInc = participantHeight + 50.0;
             q(object, rootElement, expandedSubprocess);
         }
         for (Shape shape : shapes) {
@@ -323,18 +324,19 @@ public class FillBPMNDI_StepThree_lazy {
         bpmnLane.setAttribute("bpmnElement", collaboration.getId());
         bpmnDiagram.appendChild(bpmnLane);
 
-        double participantStartY = 100.0;
-        double startEventY = participantHeight / 2 - 20 + participantStartY;
+        if (lane){
+            participantWidth = 1700.0;
+            participantHeight = 3000.0;
+            participantYInc = participantHeight + 50.0;
+        }
+
         for (Participant object : pools) {
 
             // add pools
-            addParticipantsShape(bpmnLane, object, participantStartY);
+            addParticipantsShape(bpmnLane, object, this.participantStartY);
 
-            parseFlows(bpmnLane, object, startEventX, startEventY, expandedSubprocess, lane);
+            parseFlows(bpmnLane, object, startEventX, this.startEventY, expandedSubprocess, lane);
 
-            // adapt positions for next participant/pool
-            participantStartY += participantYInc;
-            startEventY = participantHeight / 2 - 20 + participantStartY;
 
         }
 
@@ -385,6 +387,16 @@ public class FillBPMNDI_StepThree_lazy {
 
     public void addParticipantsShape(Element rootElement, Participant p, double participantY) {
 
+        if (p.getLanes().size() == 1) {
+            this.participantHeight = 600.0;
+            this.startEventY = this.participantHeight / 2 - 20 + this.participantStartY;
+        } else if (p.getLanes().size() == 2) {
+            this.participantHeight = 900.0;
+            this.startEventY = this.participantHeight / 2 - 20 + this.participantStartY;
+        } else {
+            this.startEventY = this.participantHeight / 2 - 20 + this.participantStartY;
+        }
+
         Bounds bounds = new Bounds(this.participantX, participantY, this.participantWidth, this.participantHeight);
         Shape shape = new Shape(p.getId(), "true", bounds);
         shape.setShapePool();
@@ -393,6 +405,7 @@ public class FillBPMNDI_StepThree_lazy {
         rootElement.appendChild(shape.getBpmnElement());
 
         int yOff = 0;
+
         // add Lanes
         for (Map.Entry<Lane, org.bpmn.process.Lane> lane : p.getLanes().entrySet()) {
 
@@ -406,6 +419,7 @@ public class FillBPMNDI_StepThree_lazy {
 
             Double x = this.participantX + 30;
             Double width = this.participantWidth - 30;
+
             Double height = this.participantHeight / p.getLanes().size();
             Double y = participantY + (this.participantHeight / p.getLanes().size()) * yOff;
 
@@ -428,6 +442,8 @@ public class FillBPMNDI_StepThree_lazy {
             yOff++;
         }
 
+        // adapt positions for next participant/pool
+        this.participantStartY += this.participantHeight + 50.0;
     }
 
     private Shape getBPMNShapeByFlow(String sfId) {
