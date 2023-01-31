@@ -200,21 +200,15 @@ public class Task implements BPMNElement {
         return lane;
     }
 
-    public Task(Double createId, Double createdEntityId, String name, Participant participant, ArrayList<AbstractFlowsEntity> objects, boolean adHoc, boolean expandedSubprocess) {
-        this.createId = createId;
+    public Task(Double createdEntityId, String name, Participant participant, ArrayList<AbstractFlowsEntity> objects, boolean adHoc) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
         this.name = name;
         this.participant = participant;
         this.dataObject = new DataObject(this);
         this.adHoc = adHoc;
-        this.steps = setSteps(objects);
-        setElement();
-        setDataOutputAssociation();
-        this.elementIncoming = doc.createElement("bpmn:incoming");
-        this.elementTask.appendChild(this.elementIncoming);
-        this.elementOutgoing = doc.createElement("bpmn:outgoing");
-        this.elementTask.appendChild(this.elementOutgoing);
+        //this.steps = setSteps(objects);
+        //setElement();
     }
 
     public ArrayList<Port> getPorts() {
@@ -245,6 +239,11 @@ public class Task implements BPMNElement {
         this.elementTask.setAttribute("id", this.id);
         this.elementTask.setAttribute("name", this.name);
 
+        setDataOutputAssociation();
+        this.elementIncoming = doc.createElement("bpmn:incoming");
+        this.elementTask.appendChild(this.elementIncoming);
+        this.elementOutgoing = doc.createElement("bpmn:outgoing");
+        this.elementTask.appendChild(this.elementOutgoing);
     }
 
     public void setProperty(Property property) {
@@ -536,10 +535,14 @@ public class Task implements BPMNElement {
         return false;
     }
 
+    public void setStepsTemp(ArrayList<Step> subTasks) {
+        this.steps = subTasks;
+        setElement();
+    }
+
     // TODO: GEHT BESSER SETSTEPS()
     public ArrayList<Step> setSteps(ArrayList<AbstractFlowsEntity> objects) {
 
-        HashSet<String> stepNames = new HashSet<>();
         objects.forEach(obj -> {
 
             if (obj != null && (obj.getMethodName().equals("AddStepType") || obj.getMethodName().equals("AddComputationStepType"))) {

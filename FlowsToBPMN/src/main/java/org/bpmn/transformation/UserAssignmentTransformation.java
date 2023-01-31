@@ -97,8 +97,11 @@ public class UserAssignmentTransformation implements Transformation {
                 if (flow.getSourceRef().getId().equals(gateway.getId())) {
                     BPMNElement target = flow.getTargetRef();
                     Lane temp = target.getUser();
-                    while(temp == null){
+                    while (temp == null) {
                         SequenceFlow tempFlow = object.getProcessRef().getFlowBySource(target);
+                        if(tempFlow == null){
+                            break;
+                        }
                         target = tempFlow.getTargetRef();
                         temp = target.getUser();
                     }

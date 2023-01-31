@@ -1,6 +1,7 @@
 package org.bpmn.parse_json;
 
 import org.bpmn.bpmn_elements.flows.Loop;
+import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.flows_process_model.Port;
 import org.bpmn.flows_process_model.Relation;
 import org.bpmn.flows_process_model.RelationType;
@@ -16,11 +17,13 @@ import org.bpmn.process.FlowsProcessObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.bpmn.bpmn_elements.flows.SequenceFlow.getFlowBySource;
 import static org.bpmn.bpmn_elements.flows.SequenceFlow.getFlowByTarget;
 import static org.bpmn.bpmn_elements.gateway.Predicate.getPredicate;
-import static org.bpmn.bpmn_elements.gateway.Predicate.parsePredicate;
+import static org.bpmn.bpmn_elements.gateway.Predicate.createPredicate;
 import static org.bpmn.transformation.LifecycleTransformation.allTasks;
 
 public class Parser {
@@ -30,7 +33,7 @@ public class Parser {
     public ArrayList<Port> coordinationPorts = new ArrayList<>();
 
 
-    public ArrayList<Task> parseTasks(Participant participant, ArrayList<AbstractFlowsEntity> objects, boolean adHoc, boolean expandedSubprocess) {
+    public ArrayList<Task> parseTasks(Participant participant, ArrayList<AbstractFlowsEntity> objects, boolean adHoc) {
 
         ArrayList<Task> tasks = new ArrayList<>();
 
@@ -39,25 +42,44 @@ public class Parser {
             if (obj != null && obj.getMethodName().equals("UpdateStateType")) {
 
                 String taskName = "Execute " + obj.getParameters().get(1);
-                Double updateEntityId = (Double) obj.getParameters().get(0);
-                Double stepEntityId = null;
+                Double updatedEntityId = (Double) obj.getParameters().get(0);
 
-                for (AbstractFlowsEntity stateObj : objects) {
+                Task task = new Task(updatedEntityId, taskName, participant, objects, adHoc);
+                ArrayList<Step> subTasks = new ArrayList<>();
 
-                    if (stateObj != null
-                            && stateObj.getMethodName().equals("AddStepType")
-                            && stateObj.getParameters().get(0).equals(updateEntityId)) {
+                for (AbstractFlowsEntity step : objects) {
 
-                        stepEntityId = stateObj.getCreatedEntityId();
+                    if (step != null
+                            && (step.getMethodName().equals("AddStepType") || step.getMethodName().equals("AddPredicateStepType"))
+                            && (step.getParameters().get(0).equals(updatedEntityId))) {
 
+                        // get name of step
+                        String stepName = "";
+                        for (AbstractFlowsEntity attribute : objects) {
+
+                            if (attribute != null
+                                    && (attribute.getMethodName().equals("UpdateStepAttributeType"))
+                                    && (attribute.getParameters().get(0).equals(step.getCreatedEntityId()))) {
+
+                                for (AbstractFlowsEntity updateAttribute : objects) {
+
+                                    if (updateAttribute != null) {
+                                        Pattern p = Pattern.compile("^Update.*AttributeType$");
+                                        Matcher m = p.matcher(updateAttribute.getMethodName());
+                                        if (m.find() && updateAttribute.getParameters().get(0).equals(attribute.getParameters().get(1))) {
+                                            stepName = (String) updateAttribute.getParameters().get(1);
+                                            subTasks.add(new Step(step.getCreatedEntityId(), stepName, task.getParticipant(), task, false));
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
-
                 }
-
-                Task task = new Task(stepEntityId, updateEntityId, taskName, participant, objects, adHoc, expandedSubprocess);
+                task.setStepsTemp(subTasks);
                 tasks.add(task);
                 allTasks.add(task);
-
             }
 
         }
@@ -76,6 +98,7 @@ public class Parser {
         flows.add(startFlow);
         start.setOutgoing(startFlow);
 
+        // parse state transitions
         for (AbstractFlowsEntity obj : objects) {
 
             if (obj != null && obj.getMethodName().equals("AddTransitionType")) {
@@ -94,21 +117,62 @@ public class Parser {
                     target = (Double) targetTemp.getParameters().get(0);
                 }
 
-                Double sourceObjectId = (Double) object.findObjectById(source, objects).getParameters().get(0);
-                Double targetObjectId = (Double) object.findObjectById(target, objects).getParameters().get(0);
+                System.out.println(source + " AAA " + target);
+
+                Double sourceObjectId = (Double) object.getObjectById(source, objects).getParameters().get(0);
+                Double targetObjectId = (Double) object.getObjectById(target, objects).getParameters().get(0);
                 if (!sourceObjectId.equals(targetObjectId)) {
 
-                    Task taskSource = object.findTaskById(sourceObjectId);
-                    Task taskTarget = object.findTaskById(targetObjectId);
+                    System.out.println(sourceObjectId + " BBB " + targetObjectId);
+
+                    Task taskSource = object.getTaskById(sourceObjectId);
+                    Task taskTarget = object.getTaskById(targetObjectId);
+
+
+                    System.out.println(taskSource + " CCC " + taskTarget);
+
 
                     if (taskSource != null && taskTarget != null) {
                         SequenceFlow sf = new SequenceFlow(taskSource, taskTarget);
                         flows.add(sf);
+                        System.out.println(sf + " FFF ");
                     }
                 }
 
             }
         }
+
+        // parse step transitions
+        for (AbstractFlowsEntity obj : objects) {
+
+            if (obj != null && obj.getMethodName().equals("AddTransitionType")) {
+
+                Double source = (Double) obj.getParameters().get(0);
+                Double target = (Double) obj.getParameters().get(1);
+
+                AbstractFlowsEntity sourceTemp = getPredicate(source, objects);
+                AbstractFlowsEntity targetTemp = getPredicate(target, objects);
+
+                if (sourceTemp != null) {
+                    source = (Double) sourceTemp.getParameters().get(0);
+                }
+
+                if (targetTemp != null) {
+                    target = (Double) targetTemp.getParameters().get(0);
+                }
+
+                Task taskSource = object.getTaskById(source);
+                Task taskTarget = object.getTaskById(target);
+
+                if (taskSource != null && taskTarget != null && sourceTemp != null) {
+                    SequenceFlow sf = new SequenceFlow(taskSource, taskTarget);
+                    flows.add(sf);
+                    System.out.println(sf + " FFF ");
+                }
+            }
+
+        }
+
         return flows;
     }
 
@@ -122,11 +186,11 @@ public class Parser {
                 Double source = (Double) obj.getParameters().get(1);
                 Double target = (Double) obj.getParameters().get(0);
 
-                Double sourceObjectId = object.findObjectById(source, objects).getCreatedEntityId();
-                Double targetObjectId = object.findObjectById(target, objects).getCreatedEntityId();
+                Double sourceObjectId = object.getObjectById(source, objects).getCreatedEntityId();
+                Double targetObjectId = object.getObjectById(target, objects).getCreatedEntityId();
 
-                Task sourceTask = object.findTaskById(sourceObjectId);
-                Task targetTask = object.findTaskById(targetObjectId);
+                Task sourceTask = object.getTaskById(sourceObjectId);
+                Task targetTask = object.getTaskById(targetObjectId);
 
                 loops.add(new Loop(sourceTask, targetTask));
 
@@ -143,13 +207,12 @@ public class Parser {
         for (AbstractFlowsEntity obj : objects) {
             if (obj != null && obj.getMethodName().equals("AddPredicateStepType")) {
 
-                Predicate predicate = parsePredicate(obj.getCreatedEntityId(), objects);
+                Predicate predicate = createPredicate(obj.getCreatedEntityId(), objects);
                 predicate.setCreatedEntityId(obj.getCreatedEntityId());
                 predicates.add(predicate);
 
             }
         }
-
         return predicates;
     }
 

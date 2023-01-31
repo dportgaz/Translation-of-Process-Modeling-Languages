@@ -34,8 +34,6 @@ public class SequenceFlow {
 
     Double yEnd;
 
-    HashSet<Association> associations = new HashSet<>();
-
 
     public SequenceFlow() {
         this.id = "Flow_" + RandomIdGenerator.generateRandomUniqueId(6);
@@ -118,23 +116,6 @@ public class SequenceFlow {
         this.name = name;
     }
 
-    public void setFromGateway(SequenceFlow fromGateway) {
-        this.fromGateway = fromGateway;
-    }
-
-    public void setToGateway(SequenceFlow toGateway) {
-        this.toGateway = toGateway;
-    }
-
-    public SequenceFlow getFromGateway() {
-        return fromGateway;
-    }
-
-    public SequenceFlow getToGateway() {
-        return toGateway;
-    }
-
-
     public String getId() {
         return id;
     }
@@ -150,20 +131,6 @@ public class SequenceFlow {
     @Override
     public String toString() {
         return this.id + ", sourceRef: " + this.sourceRef + ", targetRef: " + this.targetRef;
-    }
-
-    public static ArrayList<SequenceFlow> removeSequenzeFlow(SequenceFlow sequenceFlow, ArrayList<SequenceFlow> sfs) {
-
-        ArrayList<SequenceFlow> tempFlows = sfs;
-        for (int i = 0; i < sfs.size(); i++) {
-            SequenceFlow sf = sfs.get(i);
-            if (sf.getId().equals(sequenceFlow.getId())) {
-                tempFlows.remove(i);
-            }
-
-        }
-        return tempFlows;
-
     }
 
     public static SequenceFlow getFlowBySource(String source, ArrayList<SequenceFlow> sfs) {

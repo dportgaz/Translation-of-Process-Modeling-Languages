@@ -484,6 +484,7 @@ public class FillBPMNDI_StepThree_lazy {
 
         }
 
+
         return null;
 
     }
@@ -708,52 +709,54 @@ public class FillBPMNDI_StepThree_lazy {
             Edge sequenceFlow = new Edge(sf.getId());
 
             // JSON BUG FINDING :
-            //System.out.println(sf);
-            double xStart = bsSource.getBounds().getX() + bsSource.getBounds().getWidth();
-            double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2;
+            // System.out.println(sf);
+            if (bsSource != null && bsTarget != null) {
+                double xStart = bsSource.getBounds().getX() + bsSource.getBounds().getWidth();
+                double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2;
 
-            double xEnd = bsTarget.getBounds().getX();
-            double yEnd = bsTarget.getBounds().getY() + bsTarget.getBounds().getHeight() / 2;
+                double xEnd = bsTarget.getBounds().getX();
+                double yEnd = bsTarget.getBounds().getY() + bsTarget.getBounds().getHeight() / 2;
 
-            sf.setXStart(xStart);
-            sf.setYStart(yStart);
-            sf.setXEnd(xEnd);
-            sf.setYEnd(yEnd);
+                sf.setXStart(xStart);
+                sf.setYStart(yStart);
+                sf.setXEnd(xEnd);
+                sf.setYEnd(yEnd);
 
-            Element waypointStart = doc.createElement("di:waypoint");
-            waypointStart.setAttribute("x", String.valueOf(xStart));
-            waypointStart.setAttribute("y", String.valueOf(yStart));
+                Element waypointStart = doc.createElement("di:waypoint");
+                waypointStart.setAttribute("x", String.valueOf(xStart));
+                waypointStart.setAttribute("y", String.valueOf(yStart));
 
-            Element waypointEnd = doc.createElement("di:waypoint");
-            waypointEnd.setAttribute("x", String.valueOf(xEnd));
-            waypointEnd.setAttribute("y", String.valueOf(yEnd));
-
-            sequenceFlow.getBpmnElement().appendChild(waypointStart);
-            sequenceFlow.getBpmnElement().appendChild(waypointEnd);
-
-            Element waypointAngleStart;
-            Element waypointAngleEnd;
-            if (elementsAreLoop) {
-                waypointAngleStart = doc.createElement("di:waypoint");
-                waypointAngleStart.setAttribute("x", String.valueOf(xStart));
-                waypointAngleStart.setAttribute("y", String.valueOf(yStart + loopOffset + (multipleLoopOffset * (cntLoops - 1))));
-
-                waypointAngleEnd = doc.createElement("di:waypoint");
-                waypointAngleEnd.setAttribute("x", String.valueOf(xEnd));
-                waypointAngleEnd.setAttribute("y", String.valueOf(yEnd + loopOffset + (multipleLoopOffset * (cntLoops - 1))));
+                Element waypointEnd = doc.createElement("di:waypoint");
+                waypointEnd.setAttribute("x", String.valueOf(xEnd));
+                waypointEnd.setAttribute("y", String.valueOf(yEnd));
 
                 sequenceFlow.getBpmnElement().appendChild(waypointStart);
-                sequenceFlow.getBpmnElement().appendChild(waypointAngleStart);
-                sequenceFlow.getBpmnElement().appendChild(waypointAngleEnd);
                 sequenceFlow.getBpmnElement().appendChild(waypointEnd);
 
-            } else {
-                sequenceFlow.getBpmnElement().appendChild(waypointStart);
-                sequenceFlow.getBpmnElement().appendChild(waypointEnd);
+                Element waypointAngleStart;
+                Element waypointAngleEnd;
+                if (elementsAreLoop) {
+                    waypointAngleStart = doc.createElement("di:waypoint");
+                    waypointAngleStart.setAttribute("x", String.valueOf(xStart));
+                    waypointAngleStart.setAttribute("y", String.valueOf(yStart + loopOffset + (multipleLoopOffset * (cntLoops - 1))));
+
+                    waypointAngleEnd = doc.createElement("di:waypoint");
+                    waypointAngleEnd.setAttribute("x", String.valueOf(xEnd));
+                    waypointAngleEnd.setAttribute("y", String.valueOf(yEnd + loopOffset + (multipleLoopOffset * (cntLoops - 1))));
+
+                    sequenceFlow.getBpmnElement().appendChild(waypointStart);
+                    sequenceFlow.getBpmnElement().appendChild(waypointAngleStart);
+                    sequenceFlow.getBpmnElement().appendChild(waypointAngleEnd);
+                    sequenceFlow.getBpmnElement().appendChild(waypointEnd);
+
+                } else {
+                    sequenceFlow.getBpmnElement().appendChild(waypointStart);
+                    sequenceFlow.getBpmnElement().appendChild(waypointEnd);
+                }
+
+                rootElement.appendChild(sequenceFlow.getBpmnElement());
+
             }
-
-            rootElement.appendChild(sequenceFlow.getBpmnElement());
-
         }
 
 

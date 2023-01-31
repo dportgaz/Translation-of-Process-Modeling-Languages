@@ -14,6 +14,8 @@ public class Predicate {
     String condition;
     Double createdEntityId;
 
+    String name;
+
     public Predicate() {
         this.Id = "Predicate_" + RandomIdGenerator.generateRandomUniqueId(6);
     }
@@ -44,7 +46,7 @@ public class Predicate {
         return "Id= " + this.createdEntityId + "Value= " + this.getCondition();
     }
 
-    public static Predicate parsePredicate(Double id, ArrayList<AbstractFlowsEntity> objectTypeObjects) {
+    public static Predicate createPredicate(Double id, ArrayList<AbstractFlowsEntity> objectTypeObjects) {
 
         for (AbstractFlowsEntity obj : objectTypeObjects) {
             if (obj != null) {
@@ -69,7 +71,7 @@ public class Predicate {
                         }
 
                         Predicate predicate = new Predicate();
-                        predicate.setCondition("[" + att + "]" + " " + expr + " " + innerRight.get("Value"));
+                        predicate.setCondition("[" + att + "]\n" + expr + " " + innerRight.get("Value"));
                         return predicate;
                     }
                 }
@@ -106,5 +108,13 @@ public class Predicate {
 
         }
         return null;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 }

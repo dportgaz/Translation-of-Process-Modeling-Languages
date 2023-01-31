@@ -25,7 +25,7 @@ public class BPMNDiagram {
 
     final double participantX = 70.0;
 
-    double participantWidth = 1700.0;
+    double participantWidth = 1750.0;
 
     double participantHeight = 800.0;
 
@@ -167,16 +167,60 @@ public class BPMNDiagram {
                         ArrayList<Step> steps = fp.getTaskById(e).getSteps();
                         Double subProcessWidth = steps.size() * subProcessWidthOffset;
                         tempBounds = new Bounds(x, y - subProcessOffsetY, subProcessWidth, subProcessHeight);
+                        /*
+                        Shape startEvent = new Shape(fp.getTaskById(e).getStart().getId(), new Bounds(tempBounds.getX(), tempBounds.getY() + subProcessHeight / 2, eventWidth, eventHeight));
+                        startEvent.setBounds();
+                        startEvent.setShapeParticipant();
+                        Shape endEvent = new Shape(fp.getTaskById(e).getEnd().getId(), new Bounds(subProcessWidth, tempBounds.getY() + subProcessHeight / 2, eventWidth, eventHeight));
+                        endEvent.setBounds();
+                        endEvent.setShapeParticipant();
+                        stepShapes.add(startEvent);
+                        rootElement.appendChild(startEvent.getBpmnElement());
+                        stepShapes.add(endEvent);
+                        rootElement.appendChild(endEvent.getBpmnElement());
+
+                         */
                         //TODO: Steps ohne XOR print
-                        Double stepOffset = (subProcessWidth - steps.size() * activityWidth) / (steps.size() + 1);
+                        Double stepOffset = ((subProcessWidth - steps.size() * activityWidth) / (steps.size() + 1));
+
                         for (int i = 0; i < steps.size(); i++) {
                             Step step = steps.get(i);
-                            Bounds stepBounds = new Bounds(x + stepOffset + (stepOffset + activityWidth) * i, y - subProcessOffsetY + subProcessHeight / 4, activityWidth, activityHeight);
-                            Shape stepShape = new Shape(step.getId(), stepBounds);
-                            stepShape.setBounds();
-                            stepShape.setShapeParticipant();
-                            stepShapes.add(stepShape);
-                            rootElement.appendChild(stepShape.getBpmnElement());
+                            if(!step.getMarked()) {
+                                step.setMarked();
+                                Shape stepShape = new Shape(step.getId(), new Bounds(x + stepOffset + (stepOffset + activityWidth) * i, y - subProcessOffsetY + subProcessHeight / 4, activityWidth, activityHeight));
+                                stepShape.setBounds();
+                                stepShape.setShapeParticipant();
+                                stepShapes.add(stepShape);
+                                rootElement.appendChild(stepShape.getBpmnElement());
+                            }
+
+                            for(SequenceFlow flow : fp.getFlows()){
+                                if(flow.getSourceRef().getId().equals(step.getId())){
+                                    Shape gatewayShape = new Shape(flow.getTargetRef().getId(), new Bounds(x + stepOffset + (stepOffset + activityWidth) * (i+1), y - subProcessOffsetY + subProcessHeight/3 - 9, gatewayWidth, gatewayHeight));
+                                    gatewayShape.setBounds();
+                                    gatewayShape.setShapeParticipant();
+                                    stepShapes.add(gatewayShape);
+                                    rootElement.appendChild(gatewayShape.getBpmnElement());
+
+                                    int k = 1;
+                                    for(SequenceFlow flowOuter : fp.getFlows()){
+                                        if(flow.getTargetRef().getId().equals(flowOuter.getSourceRef().getId())){
+                                            Step stepPredicate = (Step) flowOuter.getTargetRef();
+                                            if(!stepPredicate.getMarked()) {
+                                                stepPredicate.setMarked();
+                                                Shape stepShapePredicate = new Shape(stepPredicate.getId(), new Bounds(x + stepOffset + (stepOffset + activityWidth) * (i+2) - 40, y - subProcessOffsetY*k + subProcessHeight/3 + 40, activityWidth, activityHeight));
+                                                stepShapePredicate.setBounds();
+                                                stepShapePredicate.setShapeParticipant();
+                                                stepShapes.add(stepShapePredicate);
+                                                rootElement.appendChild(stepShapePredicate.getBpmnElement());
+                                                k++;
+                                            }
+                                        }
+                                    }
+                                    i+=2;
+                                }
+                            }
+
                         }
                         tempShape = new Shape(e, expandedSubprocess, tempBounds);
                     } else {
@@ -302,6 +346,14 @@ public class BPMNDiagram {
 
         }
 
+        for (Shape bs : stepShapes) {
+
+            if (bs.getElementId().equals(sfId)) {
+                return bs;
+            }
+
+        }
+
         return null;
 
     }
@@ -397,6 +449,8 @@ public class BPMNDiagram {
                     dataObject.setAttribute("id", dStep.getRefId() + "_di");
                     dataObject.setAttribute("bpmnElement", dStep.getRefId());
 
+                    System.out.println(step + " " + bsStep);
+
                     Double xBound = bsStep.getBounds().getX();
                     Double yBound = bsStep.getBounds().getY() + 100;
 
@@ -486,7 +540,7 @@ public class BPMNDiagram {
             Edge sequenceFlow = new Edge(sf.getId());
 
             // JSON BUG FINDING :
-            // System.out.println(sf);
+            System.out.println(sf);
             double xStart = bsSource.getBounds().getX() + bsSource.getBounds().getWidth();
             double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2;
 
@@ -514,11 +568,11 @@ public class BPMNDiagram {
             if (elementsAreLoop) {
                 waypointAngleStart = doc.createElement("di:waypoint");
                 waypointAngleStart.setAttribute("x", String.valueOf(xStart));
-                waypointAngleStart.setAttribute("y", String.valueOf(yStart + loopOffset + (multipleLoopOffset * (cntLoops-1))));
+                waypointAngleStart.setAttribute("y", String.valueOf(yStart + loopOffset + (multipleLoopOffset * (cntLoops - 1))));
 
                 waypointAngleEnd = doc.createElement("di:waypoint");
                 waypointAngleEnd.setAttribute("x", String.valueOf(xEnd));
-                waypointAngleEnd.setAttribute("y", String.valueOf(yEnd + loopOffset + (multipleLoopOffset * (cntLoops-1))));
+                waypointAngleEnd.setAttribute("y", String.valueOf(yEnd + loopOffset + (multipleLoopOffset * (cntLoops - 1))));
 
                 sequenceFlow.getBpmnElement().appendChild(waypointStart);
                 sequenceFlow.getBpmnElement().appendChild(waypointAngleStart);
@@ -533,10 +587,7 @@ public class BPMNDiagram {
             rootElement.appendChild(sequenceFlow.getBpmnElement());
 
         }
-
-
     }
-
 }
 
 

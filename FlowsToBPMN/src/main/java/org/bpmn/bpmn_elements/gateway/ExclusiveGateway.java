@@ -41,6 +41,8 @@ public class ExclusiveGateway implements BPMNElement {
 
     HashSet<SequenceFlow> outgoingMarker;
 
+    String name;
+
     public ExclusiveGateway() {
         this.id = "Gateway_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.incomingMarker = new HashSet<>();
@@ -234,4 +236,5 @@ public class ExclusiveGateway implements BPMNElement {
     public String toString() {
         return this.id;
     }
+
 }

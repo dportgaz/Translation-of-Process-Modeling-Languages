@@ -46,7 +46,7 @@ public class LifecycleTransformation implements Transformation {
 
     public void transform() throws TransformerException {
 
-        boolean adHoc = false;
+        boolean adHoc = true;
         boolean expandedSubprocess = true;
         this.collaboration = new Collaboration();
         collaboration.setParticipants(objectTypeObjects, adHoc, expandedSubprocess);

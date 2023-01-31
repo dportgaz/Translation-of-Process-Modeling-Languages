@@ -1,6 +1,7 @@
 package org.bpmn.process;
 
 import org.bpmn.bpmn_elements.BPMNElement;
+import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.event.IntermediateThrowEvent;
 import org.bpmn.bpmn_elements.flows.Loop;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
@@ -87,27 +88,61 @@ public class FlowsProcessObject {
 
         Parser parser = new Parser();
 
-        this.tasks = parser.parseTasks(this.participant, objects, adHoc, expandedSubprocess);
+        this.tasks = parser.parseTasks(this.participant, objects, adHoc);
         this.loops = parser.parseLoops(this, objects);
         predicates = parser.parsePredicates(objects);
 
         this.startEvent = new StartEvent();
         this.endEvent = new EndEvent();
         this.flows = parser.parseFlows(this, objects);
+
         setDataObjects();
         setAssociations();
         sortProcess();
         setEndTasks();
         addEndEventFlows();
-        if (!adHoc) {
-            setSubProcesses();
-        }
+        setSubProcesses();
         setBeforeAndAfterElements();
         setLoops();
         setGatewaysMachine();
         addFlowsToTasks();
         setGateways();
         setBeforeAndAfterElements();
+        trimSequenceFlows();
+        setBeforeAndAfterElements();
+
+    }
+
+    private void trimSequenceFlows() {
+
+
+        // trim excl --> excl
+
+        HashSet<SequenceFlow> flowsToRemove = new HashSet<>();
+        HashSet<ExclusiveGateway> gatewaysToRemove = new HashSet<>();
+        HashSet<SequenceFlow> flowsToAdd = new HashSet<>();
+        Pattern p = Pattern.compile("^Exclusive_+");
+
+        for (int i = 0; i < flows.size()-1; i++) {
+
+            BPMNElement source = flows.get(i).getSourceRef();
+            BPMNElement target = flows.get(i).getTargetRef();
+            Matcher matchSource = p.matcher(source.getId());
+            Matcher matchTarget = p.matcher(target.getId());
+
+            if(matchSource.find() && matchTarget.find()){
+
+                gatewaysToRemove.add((ExclusiveGateway) source);
+                gatewaysToRemove.add((ExclusiveGateway) target);
+
+                for(int j = i + 1; j < flows.size(); j++) {
+
+                }
+
+            }
+
+
+        }
 
     }
 
@@ -322,7 +357,7 @@ public class FlowsProcessObject {
 
     }
 
-    private void setSubProcesses() {
+    /*private void setSubProcesses() {
 
         for (Task task : tasks) {
             if (task.getIsSubprocess()) {
@@ -331,15 +366,18 @@ public class FlowsProcessObject {
                 subprocesses.add(task);
                 ArrayList<Step> steps = task.getSteps();
                 SequenceFlow sfStart = new SequenceFlow(task.getStart(), steps.get(0));
+                flows.add(sfStart);
                 task.getElement().appendChild(sfStart.getElementSequenceFlow());
                 task.getFlows().add(sfStart);
                 task.getStart().setOutgoing(sfStart);
                 for (int i = 0; i < task.getSteps().size() - 1; i++) {
                     SequenceFlow sf = new SequenceFlow(steps.get(i), steps.get(i + 1));
+                    flows.add(sf);
                     task.getElement().appendChild(sf.getElementSequenceFlow());
                     task.getFlows().add(sf);
                 }
                 SequenceFlow sfEnd = new SequenceFlow(steps.get(task.getSteps().size() - 1), task.getEnd());
+                flows.add(sfEnd);
                 task.getElement().appendChild(task.getEnd().getElement());
                 task.getElement().appendChild(sfEnd.getElementSequenceFlow());
                 task.getFlows().add(sfEnd);
@@ -348,6 +386,36 @@ public class FlowsProcessObject {
         }
 
     }
+     */
+
+    private void setSubProcesses() {
+
+        for (Task task : tasks) {
+            if (task.getIsSubprocess()) {
+                subprocesses.add(task);
+                for (Step step : task.getSteps()) {
+                    for (SequenceFlow flow : flows) {
+                        if (flow.getSourceRef().getId().equals(step.getId())) {
+                            task.getElement().appendChild(flow.getElementSequenceFlow());
+                            task.getFlows().add(flow);
+                        }
+                    }
+                }
+
+                /*
+                SequenceFlow sfEnd = new SequenceFlow(steps.get(task.getSteps().size() - 1), task.getEnd());
+                flows.add(sfEnd);
+                task.getElement().appendChild(task.getEnd().getElement());
+                task.getElement().appendChild(sfEnd.getElementSequenceFlow());
+                task.getFlows().add(sfEnd);
+                task.getEnd().setIncoming(sfEnd);
+
+                 */
+            }
+        }
+
+    }
+
 
     public Task getTaskById(String id) {
         for (Task task : tasks) {
@@ -402,6 +470,7 @@ public class FlowsProcessObject {
         }
 
     }
+
     public void setFlowsElement() {
 
         for (SequenceFlow flow : flows) {
@@ -462,12 +531,12 @@ public class FlowsProcessObject {
 
     }
 
-    public AbstractFlowsEntity findObjectById(Double id, ArrayList<AbstractFlowsEntity> objectTypeObjects) {
+    public AbstractFlowsEntity getObjectById(Double id, ArrayList<AbstractFlowsEntity> objectTypeObjects) {
 
         return objectTypeObjects.stream().filter(obj -> obj != null && obj.getCreatedEntityId() != null && obj.getCreatedEntityId().equals(id)).collect(Collectors.toList()).get(0);
     }
 
-    public Task findTaskById(Double id) {
+    public Task getTaskById(Double id) {
 
         for (Task task : this.tasks) {
 
@@ -475,7 +544,14 @@ public class FlowsProcessObject {
                 return task;
             }
 
+            for (Task subTask : task.getSteps()) {
+                if (subTask.getCreatedEntityId().equals(id)) {
+                    return subTask;
+                }
+            }
+
         }
+
         return null;
     }
 
@@ -598,7 +674,6 @@ public class FlowsProcessObject {
                                     }
                                 }
                             }
-
                         }
                     }
                 }
