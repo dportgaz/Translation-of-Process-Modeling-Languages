@@ -103,6 +103,11 @@ public class FlowsProcessObject {
         addEndEventFlows();
         setSubProcesses();
         setBeforeAndAfterElements();
+
+            System.out.println(flows);
+
+
+
         setLoops();
         setGatewaysMachine();
         addFlowsToTasks();
@@ -189,6 +194,8 @@ public class FlowsProcessObject {
     private void setLoops() {
 
         for (Loop loop : loops) {
+
+            System.out.println(" ::: " + loop);
 
             Task source = loop.getSource();
             Task target = loop.getTarget();

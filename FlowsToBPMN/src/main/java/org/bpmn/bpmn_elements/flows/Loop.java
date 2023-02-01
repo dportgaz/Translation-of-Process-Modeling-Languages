@@ -85,6 +85,6 @@ public class Loop {
 
     @Override
     public String toString() {
-        return "Gateways: " + gateways;
+        return "Loop: " + source + " --> " + target;
     }
 }

@@ -192,6 +192,8 @@ public class Parser {
                 Task sourceTask = object.getTaskById(sourceObjectId);
                 Task targetTask = object.getTaskById(targetObjectId);
 
+                System.out.println(source + " __ " + target + " ____ " + sourceTask + " ____ " + targetTask);
+
                 loops.add(new Loop(sourceTask, targetTask));
 
             }
@@ -300,15 +302,15 @@ public class Parser {
             for (Port port : coordinationPorts) {
                 if (task.getCoordinationStepTypeId().equals(port.getTaskId())) {
                     for (Relation relation : port.getIncoming()) {
-                        if (relation.getTask().getParticipant().equals(task.getParticipant())) {
-                            relation.setRelationType(RelationType.SELF);
-                        } else {
+                        if (!relation.getTask().getParticipant().equals(task.getParticipant())) {
                             relation.setRelationType(RelationType.OTHER);
                             port.incCntOther();
                             task.intCntOtherRelations();
                         }
                     }
-                    task.getPorts().add(port);
+                    if(port.getCntOther() > 0){
+                        task.getPorts().add(port);
+                    }
                 }
             }
         }

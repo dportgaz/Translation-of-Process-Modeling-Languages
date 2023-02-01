@@ -64,6 +64,7 @@ public class CoordinationTransformation implements Transformation {
 
         // fill coordination Process
         coordinationProcess = parser.getCoordinationTasks(coordinationProcessObjects);
+        System.out.println(coordinationProcess);
         // fill Data Model
         for (AbstractRelationship relation : relationsDataModel) {
 
@@ -324,11 +325,9 @@ public class CoordinationTransformation implements Transformation {
 
         }
 
-        // transforms throwing message tasks to sendTasks
         HashSet<Task> marked = new HashSet<>();
 
         for (MessageFlow mf : collaboration.getMessageFlows()) {
-
             Task task = (Task) mf.getSourceRef();
             IntermediateThrowEvent messageThrow = null;
             if (!marked.contains(task)) {
@@ -341,8 +340,6 @@ public class CoordinationTransformation implements Transformation {
                 fp.getFlows().remove(task.getOutgoing());
                 fp.getFlows().add(new SequenceFlow(task, messageThrow));
                 marked.add(task);
-            } else {
-                mf.setSourceRef(task.getSendingMessage());
             }
             if(messageThrow != null) {
                 mf.setSourceRef(messageThrow);
@@ -395,6 +392,8 @@ public class CoordinationTransformation implements Transformation {
             fp.setBeforeAndAfterElements();
       }
 
+        setParallelMultipleMessageStartEvent();
+
         appendXMLElements(definitionsElement);
 
         FillBPMNDI_StepThree_lazy di = new FillBPMNDI_StepThree_lazy();
@@ -402,6 +401,23 @@ public class CoordinationTransformation implements Transformation {
 
         createXml(file);
 
+    }
+
+    private void setParallelMultipleMessageStartEvent(){
+        Pattern p = Pattern.compile("^StartEvent+");
+        Matcher m;
+        for(MessageFlow mf : collaboration.getMessageFlows()){
+            m = p.matcher(mf.getTargetRef().getId());
+            if(m.find()){
+                for(MessageFlow mf2 : collaboration.getMessageFlows()){
+                    m = p.matcher(mf2.getTargetRef().getId());
+                    if(m.find() && !mf2.getTargetRef().getId().equals(mf.getTargetRef().getId())){
+                        ((StartEvent) mf.getTargetRef()).setParallelMessage();
+                        return;
+                    }
+                }
+            }
+        }
     }
 
     private IntermediateCatchEvent setParallelPort(Port port, FlowsProcessObject fp, Task task) {

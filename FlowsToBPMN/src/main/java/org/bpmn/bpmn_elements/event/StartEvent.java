@@ -7,6 +7,7 @@ import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 
@@ -39,6 +40,8 @@ public class StartEvent extends Event{
 
     Lane lane;
 
+    Element startMessage;
+
     public StartEvent() {
         this.id = "StartEvent_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.elementStartEvent = doc.createElement("bpmn:startEvent");
@@ -48,11 +51,21 @@ public class StartEvent extends Event{
     }
 
     public void setMessage(){
-        Element startMessage = doc.createElement("bpmn:messageEventDefinition");
+        startMessage = doc.createElement("bpmn:messageEventDefinition");
         startMessage.setAttribute("id", RandomIdGenerator.generateRandomUniqueId(6));
         this.elementStartEvent.appendChild(startMessage);
     }
 
+    public void setParallelMessage(){
+        this.elementStartEvent.removeChild(startMessage);
+        this.elementStartEvent.setAttribute("parallelMultiple", "true");
+        Element cancelEventDefinition = doc.createElement("bpmn:cancelEventDefinition");
+        cancelEventDefinition.setAttribute("id", "CancelEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
+        Element terminateEventDefinition = doc.createElement("bpmn:terminateEventDefinition");
+        terminateEventDefinition.setAttribute("id", "TerminateEventDefinition_" + RandomIdGenerator.generateRandomUniqueId(6));
+        this.elementStartEvent.appendChild(cancelEventDefinition);
+        this.elementStartEvent.appendChild(terminateEventDefinition);
+    }
     public void setUser(Lane lane) {
         this.lane = lane;
     }
