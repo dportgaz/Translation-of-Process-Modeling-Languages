@@ -28,8 +28,8 @@ import static org.bpmn.transformation.FlowsToBpmn.doc;
 
 public class FillBPMNDI_StepThree_lazy {
     final double participantX = 70.0;
-    double participantWidth = 1700.0;
-    double participantHeight = 600.0;
+    double participantWidth = 2000.0;
+    double participantHeight = 800.0;
 
     double participantYInc;
 

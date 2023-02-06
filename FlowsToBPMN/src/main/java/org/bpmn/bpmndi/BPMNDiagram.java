@@ -25,7 +25,7 @@ public class BPMNDiagram {
 
     final double participantX = 70.0;
 
-    double participantWidth = 1750.0;
+    double participantWidth = 2300.0;
 
     double participantHeight = 800.0;
 
