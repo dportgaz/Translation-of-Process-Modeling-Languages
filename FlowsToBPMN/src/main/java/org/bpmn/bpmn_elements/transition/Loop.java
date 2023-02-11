@@ -1,6 +1,5 @@
-package org.bpmn.bpmn_elements.flows;
+package org.bpmn.bpmn_elements.transition;
 
-import org.bpmn.bpmn_elements.flows.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.task.Task;
 

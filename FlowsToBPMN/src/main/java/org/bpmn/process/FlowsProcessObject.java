@@ -1,15 +1,14 @@
 package org.bpmn.process;
 
 import org.bpmn.bpmn_elements.BPMNElement;
-import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.event.IntermediateThrowEvent;
-import org.bpmn.bpmn_elements.flows.Loop;
+import org.bpmn.bpmn_elements.transition.Loop;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
-import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.transition.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Permission;
@@ -80,7 +79,6 @@ public class FlowsProcessObject {
         this.adHoc = adHoc;
         this.expandedSubprocess = expandedSubprocess;
         setFlowsProcess();
-        //setElementFlowsProcess();
 
     }
 
@@ -103,10 +101,6 @@ public class FlowsProcessObject {
         addEndEventFlows();
         setSubProcesses();
         setBeforeAndAfterElements();
-
-            System.out.println(flows);
-
-
 
         setLoops();
         setGatewaysMachine();
@@ -194,8 +188,6 @@ public class FlowsProcessObject {
     private void setLoops() {
 
         for (Loop loop : loops) {
-
-            System.out.println(" ::: " + loop);
 
             Task source = loop.getSource();
             Task target = loop.getTarget();

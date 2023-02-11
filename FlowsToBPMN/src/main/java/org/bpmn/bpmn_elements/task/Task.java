@@ -11,7 +11,7 @@ import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
-import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.transition.SequenceFlow;
 import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
@@ -19,7 +19,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

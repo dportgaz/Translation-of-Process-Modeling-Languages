@@ -1,8 +1,8 @@
 package org.bpmn.transformation;
 
-import org.bpmn.bpmn_elements.flows.Loop;
+import org.bpmn.bpmn_elements.transition.Loop;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
-import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.transition.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;

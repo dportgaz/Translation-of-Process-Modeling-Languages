@@ -1,7 +1,7 @@
 package org.bpmn.bpmn_elements.collaboration;
 
 import org.bpmn.bpmn_elements.BPMNElement;
-import org.bpmn.bpmn_elements.flows.MessageFlow;
+import org.bpmn.bpmn_elements.transition.MessageFlow;
 import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.participant.Pool;
@@ -67,7 +67,6 @@ public class Collaboration {
                     String participantName = (String) obj.getParameters().get(0);
 
                     // work around for json double entry bug in flows json
-                    // TODO: JSON BUG
                     if (!containsParticipant(participantName)) {
 
                         Pool pool = new Pool(this, key, participantName);

@@ -1,4 +1,4 @@
-package org.bpmn.bpmn_elements.flows;
+package org.bpmn.bpmn_elements.transition;
 
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.task.Task;
@@ -6,7 +6,6 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import static org.bpmn.transformation.FlowsToBpmn.doc;
 

@@ -1,4 +1,4 @@
-package org.bpmn.bpmn_elements.flows;
+package org.bpmn.bpmn_elements.transition;
 
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.randomidgenerator.RandomIdGenerator;

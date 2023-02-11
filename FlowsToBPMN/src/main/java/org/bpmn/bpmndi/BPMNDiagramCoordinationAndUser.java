@@ -1,15 +1,15 @@
 package org.bpmn.bpmndi;
 
 import org.bpmn.bpmn_elements.BPMNElement;
-import org.bpmn.bpmn_elements.flows.Loop;
+import org.bpmn.bpmn_elements.transition.Loop;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
-import org.bpmn.bpmn_elements.flows.MessageFlow;
-import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.transition.MessageFlow;
+import org.bpmn.bpmn_elements.transition.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.process.FlowsProcessObject;
@@ -26,9 +26,12 @@ import java.util.regex.Pattern;
 import static org.bpmn.bpmn_elements.collaboration.Collaboration.pools;
 import static org.bpmn.transformation.FlowsToBpmn.doc;
 
-public class FillBPMNDI_StepThree_lazy {
+public class BPMNDiagramCoordinationAndUser {
+
     final double participantX = 70.0;
+
     double participantWidth = 2000.0;
+
     double participantHeight = 800.0;
 
     double participantYInc;
@@ -38,6 +41,7 @@ public class FillBPMNDI_StepThree_lazy {
     final double loopOffset = 180.0;
 
     final double multipleLoopOffset = 10.0;
+
     final double startEventX = 200.0;
 
     final double eventWidth = 36.0;

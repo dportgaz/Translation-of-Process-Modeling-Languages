@@ -2,7 +2,7 @@ package org.bpmn.bpmn_elements.event;
 
 import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.collaboration.participant.Lane;
-import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.transition.SequenceFlow;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
 

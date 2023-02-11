@@ -6,11 +6,11 @@ import org.bpmn.bpmn_elements.collaboration.participant.Pool;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
-import org.bpmn.bpmn_elements.flows.MessageFlow;
-import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.transition.MessageFlow;
+import org.bpmn.bpmn_elements.transition.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.task.Task;
-import org.bpmn.bpmndi.FillBPMNDI_StepThree_lazy;
+import org.bpmn.bpmndi.BPMNDiagramCoordinationAndUser;
 import org.bpmn.parse_json.Parser;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.w3c.dom.Element;
@@ -46,7 +46,7 @@ public class UserAssignmentTransformation implements Transformation {
 
         appendXMLElements(definitionsElement);
 
-        FillBPMNDI_StepThree_lazy di = new FillBPMNDI_StepThree_lazy();
+        BPMNDiagramCoordinationAndUser di = new BPMNDiagramCoordinationAndUser();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, true, false, true);
 
         createXml(file);

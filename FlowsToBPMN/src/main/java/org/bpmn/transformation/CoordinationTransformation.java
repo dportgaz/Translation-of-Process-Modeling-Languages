@@ -8,11 +8,11 @@ import org.bpmn.bpmn_elements.event.EndEvent;
 import org.bpmn.bpmn_elements.event.IntermediateCatchEvent;
 import org.bpmn.bpmn_elements.event.IntermediateThrowEvent;
 import org.bpmn.bpmn_elements.event.StartEvent;
-import org.bpmn.bpmn_elements.flows.MessageFlow;
-import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.transition.MessageFlow;
+import org.bpmn.bpmn_elements.transition.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.ExclusiveGateway;
 import org.bpmn.bpmn_elements.task.Task;
-import org.bpmn.bpmndi.FillBPMNDI_StepThree_lazy;
+import org.bpmn.bpmndi.BPMNDiagramCoordinationAndUser;
 import org.bpmn.flows_entities.AbstractFlowsEntity;
 import org.bpmn.flows_entities.AbstractRelationship;
 import org.bpmn.flows_process_model.Port;
@@ -64,7 +64,6 @@ public class CoordinationTransformation implements Transformation {
 
         // fill coordination Process
         coordinationProcess = parser.getCoordinationTasks(coordinationProcessObjects);
-        System.out.println(coordinationProcess);
         // fill Data Model
         for (AbstractRelationship relation : relationsDataModel) {
 
@@ -396,7 +395,7 @@ public class CoordinationTransformation implements Transformation {
 
         appendXMLElements(definitionsElement);
 
-        FillBPMNDI_StepThree_lazy di = new FillBPMNDI_StepThree_lazy();
+        BPMNDiagramCoordinationAndUser di = new BPMNDiagramCoordinationAndUser();
         di.fillBPMNDI(bpmnDiagramID, definitionsElement, collaboration, true, false, false);
 
         createXml(file);

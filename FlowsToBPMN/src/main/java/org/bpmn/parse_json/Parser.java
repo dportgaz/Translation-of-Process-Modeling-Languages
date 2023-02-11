@@ -1,13 +1,13 @@
 package org.bpmn.parse_json;
 
-import org.bpmn.bpmn_elements.flows.Loop;
+import org.bpmn.bpmn_elements.transition.Loop;
 import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.flows_process_model.Port;
 import org.bpmn.flows_process_model.Relation;
 import org.bpmn.flows_process_model.RelationType;
 import org.bpmn.bpmn_elements.collaboration.participant.Lane;
 import org.bpmn.bpmn_elements.event.StartEvent;
-import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.transition.SequenceFlow;
 import org.bpmn.bpmn_elements.gateway.Predicate;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.flows_entities.AbstractFlowsEntity;
@@ -20,8 +20,8 @@ import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.bpmn.bpmn_elements.flows.SequenceFlow.getFlowBySource;
-import static org.bpmn.bpmn_elements.flows.SequenceFlow.getFlowByTarget;
+import static org.bpmn.bpmn_elements.transition.SequenceFlow.getFlowBySource;
+import static org.bpmn.bpmn_elements.transition.SequenceFlow.getFlowByTarget;
 import static org.bpmn.bpmn_elements.gateway.Predicate.getPredicate;
 import static org.bpmn.bpmn_elements.gateway.Predicate.createPredicate;
 import static org.bpmn.transformation.LifecycleTransformation.allTasks;
@@ -117,25 +117,16 @@ public class Parser {
                     target = (Double) targetTemp.getParameters().get(0);
                 }
 
-                System.out.println(source + " AAA " + target);
-
                 Double sourceObjectId = (Double) object.getObjectById(source, objects).getParameters().get(0);
                 Double targetObjectId = (Double) object.getObjectById(target, objects).getParameters().get(0);
                 if (!sourceObjectId.equals(targetObjectId)) {
 
-                    System.out.println(sourceObjectId + " BBB " + targetObjectId);
-
                     Task taskSource = object.getTaskById(sourceObjectId);
                     Task taskTarget = object.getTaskById(targetObjectId);
-
-
-                    System.out.println(taskSource + " CCC " + taskTarget);
-
 
                     if (taskSource != null && taskTarget != null) {
                         SequenceFlow sf = new SequenceFlow(taskSource, taskTarget);
                         flows.add(sf);
-                        System.out.println(sf + " FFF ");
                     }
                 }
 
@@ -167,7 +158,6 @@ public class Parser {
                 if (taskSource != null && taskTarget != null && sourceTemp != null) {
                     SequenceFlow sf = new SequenceFlow(taskSource, taskTarget);
                     flows.add(sf);
-                    System.out.println(sf + " FFF ");
                 }
             }
 
@@ -191,8 +181,6 @@ public class Parser {
 
                 Task sourceTask = object.getTaskById(sourceObjectId);
                 Task targetTask = object.getTaskById(targetObjectId);
-
-                System.out.println(source + " __ " + target + " ____ " + sourceTask + " ____ " + targetTask);
 
                 loops.add(new Loop(sourceTask, targetTask));
 

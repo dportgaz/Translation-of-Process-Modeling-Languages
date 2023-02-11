@@ -1,10 +1,10 @@
 package org.bpmn.bpmndi;
 
 import org.bpmn.bpmn_elements.BPMNElement;
-import org.bpmn.bpmn_elements.flows.Loop;
+import org.bpmn.bpmn_elements.transition.Loop;
 import org.bpmn.bpmn_elements.association.DataInputAssociation;
 import org.bpmn.bpmn_elements.dataobject.DataObject;
-import org.bpmn.bpmn_elements.flows.SequenceFlow;
+import org.bpmn.bpmn_elements.transition.SequenceFlow;
 import org.bpmn.bpmn_elements.task.Step;
 import org.bpmn.bpmn_elements.task.Task;
 import org.bpmn.randomidgenerator.RandomIdGenerator;
@@ -449,8 +449,6 @@ public class BPMNDiagram {
                     dataObject.setAttribute("id", dStep.getRefId() + "_di");
                     dataObject.setAttribute("bpmnElement", dStep.getRefId());
 
-                    System.out.println(step + " " + bsStep);
-
                     Double xBound = bsStep.getBounds().getX();
                     Double yBound = bsStep.getBounds().getY() + 100;
 
@@ -540,7 +538,7 @@ public class BPMNDiagram {
             Edge sequenceFlow = new Edge(sf.getId());
 
             // JSON BUG FINDING :
-            System.out.println(sf);
+            // System.out.println(sf);
             double xStart = bsSource.getBounds().getX() + bsSource.getBounds().getWidth();
             double yStart = bsSource.getBounds().getY() + bsSource.getBounds().getHeight() / 2;
 

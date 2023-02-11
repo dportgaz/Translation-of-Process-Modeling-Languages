@@ -19,7 +19,7 @@ public class Prototype {
         FlowsToBpmn flowsToBpmn = new FlowsToBpmn();
         flowsToBpmn.transform(new FlowsProcessModel(flowsJSON));
 
-        System.out.println("Transforming Flows process model...");
+        System.out.println("Transforming PHILharmonicFlows process model...");
         System.out.println("Transformation complete.");
     }
 } 
