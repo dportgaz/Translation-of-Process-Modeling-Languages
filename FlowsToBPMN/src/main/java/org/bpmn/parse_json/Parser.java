@@ -41,10 +41,10 @@ public class Parser {
 
             if (obj != null && obj.getMethodName().equals("UpdateStateType")) {
 
-                String taskName = "Execute " + obj.getParameters().get(1);
+                String stateName = (String) obj.getParameters().get(1);
                 Double updatedEntityId = (Double) obj.getParameters().get(0);
 
-                Task task = new Task(updatedEntityId, taskName, participant, objects, adHoc);
+                Task task = new Task(updatedEntityId, stateName, participant, objects, adHoc);
                 ArrayList<Step> subTasks = new ArrayList<>();
 
                 for (AbstractFlowsEntity step : objects) {

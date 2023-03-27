@@ -635,7 +635,7 @@
         "Id": -6349718936674116559,
         "MethodName": "UpdateName",
         "Parameters": [
-          "Diagnosis and Treatment"
+          "Patient"
         ],
         "UpdatedEntityId": null
       },
@@ -809,7 +809,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -3344536894533373943,
-          "Admission"
+          "Accepted"
         ],
         "UpdatedEntityId": -3344536894533373943
       },
@@ -963,7 +963,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -5825028434933750573,
-          "Examination"
+          "Examined"
         ],
         "UpdatedEntityId": -5825028434933750573
       },
@@ -1011,7 +1011,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           2815538867222134253,
-          "Diagnosis"
+          "Diagnosed"
         ],
         "UpdatedEntityId": 2815538867222134253
       },
@@ -1049,7 +1049,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -1369321203080599110,
-          "Treatment"
+          "Treated"
         ],
         "UpdatedEntityId": -1369321203080599110
       },
@@ -1077,7 +1077,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           1264376651458342897,
-          "Discharge"
+          "Discharged"
         ],
         "UpdatedEntityId": 1264376651458342897
       },
@@ -1168,7 +1168,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -7385640651944440938,
-          "Disease Selection"
+          "Selected"
         ],
         "UpdatedEntityId": -7385640651944440938
       },
@@ -1206,7 +1206,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -2719150840692265894,
-          "Treatment Preparation"
+          "Prepared"
         ],
         "UpdatedEntityId": -2719150840692265894
       },
@@ -1244,7 +1244,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           7875284446746347343,
-          "Treatment"
+          "Enacted"
         ],
         "UpdatedEntityId": 7875284446746347343
       },
@@ -1282,7 +1282,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           5565727052705630397,
-          "Confirmation"
+          "Confirmed"
         ],
         "UpdatedEntityId": 5565727052705630397
       },
@@ -1376,7 +1376,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           4244702751412052985,
-          "Diagnosis Selection"
+          "Selected"
         ],
         "UpdatedEntityId": 4244702751412052985
       },
@@ -1423,7 +1423,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           5178487546025434767,
-          "Test Preparation"
+          "Prepared"
         ],
         "UpdatedEntityId": 5178487546025434767
       },
@@ -1461,7 +1461,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -5660089957064341089,
-          "Analysis"
+          "Analyzed"
         ],
         "UpdatedEntityId": -5660089957064341089
       },
@@ -1577,7 +1577,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           5132290458426948564,
-          "Positive Result Notification"
+          "Notified positive"
         ],
         "UpdatedEntityId": 5132290458426948564
       },
@@ -1625,7 +1625,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           6800278005524676986,
-          "Negative Result Notification"
+          "Notified negative"
         ],
         "UpdatedEntityId": 6800278005524676986
       },

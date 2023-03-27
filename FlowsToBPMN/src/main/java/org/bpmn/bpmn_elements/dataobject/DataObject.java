@@ -103,11 +103,7 @@ public class DataObject {
         this.elementDataObject.setAttribute("id", this.refId);
 
         String obj = associatedTask.getParticipant().getName();
-        String temp = associatedTask.getName().replaceAll(obj, "");
-        temp = associatedTask.getName().replaceAll("Execute ", "");
-        String state = temp.substring(0, temp.length());
-
-        this.elementDataObject.setAttribute("name", obj + " " + "[" + state + "]");
+        this.elementDataObject.setAttribute("name", obj + " " + "[" + associatedTask.getStateName() + "]");
     }
 
     private void setElementDataObjectSingle() {
@@ -133,7 +129,7 @@ public class DataObject {
 
         this.elementDataObject.setAttribute("dataObjectRef", this.id);
         this.elementDataObject.setAttribute("id", this.refId);
-        this.elementDataObject.setAttribute("name", name);
+        this.elementDataObject.setAttribute("name", associatedTask.getParticipant().getName() + ".\n" + name);
 
     }
 

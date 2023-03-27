@@ -289,7 +289,6 @@ public class CoordinationTransformation implements Transformation {
 
         }
 
-        // trim event --> event; braucht man vielleicht/wahrscheinlich für backwards transitions mit predicates
         for (Participant object : Participants) {
 
             ArrayList<SequenceFlow> flows = object.getProcessRef().getFlows();
@@ -391,6 +390,44 @@ public class CoordinationTransformation implements Transformation {
             fp.setBeforeAndAfterElements();
       }
 
+        // subsequent: exclusive to event-based where needed
+        for(Participant object: Participants){
+
+            FlowsProcessObject fp = object.getProcessRef();
+            fp.setBeforeAndAfterElements();
+            Pattern messageEvent = Pattern.compile("^Event_+");
+            Pattern exclusiveGateway = Pattern.compile("^Gateway_+");
+            int messageTargetCount = 0;
+
+            for(int i = 0; i < fp.getFlows().size()-1; i++){
+                SequenceFlow firstFlow = fp.getFlows().get(i);
+                Matcher gateWayMatcher = exclusiveGateway.matcher(firstFlow.getSourceRef().getId());
+                Matcher messageEventMatcher = messageEvent.matcher(firstFlow.getTargetRef().getId());
+
+                if(gateWayMatcher.find() && messageEventMatcher.find()) {
+                    messageTargetCount++;
+                    ExclusiveGateway gateway = (ExclusiveGateway) firstFlow.getSourceRef();
+                    for (int j = i + 1; j < fp.getFlows().size(); j++) {
+                        SequenceFlow secondFlow = fp.getFlows().get(j);
+                        if(secondFlow.getSourceRef().getId().equals(firstFlow.getSourceRef().getId())) {
+                            messageEventMatcher = messageEvent.matcher(secondFlow.getTargetRef().getId());
+                            if (messageEventMatcher.find()) {
+                                messageTargetCount++;
+                            } else {
+                                messageTargetCount--;
+                            }
+                        }
+                    }
+                    if(messageTargetCount >= 2){
+                        gateway.setEventBased();
+                        messageTargetCount = 0;
+                    }
+                }
+            }
+
+            fp.setBeforeAndAfterElements();
+        }
+
         setParallelMultipleMessageStartEvent();
 
         appendXMLElements(definitionsElement);
@@ -410,7 +447,7 @@ public class CoordinationTransformation implements Transformation {
             if(m.find()){
                 for(MessageFlow mf2 : collaboration.getMessageFlows()){
                     m = p.matcher(mf2.getTargetRef().getId());
-                    if(m.find() && !mf2.getTargetRef().getId().equals(mf.getTargetRef().getId())){
+                    if(m.find() && !mf2.getId().equals(mf.getId()) && mf2.getTargetRef().getId().equals(mf.getTargetRef().getId())){
                         ((StartEvent) mf.getTargetRef()).setParallelMessage();
                         return;
                     }
@@ -424,7 +461,7 @@ public class CoordinationTransformation implements Transformation {
         IntermediateCatchEvent messageCatch = null;
         if (port.getCntOther() == 1) {
 
-            // find other relation for messageflow
+            // find other relation for message flows
             for (Relation relation : port.getIncoming()) {
 
                 if (relation.getRelationType() == RelationType.OTHER) {
@@ -437,7 +474,7 @@ public class CoordinationTransformation implements Transformation {
 
             messageCatch = new IntermediateCatchEvent(true, task.getUser());
 
-            // find other relations for messageflows
+            // find other relations for message flows
             for (Relation relation : port.getIncoming()) {
 
                 if (relation.getRelationType() == RelationType.OTHER) {

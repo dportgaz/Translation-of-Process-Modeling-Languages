@@ -41,10 +41,6 @@ public class MessageFlow {
         this.elementMessageFlow.setAttribute("sourceRef", sourceRef.getId());
     }
 
-    public Element getElementMessageFlow() {
-        return elementMessageFlow;
-    }
-
     public void setTargetRef(BPMNElement targetRef) {
         this.targetRef = targetRef;
         this.elementMessageFlow.setAttribute("targetRef", targetRef.getId());

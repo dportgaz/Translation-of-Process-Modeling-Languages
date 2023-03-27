@@ -14,7 +14,7 @@ public class Prototype {
             throws ParserConfigurationException, TransformerException, FileNotFoundException {
 
         // Absolute path must be adjusted by user. E.g., user wants to transform the process 'Recruitment'.
-        String flowsJSON = "FlowsToBPMN/src/resources/philharmonicflows/Recruitment.json";
+        String flowsJSON = "FlowsToBPMN/src/resources/philharmonicflows/DiagnosisAndTreatment.json";
 
         FlowsToBpmn flowsToBpmn = new FlowsToBpmn();
         flowsToBpmn.transform(new FlowsProcessModel(flowsJSON));

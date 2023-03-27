@@ -17,6 +17,11 @@ import org.bpmn.randomidgenerator.RandomIdGenerator;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import simplenlg.framework.*;
+import simplenlg.lexicon.*;
+import simplenlg.realiser.english.*;
+import simplenlg.phrasespec.*;
+import simplenlg.features.*;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -39,6 +44,8 @@ public class Task implements BPMNElement {
     SequenceFlow incoming;
 
     Element elementIncoming;
+
+    String stateName;
 
     SequenceFlow outgoing;
 
@@ -118,9 +125,9 @@ public class Task implements BPMNElement {
         this.permission = permissionForStep(name);
         String permission = stepName();
         this.name = permission + " " + name;
-        this.dataObject = new DataObject(this, name);
         this.participant = participant;
         this.participantName = name;
+        this.dataObject = new DataObject(this, name);
         this.computationStep = computationStep;
         if (computationStep) {
             this.elementTask = doc.createElement("bpmn:serviceTask");
@@ -133,16 +140,6 @@ public class Task implements BPMNElement {
         this.elementTask.appendChild(this.elementIncoming);
         this.elementOutgoing = doc.createElement("bpmn:outgoing");
         this.elementTask.appendChild(this.elementOutgoing);
-    }
-
-    public void setSendTask() {
-        Node temp = this.elementTask.getFirstChild();
-        this.isSendTask = true;
-        this.id = "SendActivity_" + RandomIdGenerator.generateRandomUniqueId(6);
-        this.elementTask = doc.createElement("bpmn:sendTask");
-        this.elementTask.setAttribute("id", this.id);
-        this.elementTask.setAttribute("name", this.name);
-        this.elementTask.appendChild(temp);
     }
 
     private Permission permissionForStep(String name) {
@@ -199,15 +196,31 @@ public class Task implements BPMNElement {
         return lane;
     }
 
-    public Task(Double createdEntityId, String name, Participant participant, ArrayList<AbstractFlowsEntity> objects, boolean adHoc) {
+    public Task(Double createdEntityId, String stateName, Participant participant, ArrayList<AbstractFlowsEntity> objects, boolean adHoc) {
         this.id = "Activity_" + RandomIdGenerator.generateRandomUniqueId(6);
         this.createdEntityId = createdEntityId;
-        this.name = name;
+        this.stateName = stateName;
+
+        Lexicon lexicon = Lexicon.getDefaultLexicon();
+        NLGFactory nlgFactory = new NLGFactory(lexicon);
+        SPhraseSpec p = nlgFactory.createClause();
+        Realiser realiser = new Realiser(lexicon);
+
+        p.setVerb(stateName.toLowerCase());
+        p.setObject(participant.getName());
+        p.setFeature(Feature.FORM, Form.BARE_INFINITIVE);
+        String infinitiveName = realiser.realiseSentence(p);
+
+        this.name = infinitiveName.substring(0, infinitiveName.length()-1);
         this.participant = participant;
         this.dataObject = new DataObject(this);
         this.adHoc = adHoc;
         //this.steps = setSteps(objects);
         //setElement();
+    }
+
+    public String getStateName() {
+        return stateName;
     }
 
     public ArrayList<Port> getPorts() {
@@ -252,20 +265,8 @@ public class Task implements BPMNElement {
         }
     }
 
-    public ArrayList<Task> getBeforeTask() {
-        return beforeTask;
-    }
-
-    public ArrayList<Task> getAfterTask() {
-        return afterTask;
-    }
-
     public void setStart(StartEvent start) {
         this.start = start;
-    }
-
-    public StartEvent getStart() {
-        return start;
     }
 
     @Override
@@ -316,15 +317,6 @@ public class Task implements BPMNElement {
         this.isEndTask = true;
     }
 
-    /*
-        private addStepsToTask() {
-            for (Step step : steps) {
-                this.elementTask.appendChild(step.getElementTask());
-            }
-        }
-
-
-         */
     @Override
     public int hashCode() {
         final int prime = 31;

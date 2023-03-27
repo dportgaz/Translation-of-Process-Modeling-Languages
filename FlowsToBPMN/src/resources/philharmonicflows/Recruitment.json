@@ -1170,7 +1170,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           8403451714358761985,
-          "Preparation"
+          "Prepared"
         ],
         "UpdatedEntityId": 8403451714358761985
       },
@@ -1248,7 +1248,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           7580319268532151335,
-          "Applicant Assessment"
+          "Assessed"
         ],
         "UpdatedEntityId": 7580319268532151335
       },
@@ -1383,7 +1383,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           3046652504108637961,
-          "Confirmation"
+          "Confirmed"
         ],
         "UpdatedEntityId": 3046652504108637961
       },
@@ -1558,7 +1558,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           6479781507062103835,
-          "Reject Proposed"
+          "Rejected"
         ],
         "UpdatedEntityId": 6479781507062103835
       },
@@ -1596,7 +1596,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           3189199733057681839,
-          "Invite Proposed"
+          "Invited"
         ],
         "UpdatedEntityId": 3189199733057681839
       },
@@ -1828,7 +1828,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -1909749795613153713,
-          "Preparation"
+          "Prepared"
         ],
         "UpdatedEntityId": -1909749795613153713
       },
@@ -1847,7 +1847,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -7279995151824194361,
-          "Appointment Confirmation"
+          "Confirmed "
         ],
         "UpdatedEntityId": -7279995151824194361
       },
@@ -2156,7 +2156,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -7182540005760534709,
-          "Reject Proposed"
+          "Rejected"
         ],
         "UpdatedEntityId": -7182540005760534709
       },
@@ -2184,7 +2184,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -7181361630924649077,
-          "Hire Proposed"
+          "Hired"
         ],
         "UpdatedEntityId": -7181361630924649077
       },
@@ -2428,7 +2428,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -5196353745074254794,
-          "Preparation"
+          "Prepared"
         ],
         "UpdatedEntityId": -5196353745074254794
       },
@@ -2794,7 +2794,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -3447549256737188746,
-          "Position Vacant"
+          "Abandoned"
         ],
         "UpdatedEntityId": -3447549256737188746
       },
@@ -2813,7 +2813,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -5746586811596953039,
-          "Position Filled"
+          "Filled"
         ],
         "UpdatedEntityId": -5746586811596953039
       },
@@ -3078,7 +3078,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           3316187700374918976,
-          "Creation"
+          "Created"
         ],
         "UpdatedEntityId": 3316187700374918976
       },

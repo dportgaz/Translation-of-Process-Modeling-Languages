@@ -704,7 +704,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           3821103650883626439,
-          "Creation"
+          "Created"
         ],
         "UpdatedEntityId": 3821103650883626439
       },
@@ -770,7 +770,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           6209782385280947496,
-          "Unassign Tutorial"
+          "Assigned"
         ],
         "UpdatedEntityId": 6209782385280947496
       },
@@ -828,7 +828,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           7366249113333939450,
-          "Assign Tutorial"
+          "Cancel"
         ],
         "UpdatedEntityId": 7366249113333939450
       },
@@ -876,7 +876,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -4776076936588729938,
-          "Created"
+          "Finished"
         ],
         "UpdatedEntityId": -4776076936588729938
       },
@@ -1067,7 +1067,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -4002192297805815254,
-          "Creation"
+          "Finished"
         ],
         "UpdatedEntityId": -4002192297805815254
       },
@@ -1143,7 +1143,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -2348978411018248933,
-          "Active"
+          "Completed"
         ],
         "UpdatedEntityId": -2348978411018248933
       },
@@ -1774,7 +1774,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -8046770946989546871,
-          "Rated"
+          "Finished"
         ],
         "UpdatedEntityId": -8046770946989546871
       },
@@ -2629,7 +2629,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -2673635994207941327,
-          "Publish"
+          "Published"
         ],
         "UpdatedEntityId": -2673635994207941327
       },
@@ -2667,7 +2667,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           1569720790458659500,
-          "Past Due"
+          "Completed"
         ],
         "UpdatedEntityId": 1569720790458659500
       },
@@ -2705,7 +2705,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           2466773048023399632,
-          "Completed"
+          "Finished"
         ],
         "UpdatedEntityId": 2466773048023399632
       },
