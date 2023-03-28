@@ -828,7 +828,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           7366249113333939450,
-          "Cancel"
+          "Canceled"
         ],
         "UpdatedEntityId": 7366249113333939450
       },
@@ -1067,7 +1067,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -4002192297805815254,
-          "Finished"
+          "Created"
         ],
         "UpdatedEntityId": -4002192297805815254
       },
@@ -1143,7 +1143,7 @@
         "MethodName": "UpdateStateType",
         "Parameters": [
           -2348978411018248933,
-          "Completed"
+          "Finished"
         ],
         "UpdatedEntityId": -2348978411018248933
       },

@@ -583,7 +583,7 @@
         "Id": -2838373144713752712,
         "MethodName": "UpdateName",
         "Parameters": [
-          "Patient"
+          "Person"
         ],
         "UpdatedEntityId": null
       },
@@ -602,7 +602,7 @@
         "MethodName": "UpdateGlobalRoleName",
         "Parameters": [
           5548173610282625441,
-          "Patient"
+          "Person"
         ],
         "UpdatedEntityId": 5548173610282625441
       },

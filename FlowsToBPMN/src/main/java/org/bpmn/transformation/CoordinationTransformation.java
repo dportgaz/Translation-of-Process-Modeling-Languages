@@ -398,7 +398,7 @@ public class CoordinationTransformation implements Transformation {
             fp.setBeforeAndAfterElements();
             Pattern messageEvent = Pattern.compile("^Event_+");
             Pattern exclusiveGateway = Pattern.compile("^Gateway_+");
-            int messageTargetCount = 0;
+            int messageTargetCount = 1;
 
             for(int i = 0; i < fp.getFlows().size()-1; i++){
                 SequenceFlow firstFlow = fp.getFlows().get(i);
@@ -406,7 +406,6 @@ public class CoordinationTransformation implements Transformation {
                 Matcher messageEventMatcher = messageEvent.matcher(firstFlow.getTargetRef().getId());
 
                 if(gateWayMatcher.find() && messageEventMatcher.find()) {
-                    messageTargetCount++;
                     ExclusiveGateway gateway = (ExclusiveGateway) firstFlow.getSourceRef();
                     for (int j = i + 1; j < fp.getFlows().size(); j++) {
                         SequenceFlow secondFlow = fp.getFlows().get(j);
@@ -422,7 +421,7 @@ public class CoordinationTransformation implements Transformation {
                     if(messageTargetCount >= 2){
                         gateway.setEventBased();
                         System.out.println(gateway.getId());
-                        messageTargetCount = 0;
+                        messageTargetCount = 1;
                     }
                 }
             }
