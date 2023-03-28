@@ -55,7 +55,6 @@ public class ExclusiveGateway implements BPMNElement {
         return this.parallelGate;
     }
 
-    // TODO: create event based class?
     public ExclusiveGateway(boolean eventBased) {
         this.eventBased = eventBased;
         this.incomingMarker = new HashSet<>();

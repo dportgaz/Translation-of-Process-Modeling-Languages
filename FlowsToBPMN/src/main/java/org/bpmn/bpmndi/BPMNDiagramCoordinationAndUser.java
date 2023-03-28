@@ -103,7 +103,7 @@ public class BPMNDiagramCoordinationAndUser {
         // extract in method to recognize if activity, event or gateway
         Pattern activityPattern = Pattern.compile("Activity_+");
         Pattern eventPattern = Pattern.compile("Event_+");
-        Pattern gatewayPattern = Pattern.compile("Gateway_+");
+        Pattern gatewayPattern = Pattern.compile(".*Gateway_+");
         Matcher activityMatcher = activityPattern.matcher(e);
         Matcher eventMatcher = eventPattern.matcher(e);
         Matcher gatewayMatcher = gatewayPattern.matcher(e);

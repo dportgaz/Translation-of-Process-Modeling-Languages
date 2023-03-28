@@ -1,5 +1,6 @@
 package org.bpmn.transformation;
 
+import org.bpmn.bpmn_elements.BPMNElement;
 import org.bpmn.bpmn_elements.collaboration.Collaboration;
 import org.bpmn.bpmn_elements.collaboration.participant.Pool;
 import org.bpmn.bpmn_elements.collaboration.participant.Participant;
@@ -420,12 +421,31 @@ public class CoordinationTransformation implements Transformation {
                     }
                     if(messageTargetCount >= 2){
                         gateway.setEventBased();
+                        System.out.println(gateway.getId());
                         messageTargetCount = 0;
                     }
                 }
             }
 
             fp.setBeforeAndAfterElements();
+        }
+
+        // subsequent for sendTask
+        Pattern p = Pattern.compile("^Activity+");
+        Matcher m;
+        for(MessageFlow mf : collaboration.getMessageFlows()){
+            m = p.matcher(mf.getSourceRef().getId());
+            if(m.find()){
+                BPMNElement sendTask = mf.getSourceRef();
+                for(Participant object : Participants){
+                    FlowsProcessObject fp = object.getProcessRef();
+                    for(Task task : fp.getTasks()){
+                        if(task.getId().equals(sendTask.getId())){
+                            mf.setSourceRef(task.getSendingMessage());
+                        }
+                    }
+                }
+            }
         }
 
         setParallelMultipleMessageStartEvent();
